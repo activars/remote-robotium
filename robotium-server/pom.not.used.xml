@@ -1,3 +1,4 @@
+??
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -87,36 +88,16 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-					<artifactId>maven-android-plugin</artifactId>
-					<configuration>
-						<sdk>
-							<platform>4</platform>
-						</sdk>
-						<androidConfiguration>
-							<use_custom_gen_folder>true</use_custom_gen_folder>
-							<custom_gen_folder_relative_path>
-								/target/generated-sources/gen
-							</custom_gen_folder_relative_path>
-						</androidConfiguration>
-						<deleteConflictingFiles>true</deleteConflictingFiles>
-						<undeployBeforeDeploy>true</undeployBeforeDeploy>
-						<zipalign>
-							<verbose>true</verbose>
-						</zipalign>
-						<sign>
-							<debug>false</debug>
-						</sign>
-					</configuration>
-					<extensions>true</extensions>
-				</plugin>
-				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>2.3</version>
 					<configuration>
 						<source>1.6</source>
 						<target>1.6</target>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+					<artifactId>maven-android-plugin</artifactId>
 				</plugin>
 			</plugins>
 		</pluginManagement>

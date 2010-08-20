@@ -42,6 +42,7 @@ public class RemoteService extends Service {
 	public void onDestroy() {
 		Toast.makeText(this, "Service Stopped", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onDestroy");
+		bootstrap.releaseExternalResources();
 	}
 	
 	@Override

@@ -11,7 +11,6 @@
     <inceptionYear>2009</inceptionYear>
     <modules>
         <module>robotium-solo</module>
-        <module>robotium-server</module>
     </modules>
     <properties>
         <scm.branch>master</scm.branch>
