@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+android:id="@+id/widget39"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:orientation="vertical"
+xmlns:android="http://schemas.android.com/apk/res/android">
+<TextView
+android:id="@+id/TextView01"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:padding="30dp"
+android:text="Robotium Remote Service"
+android:textSize="20px"
+>
+</TextView>
+
+
+<LinearLayout android:id="@+id/LinearLayout01" android:layout_width="wrap_content" android:layout_height="wrap_content"><TextView android:id="@+id/TextView02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="10dp" android:text="Server Port:">
+</TextView><EditText android:id="@+id/portEditText" android:layout_height="wrap_content" android:numeric="integer" android:focusableInTouchMode="true" android:inputType="number" android:longClickable="false" android:singleLine="true" android:phoneNumber="true" android:password="false" android:minLines="1" android:maxLines="1" android:layout_width="180dp">
+</EditText></LinearLayout><LinearLayout
+android:id="@+id/LinearLayout02"
+android:layout_height="wrap_content"
+android:padding="20dp"
+android:layout_gravity="center" android:layout_width="wrap_content">
+<Button
+android:id="@+id/buttonStartService"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:padding="20dp"
+android:text="Start"
+>
+</Button>
+<Button
+android:id="@+id/buttonStopService"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:padding="20dp"
+android:text="Stop"
+>
+</Button>
+</LinearLayout>
+
+</LinearLayout>

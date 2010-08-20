@@ -1,6 +1,9 @@
 package com.jayway.android.robotium.solo;
 
 import java.util.ArrayList;
+
+import com.jayway.android.robotium.ISolo;
+
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.view.View;
@@ -53,7 +56,7 @@ import android.widget.ToggleButton;
  *
  */
 
-public class Solo {
+public class Solo implements ISolo {
 
 	private final Asserter asserter;
 	private final ViewFetcher viewFetcher;
