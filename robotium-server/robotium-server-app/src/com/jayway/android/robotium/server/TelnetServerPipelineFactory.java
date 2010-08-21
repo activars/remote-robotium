@@ -32,7 +32,7 @@ import org.jboss.netty.channel.ChannelPipeline;
           pipeline.addLast("encoder", new StringEncoder());
           // and then business logic.
           pipeline.addLast("handler", new TelnetServerHandler());
-  
+          
           return pipeline;
       }
   }
