@@ -1,6 +1,5 @@
 package com.jayway.android.robotium.server.util;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 //import com.android.ddmlib.IShellOutputReceiver;

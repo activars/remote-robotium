@@ -3,7 +3,6 @@ package com.jayway.android.robotium.solo;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ListView;
 import android.widget.ScrollView;
