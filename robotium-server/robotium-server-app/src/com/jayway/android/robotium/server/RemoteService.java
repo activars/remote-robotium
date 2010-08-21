@@ -41,7 +41,7 @@ public class RemoteService extends Service {
 		if (channelGroup == null) 
 			channelGroup = new DefaultChannelGroup();
 		// Configure the pipeline factory.
-		bootstrap.setPipelineFactory(new TelnetServerPipelineFactory());
+		bootstrap.setPipelineFactory(new ServerPipelineFactory());
 	} 
 
 	@Override

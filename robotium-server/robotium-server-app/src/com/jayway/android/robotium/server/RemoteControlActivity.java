@@ -60,8 +60,8 @@ public class RemoteControlActivity extends Activity implements OnClickListener {
            
                 	setServiceEnabled(false, false);
                 	int value = Integer.parseInt(serverPort.getText().toString());
-                	if( value > 65535 ) {
-                		serverPort.setError("invalid port number");
+                	if( value > 65535 || value <= 0 ) {
+                		serverPort.setError("valid range: 0 - 65535");
                 		setServiceEnabled(false, true);
                 	} else {
                 		serverPort.setError(null);
@@ -69,7 +69,7 @@ public class RemoteControlActivity extends Activity implements OnClickListener {
                 	}
                 	editor.putInt("portNum", value);
                 } else {
-                	serverPort.setError("invalid port number");
+                	serverPort.setError("valid range: 0 - 65535");
                 	setServiceEnabled(false, true);
                 }
                 

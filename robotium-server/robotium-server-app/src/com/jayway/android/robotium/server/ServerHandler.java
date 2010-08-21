@@ -22,10 +22,10 @@ import java.net.InetAddress;
 37   *
 38   * @version $Rev: 2121 $, $Date: 2010-02-02 09:38:07 +0900 (Tue, 02 Feb 2010) $
 39   */
-  public class TelnetServerHandler extends SimpleChannelUpstreamHandler {
+  public class ServerHandler extends SimpleChannelUpstreamHandler {
   
       private static final Logger logger = Logger.getLogger(
-              TelnetServerHandler.class.getName());
+              ServerHandler.class.getName());
   
       @Override
       public void handleUpstream(
