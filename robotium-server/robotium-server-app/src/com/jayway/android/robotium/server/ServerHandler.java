@@ -14,14 +14,7 @@ import java.net.InetAddress;
   import org.jboss.netty.channel.MessageEvent;
   import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
   
-  /**
-33   * Handles a server-side channel.
-34   *
-35   * @author <a href="http://www.jboss.org/netty/">The Netty Project</a>
-36   * @author <a href="http://gleamynode.net/">Trustin Lee</a>
-37   *
-38   * @version $Rev: 2121 $, $Date: 2010-02-02 09:38:07 +0900 (Tue, 02 Feb 2010) $
-39   */
+
   public class ServerHandler extends SimpleChannelUpstreamHandler {
   
       private static final Logger logger = Logger.getLogger(
@@ -66,7 +59,7 @@ import java.net.InetAddress;
           }
   
           // We do not need to write a ChannelBuffer here.
-          // We know the encoder inserted at TelnetPipelineFactory will do the conversion.
+          // We know the encoder inserted at ServerPipelineFactory will do the conversion.
           ChannelFuture future = e.getChannel().write(response);
   
           // Close the connection after sending 'Have a good day!'

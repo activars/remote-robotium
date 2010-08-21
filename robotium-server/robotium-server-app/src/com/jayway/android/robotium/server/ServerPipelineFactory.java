@@ -9,15 +9,7 @@ import org.jboss.netty.channel.ChannelPipeline;
   import org.jboss.netty.handler.codec.string.StringDecoder;
   import org.jboss.netty.handler.codec.string.StringEncoder;
   
-  /**
-28   * Creates a newly configured {@link ChannelPipeline} for a new channel.
-29   *
-30   * @author <a href="http://www.jboss.org/netty/">The Netty Project</a>
-31   * @author <a href="http://gleamynode.net/">Trustin Lee</a>
-32   *
-33   * @version $Rev: 2080 $, $Date: 2010-01-26 18:04:19 +0900 (Tue, 26 Jan 2010) $
-34   *
-35   */
+
   public class ServerPipelineFactory implements
           ChannelPipelineFactory {
   

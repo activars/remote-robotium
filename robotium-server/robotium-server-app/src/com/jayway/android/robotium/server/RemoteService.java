@@ -57,12 +57,13 @@ public class RemoteService extends Service {
 		Toast.makeText(this, "Server Started", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onStart");
 		// parse the EditText value to integer
-		int portNumber = getSharedPreferences(RemoteControlActivity.PREFS, 0).getInt("portNumber", 8080);
+		int portNumber = getSharedPreferences(RemoteControlActivity.PREFS, 0).getInt("portNum", 8080);
 		// prevent the bad address error
 		//System.setProperty("java.net.preferIPv6Addresses", "false");
 		// Bind and start to accept incoming connections.
 		Channel channel = bootstrap.bind(new InetSocketAddress(portNumber));
 		channelGroup.add(channel);
+		Log.d(TAG, "server listening on port " + portNumber);
 	}
 	
 	
