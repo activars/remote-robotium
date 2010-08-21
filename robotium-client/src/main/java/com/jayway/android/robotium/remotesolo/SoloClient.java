@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-import org.apache.maven.plugin.MojoExecutionException;
+
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
 import com.jayway.maven.plugins.android.CommandExecutor;
@@ -19,25 +18,26 @@ public class SoloClient {
 	private ClientBootstrap bootstrap;
 	private int pcPort;
 	private int devicePort;
+	private String deviceSerial;
 	private String host;
 	private Channel channel;
 	private ChannelFuture lastWriteFuture;
-
-	public SoloClient(String host, int pcPort, int devicePort) {
-		this.host = host;
-		this.pcPort = pcPort;
-		this.devicePort = devicePort;
-		initialize();
+	
+	
+	public SoloClient(int pcPort, int devicePort, String deviceSerial) {
+		initialize("localhost", pcPort, devicePort, deviceSerial);
 	}
 
 	public SoloClient(int pcPort, int devicePort) {
-		this.host = "localhost";
-		this.pcPort = pcPort;
-		this.devicePort = devicePort;
-		initialize();
+		initialize("localhost", pcPort, devicePort, "");
 	}
 
-	private void initialize() {
+	private void initialize(String host, int pcPort, int devicePort, String deviceSerial) {
+		this.host = host;
+		this.pcPort = pcPort;
+		this.devicePort = devicePort;
+		this.deviceSerial = deviceSerial;
+		
 		// configure the client
 		bootstrap = new ClientBootstrap(new NioClientSocketChannelFactory(
 				Executors.newCachedThreadPool(), Executors
@@ -45,7 +45,7 @@ public class SoloClient {
 
 		bootstrap.setPipelineFactory(new ClientPiplineFactory());
 		
-		forwardingPort(this.pcPort, this.devicePort);
+		forwardingPort(this.pcPort, this.devicePort, this.deviceSerial);
 
 		// Start the connection attempt.
 		ChannelFuture future = bootstrap.connect(new InetSocketAddress(
@@ -94,10 +94,14 @@ public class SoloClient {
 		bootstrap.releaseExternalResources();
 	}
 
-	private void forwardingPort(int pcPort, int devicePort) {
+	private void forwardingPort(int pcPort, int devicePort, String deviceSerial) {
 		CommandExecutor executor = CommandExecutor.Factory
 				.createDefaultCommmandExecutor();
 		List<String> commands = new ArrayList<String>();
+		if(!deviceSerial.equals("") && deviceSerial != null) {
+			commands.add("-s");
+			commands.add(deviceSerial);
+		}
 		commands.add("forward");
 		commands.add("tcp:" + pcPort);
 		commands.add("tcp:" + devicePort);
@@ -105,6 +109,9 @@ public class SoloClient {
 		try {
 			executor.executeCommand("adb", commands, false);
 		} catch (ExecutionException e) {
+			// this happens when multiple devices connected
+			// or the envirment varialbe wasn't setup property
+			// need to have ANDROID_HOME setup
 			e.printStackTrace();
 		}
 
