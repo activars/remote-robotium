@@ -28,17 +28,6 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 
           super.handleUpstream(ctx, e);
       }
-      
-      @Override
-      public void handleDownstream(
-              ChannelHandlerContext ctx, ChannelEvent e) throws Exception {
-          if (e instanceof ChannelStateEvent) {
-              logger.info(e.toString());
-          }
-
-          super.handleDownstream(ctx, e);
-      }
-
 
       @Override
       public void messageReceived(

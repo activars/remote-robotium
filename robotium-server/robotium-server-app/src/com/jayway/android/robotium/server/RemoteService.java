@@ -58,8 +58,12 @@ public class RemoteService extends Service {
 		Log.d(TAG, "onStart");
 		// parse the EditText value to integer
 		int portNumber = getSharedPreferences(RemoteControlActivity.PREFS, 0).getInt("portNum", 8080);
-		// prevent the bad address error
-		//System.setProperty("java.net.preferIPv6Addresses", "false");
+		
+		// NOTE:  This is a work around to prevent the bad address error.
+		//        This was a bug exposed on Android 2.2
+		//        http://code.google.com/p/android/issues/detail?id=9431
+		System.setProperty("java.net.preferIPv6Addresses", "false");
+
 		// Bind and start to accept incoming connections.
 		Channel channel = bootstrap.bind(new InetSocketAddress(portNumber));
 		channelGroup.add(channel);
