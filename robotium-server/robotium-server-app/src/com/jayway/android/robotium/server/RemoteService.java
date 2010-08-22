@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 public class RemoteService extends Service {
 
-	private static final String TAG = "Service";
+	private static final String TAG = "RobotiumService";
 	private ServerBootstrap bootstrap;
 	private ChannelGroup channelGroup;
 	@Override

@@ -2,9 +2,7 @@ package com.jayway.android.robotium.solo;
 
 import java.util.ArrayList;
 
-
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -12,82 +10,24 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.ListView;
 import android.widget.ToggleButton;
 
-/**
- * This class contains all the methods that the sub-classes have. It supports test
- * cases that span over multiple activities. It supports regular expressions and 
- * will automatically scroll when needed.
- * 
- * When writing tests there is no need to plan for or expect new activities in the test case. 
- * All is handled automatically by Robotium-Solo. Robotium-Solo can be used in conjunction with
- * ActivityInstrumentationTestCase2. The test cases are written from a user
- * perspective were technical details are not needed.
- * 
- *
- * Example of usage (test case spanning over multiple activities):
- *
- * <pre>
- *
- * public void setUp() throws Exception {
- * solo = new Solo(getInstrumentation(), getActivity());
- * }
- *
- * public void testTextShows() throws Exception {
- *
- * solo.clickOnText(&quot;Categories&quot;);
- * solo.clickOnText(&quot;Other&quot;);
- * solo.clickOnButton(&quot;Edit&quot;);
- * solo.searchText(&quot;Edit Window&quot;);
- * solo.clickOnButton(&quot;Commit&quot;);
- * assertTrue(solo.searchText(&quot;Changes have been made successfully&quot;));
- * }
- *
- * </pre>
- *
- *
- * @author Renas Reda, renas.reda@jayway.com
- *
- */
+public interface ISolo {
 
-public class Solo implements ISolo {
-
-	private final Asserter asserter;
-	private final ViewFetcher viewFetcher;
-	private final Clicker clicker;
-	private final Presser presser;
-	private final Searcher searcher;
-	private final ActivityUtils activitiyUtils;
-	private final DialogUtils dialogUtils;
-	private final TextEnterer textEnterer;
-	private final Scroller scroller;
-	private final RobotiumUtils robotiumUtils;
-	/**
-	 * Constructor that takes in the instrumentation and the start activity.
-	 *
-	 * @param inst the instrumentation object
-	 * @param activity the start activity
-	 *
-	 */
-	
-	public Solo(Instrumentation inst, Activity activity) {
-        this.activitiyUtils = new ActivityUtils(inst, activity);
-        this.viewFetcher = new ViewFetcher(inst);
-        this.asserter = new Asserter(activitiyUtils);
-        this.dialogUtils = new DialogUtils(viewFetcher);
-        this.scroller = new Scroller(inst, activitiyUtils, viewFetcher);
-        this.searcher = new Searcher(viewFetcher, scroller, inst);
-        this.robotiumUtils = new RobotiumUtils(activitiyUtils, searcher, viewFetcher, inst);
-        this.clicker = new Clicker(activitiyUtils, viewFetcher, scroller,robotiumUtils, inst);
-        this.presser = new Presser(viewFetcher, clicker, inst);
-        this.textEnterer = new TextEnterer(viewFetcher, robotiumUtils, clicker, inst);
-        
-	}
+	public final static int LANDSCAPE = 0;
+	public final static int PORTRAIT = 1;
+	public final static int RIGHT = 2;
+	public final static int LEFT = 3;
+	public final static int UP = 4;
+	public final static int DOWN = 5;
+	public final static int ENTER = 6;
+	public final static int MENU = 7;
+	public final static int DELETE = 8;
 
 	/**
 	 * Returns an ArrayList of all the views located in the current activity.
@@ -95,13 +35,9 @@ public class Solo implements ISolo {
 	 * @return ArrayList with the views found in the current activity
 	 *
 	 */
-	
-	public ArrayList<View> getViews() {
-		ArrayList<View> viewList = viewFetcher.getViews();
-		return viewList;
 
-	}
-	
+	public abstract ArrayList<View> getViews();
+
 	/**
 	 * Returns the absolute top view in an activity.
 	 *
@@ -109,38 +45,28 @@ public class Solo implements ISolo {
 	 * @return the top parent view
 	 *
 	 */
-	
-	public View getTopParent(View view) {
-		View topParent = viewFetcher.getTopParent(view);
-		return topParent;
-	}
-	
+
+	public abstract View getTopParent(View view);
+
 	/**
-     * Clears the value of an edit text.
-     * 
-     * @param index the index of the edit text that should be cleared
-     */
-	
-    public void clearEditText(int index)
-    {
-       robotiumUtils.clearEditText(index);
-    }
-    
-    /**
+	 * Clears the value of an edit text.
+	 * 
+	 * @param index the index of the edit text that should be cleared
+	 */
+
+	public abstract void clearEditText(int index);
+
+	/**
 	 * Waits for a text to be shown. Default timeout is 20 seconds. 
 	 * 
 	 * @param text the text that needs to be shown
 	 * @return true if text is found and false if it is not found before the timeout
 	 * 
 	 */
-	
-	public boolean waitForText(String text) {
 
-		return robotiumUtils.waitForText(text);
-	}
+	public abstract boolean waitForText(String text);
 
-	
-	 /**
+	/**
 	 * Waits for a text to be shown. 
 	 * 
 	 * @param text the text that needs to be shown
@@ -149,13 +75,10 @@ public class Solo implements ISolo {
 	 * @return true if text is found and false if it is not found before the timeout
 	 * 
 	 */
-	
-	public boolean waitForText(String text, int matches, long timeout)
-    {
-       return robotiumUtils.waitForText(text, matches, timeout);
-    }
-	
-	 /**
+
+	public abstract boolean waitForText(String text, int matches, long timeout);
+
+	/**
 	 * Waits for a text to be shown. 
 	 * 
 	 * @param text the text that needs to be shown
@@ -165,13 +88,10 @@ public class Solo implements ISolo {
 	 * @return true if text is found and false if it is not found before the timeout
 	 * 
 	 */
-	
-	public boolean waitForText(String text, int matches, long timeout, boolean scroll)
-    {
-		return robotiumUtils.waitForText(text, matches, timeout, scroll);
-    }
-	
-	
+
+	public abstract boolean waitForText(String text, int matches, long timeout,
+			boolean scroll);
+
 	/**
 	 * Searches for a text string in the edit texts located in the current
 	 * activity. Will automatically scroll when needed. 
@@ -180,13 +100,9 @@ public class Solo implements ISolo {
 	 * @return true if an edit text with the given text is found or false if it is not found
 	 *
 	 */
-	
-	public boolean searchEditText(String search) {
-		boolean found = searcher.searchEditText(search);
-		return found;
-	}
-	
-	
+
+	public abstract boolean searchEditText(String search);
+
 	/**
 	 * Searches for a button with the given search string and returns true if at least one button 
 	 * is found with the expected text. Will automatically scroll when needed. 
@@ -195,12 +111,9 @@ public class Solo implements ISolo {
 	 * @return true if a button with the given text is found and false if it is not found
 	 *
 	 */
-	
-	public boolean searchButton(String search) {
-		boolean found = searcher.searchButton(search);
-		return found;
-	}
-	
+
+	public abstract boolean searchButton(String search);
+
 	/**
 	 * Searches for a toggle button with the given search string and returns true if at least one toggle button 
 	 * is found with the expected text. Will automatically scroll when needed. 
@@ -209,12 +122,9 @@ public class Solo implements ISolo {
 	 * @return true if a toggle button with the given text is found and false if it is not found
 	 *
 	 */
-	
-	public boolean searchToggleButton(String search) {
-		boolean found = searcher.searchToggleButton(search);
-		return found;
-	}
-	
+
+	public abstract boolean searchToggleButton(String search);
+
 	/**
 	 * Searches for a button with the given search string and returns true if the 
 	 * searched button is found a given number of times. Will automatically scroll when needed. 
@@ -226,13 +136,9 @@ public class Solo implements ISolo {
 	 * if it is not found
 	 *  
 	 */
-	
-	public boolean searchButton(String search, int matches) {
-		boolean found = searcher.searchButton(search, matches);
-		return found;
 
-	}
-	
+	public abstract boolean searchButton(String search, int matches);
+
 	/**
 	 * Searches for a toggle button with the given search string and returns true if the 
 	 * searched toggle button is found a given number of times. Will automatically scroll when needed. 
@@ -244,13 +150,9 @@ public class Solo implements ISolo {
 	 * if it is not found
 	 *  
 	 */
-	
-	public boolean searchToggleButton(String search, int matches) {
-		boolean found = searcher.searchToggleButton(search, matches);
-		return found;
 
-	}
-	
+	public abstract boolean searchToggleButton(String search, int matches);
+
 	/**
 	 * Searches for a text string and returns true if at least one item 
 	 * is found with the expected text. Will automatically scroll when needed. 
@@ -259,12 +161,9 @@ public class Solo implements ISolo {
 	 * @return true if the search string is found and false if it is not found
 	 *
 	 */
-	
-	public boolean searchText(String search) {
-		boolean found = searcher.searchText(search);
-		return found;
-	}
-	
+
+	public abstract boolean searchText(String search);
+
 	/**
 	 * Searches for a text string and returns true if the searched text is found a given
 	 * number of times. Will automatically scroll when needed. 
@@ -276,13 +175,9 @@ public class Solo implements ISolo {
 	 * is not found
 	 *  
 	 */
-	
-	public boolean searchText(String search, int matches) {
-		boolean found = searcher.searchText(search, matches);
-		return found;
 
-	}
-	
+	public abstract boolean searchText(String search, int matches);
+
 	/**
 	 * Searches for a text string and returns true if the searched text is found a given
 	 * number of times.
@@ -295,45 +190,35 @@ public class Solo implements ISolo {
 	 * is not found
 	 *  
 	 */
-	
-	public boolean searchText(String search, int matches, boolean scroll) {
-		return searcher.searchText(search, matches, scroll);
-	}
+
+	public abstract boolean searchText(String search, int matches,
+			boolean scroll);
 
 	/**
 	 * Sets the Orientation (Landscape/Portrait) for the current activity.
 	 * 
 	 * @param orientation the orientation to be set. 0 for landscape and 1 for portrait 
 	 */
-	
-	public void setActivityOrientation(int orientation)
-	{
-		activitiyUtils.setActivityOrientation(orientation);
-	}
-	
+
+	public abstract void setActivityOrientation(int orientation);
+
 	/**
 	 * Returns an ArrayList of all the opened/active activities.
 	 * 
 	 * @return ArrayList of all the opened activities
 	 */
-	
-	public ArrayList<Activity> getAllOpenedActivities()
-	{
-		return activitiyUtils.getAllOpenedActivities();
-	}
-	
+
+	public abstract ArrayList<Activity> getAllOpenedActivities();
+
 	/**
 	 * Returns the current activity.
 	 *
 	 * @return current activity
 	 *
 	 */
-	
-	public Activity getCurrentActivity() {
-		Activity activity = activitiyUtils.getCurrentActivity();
-		return activity;
-	}
-	
+
+	public abstract Activity getCurrentActivity();
+
 	/**
 	 * Asserts that an expected activity is currently active.
 	 * 
@@ -341,12 +226,9 @@ public class Solo implements ISolo {
 	 * @param name the name of the activity that is expected to be active e.g. "MyActivity"
 	 * 
 	 */
-	
-	public void assertCurrentActivity(String message, String name)
-	{	
-		asserter.assertCurrentActivity(message, name);
-	}
-	
+
+	public abstract void assertCurrentActivity(String message, String name);
+
 	/**
 	 * Asserts that an expected activity is currently active.
 	 * 
@@ -354,14 +236,11 @@ public class Solo implements ISolo {
 	 * @param expectedClass the class object that is expected to be active e.g. MyActivity.class
 	 * 
 	 */
-	
-	@SuppressWarnings("unchecked")
-	public void assertCurrentActivity(String message, Class expectedClass)
-	{
-		asserter.assertCurrentActivity(message, expectedClass);
 
-	}
-	
+	@SuppressWarnings("unchecked")
+	public abstract void assertCurrentActivity(String message,
+			Class expectedClass);
+
 	/**
 	 * Asserts that an expected activity is currently active with the possibility to 
 	 * verify that the expected activity is a new instance of the activity.
@@ -371,12 +250,10 @@ public class Solo implements ISolo {
 	 * @param isNewInstance true if the expected activity is a new instance of the activity 
 	 * 
 	 */
-	
-	public void assertCurrentActivity(String message, String name, boolean isNewInstance)
-	{
-		asserter.assertCurrentActivity(message, name, isNewInstance);
-	}
-	
+
+	public abstract void assertCurrentActivity(String message, String name,
+			boolean isNewInstance);
+
 	/**
 	 * Asserts that an expected activity is currently active with the possibility to 
 	 * verify that the expected activity is a new instance of the activity.
@@ -386,24 +263,18 @@ public class Solo implements ISolo {
 	 * @param isNewInstance true if the expected activity is a new instance of the activity
 	 * 
 	 */
-	
+
 	@SuppressWarnings("unchecked")
-	public void assertCurrentActivity(String message, Class expectedClass,
-			boolean isNewInstance) {
-		asserter.assertCurrentActivity(message, expectedClass, isNewInstance);
-	}	
-	
+	public abstract void assertCurrentActivity(String message,
+			Class expectedClass, boolean isNewInstance);
+
 	/**
 	 * Asserts that the available memory in the system is not low.
 	 * 
 	 */
-	
-	public void assertLowMemory()
-	{
-		asserter.assertLowMemory();
-	}
-	
-	
+
+	public abstract void assertLowMemory();
+
 	/**
 	 * Waits for a Dialog to close.
 	 * 
@@ -412,21 +283,15 @@ public class Solo implements ISolo {
 	 * 
 	 */
 
-	public boolean waitForDialogToClose(long timeout) {
-		return dialogUtils.waitForDialogToClose(timeout);
-	}
-	
-	
+	public abstract boolean waitForDialogToClose(long timeout);
+
 	/**
 	 * Simulates pressing the hard key back.
 	 * 
 	 */
-	
-	public void goBack()
-	{
-		clicker.goBack();
-	}
-	
+
+	public abstract void goBack();
+
 	/**
 	 * Clicks on a specific coordinate on the screen.
 	 *
@@ -434,11 +299,9 @@ public class Solo implements ISolo {
 	 * @param y the y coordinate
 	 *
 	 */
-	
-	public void clickOnScreen(float x, float y) {
-		robotiumUtils.waitForIdle();
-		clicker.clickOnScreen(x, y);
-	}
+
+	public abstract void clickOnScreen(float x, float y);
+
 	/**
 	 * Long clicks a specific coordinate on the screen
 	 *
@@ -446,35 +309,27 @@ public class Solo implements ISolo {
 	 * @param y the y coordinate
 	 *
 	 */
-	
-	public void clickLongOnScreen(float x, float y) {
-		clicker.clickLongOnScreen(x, y);
-	}
-	
-	
+
+	public abstract void clickLongOnScreen(float x, float y);
+
 	/**
 	 * Clicks on a button with a given text. Will automatically scroll when needed. 
 	 *
 	 * @param name the name of the button presented to the user. Regular expressions are supported
 	 *
 	 */
-	
-	public void clickOnButton(String name) {
-		clicker.clickOnButton(name);
 
-	}
-	
+	public abstract void clickOnButton(String name);
+
 	/**
 	 * Clicks on an image button with a certain index.
 	 *
 	 * @param index the index of the image button to be clicked
 	 *
 	 */
-	
-	public void clickOnImageButton(int index) {
-		clicker.clickOnImageButton(index);
-	}
-	
+
+	public abstract void clickOnImageButton(int index);
+
 	/**
 	 * Clicks on a toggle button with a given text.
 	 * 
@@ -482,20 +337,15 @@ public class Solo implements ISolo {
 	 * 
 	 */
 
-	public void clickOnToggleButton(String name) {
-		clicker.clickOnToggleButton(name);
-	}
-	
+	public abstract void clickOnToggleButton(String name);
+
 	/**
 	 * Clicks on a menu item with a given text.
 	 * @param text the menu text that should be clicked on. Regular expressions are supported 
 	 */
-	
-	public void clickOnMenuItem(String text)
-	{	
-		clicker.clickOnMenuItem(text);
-	}
-	
+
+	public abstract void clickOnMenuItem(String text);
+
 	/**
 	 * Presses a MenuItem with a certain index. Index 0 is the first item in the 
 	 * first row, index 3 is the first item in the second row and 
@@ -504,11 +354,9 @@ public class Solo implements ISolo {
 	 * @param index the index of the menu item to be pressed
 	 * 
 	 */
-	
-	public void pressMenuItem(int index) {	
-		presser.pressMenuItem(index);
-	}
-	
+
+	public abstract void pressMenuItem(int index);
+
 	/**
 	 * Presses on a spinner (drop-down menu) item.
 	 * 
@@ -517,38 +365,27 @@ public class Solo implements ISolo {
 	 * A Negative number moves up on the spinner, positive down
 	 * 
 	 */
-	
-	public void pressSpinnerItem(int spinnerIndex, int itemIndex)
-	{
-		presser.pressSpinnerItem(spinnerIndex, itemIndex);
-	}
-    
-	
+
+	public abstract void pressSpinnerItem(int spinnerIndex, int itemIndex);
+
 	/**
 	 * Clicks on a specific view.
 	 *
 	 * @param view the view that should be clicked
 	 *
 	 */
-	
-	public void clickOnView(View view) {
-		robotiumUtils.waitForIdle();
-		clicker.clickOnScreen(view);
-	}
-	
-	
+
+	public abstract void clickOnView(View view);
+
 	/**
 	 * Long clicks on a specific view.
 	 *
 	 * @param view the view that should be long clicked
 	 *
 	 */
-	
-	public void clickLongOnView(View view) {
-		robotiumUtils.waitForIdle();
-		clicker.clickLongOnScreen(view);
-	}
-	
+
+	public abstract void clickLongOnView(View view);
+
 	/**
 	 * Clicks on a specific view displaying a certain
 	 * text. Will automatically scroll when needed. 
@@ -556,11 +393,9 @@ public class Solo implements ISolo {
 	 * @param text the text that should be clicked on. Regular expressions are supported
 	 *
 	 */
-	
-	public void clickOnText(String text) {
-		clicker.clickOnText(text);
-	}
-	
+
+	public abstract void clickOnText(String text);
+
 	/**
 	 * This method is used to click on a specific text view displaying a certain
 	 * text.
@@ -569,11 +404,9 @@ public class Solo implements ISolo {
 	 * @param match the match that should be clicked on 
 	 *
 	 */
-	
-	public void clickOnText(String text, int match) {
-		clicker.clickOnText(text, match);
-	}
-	
+
+	public abstract void clickOnText(String text, int match);
+
 	/**
 	 * Long clicks on a specific text view. ClickOnText() can then be
 	 * used to click on the context menu items that appear after the long click.
@@ -581,12 +414,9 @@ public class Solo implements ISolo {
 	 * @param text the text that should be clicked on. Regular expressions are supported
 	 *
 	 */
-	
-	public void clickLongOnText(String text)
-	{
-		clicker.clickLongOnText(text);
-	}
-	
+
+	public abstract void clickLongOnText(String text);
+
 	/**
 	 * Long clicks on a specific text view. ClickOnText() can then be
 	 * used to click on the context menu items that appear after the long click.
@@ -595,12 +425,9 @@ public class Solo implements ISolo {
 	 * @param match the match that should be clicked on 
 	 *
 	 */
-	
-	public void clickLongOnText(String text, int match)
-	{
-		clicker.clickLongOnText(text, match);
-	}
-	
+
+	public abstract void clickLongOnText(String text, int match);
+
 	/**
 	 * Long clicks on a specific text view and then selects
 	 * an item from the context menu that appears. Will automatically scroll when needed. 
@@ -609,11 +436,9 @@ public class Solo implements ISolo {
 	 * @param index the index of the menu item to be pressed
 	 *
 	 */
-	
-	public void clickLongOnTextAndPress(String text, int index) {
-		clicker.clickLongOnTextAndPress(text, index);
-	}
-	
+
+	public abstract void clickLongOnTextAndPress(String text, int index);
+
 	/**
 	 * Clicks on a button with a certain index.
 	 *
@@ -621,45 +446,35 @@ public class Solo implements ISolo {
 	 * @return true if button with specified index is found
 	 *
 	 */
-	
-	public boolean clickOnButton(int index) {
-		boolean found = clicker.clickOnButton(index);
-		return found;
-		
-	}
-	
+
+	public abstract boolean clickOnButton(int index);
+
 	/**
 	 * Clicks on a radio button with a certain index.
 	 *
 	 * @param index the index of the radio button to be clicked
 	 *
 	 */
-	
-	public void clickOnRadioButton(int index) {
-		clicker.clickOnRadioButton(index);
-	}
-	
+
+	public abstract void clickOnRadioButton(int index);
+
 	/**
 	 * Clicks on a check box with a certain index.
 	 *
 	 * @param index the index of the check box to be clicked
 	 *
 	 */
-	
-	public void clickOnCheckBox(int index) {
-		clicker.clickOnCheckBox(index);
-	}
-	
+
+	public abstract void clickOnCheckBox(int index);
+
 	/**
 	 * Clicks on an edit text with a certain index.
 	 *
 	 * @param index the index of the edit text to be clicked
 	 *
 	 */
-	
-	public void clickOnEditText(int index) {
-		clicker.clickOnEditText(index);
-	}
+
+	public abstract void clickOnEditText(int index);
 
 	/**
 	 * Clicks on a certain list line and return the text views that
@@ -669,9 +484,7 @@ public class Solo implements ISolo {
 	 * @return an array list of the text views located in the list line
 	 */
 
-	public ArrayList<TextView> clickInList(int line) {
-		return clicker.clickInList(line);
-	}
+	public abstract ArrayList<TextView> clickInList(int line);
 
 	/**
 	 * Clicks on a certain list line on a specified list and 
@@ -681,12 +494,10 @@ public class Solo implements ISolo {
 	 * @param listIndex the index of the list. E.g. Index 1 if two lists are available
 	 * @return an array list of the text views located in the list line
 	 */
-	
-	public ArrayList<TextView> clickInList(int line, int listIndex) {
-	return clicker.clickInList(line, listIndex);
-	}
 
-	 /**
+	public abstract ArrayList<TextView> clickInList(int line, int listIndex);
+
+	/**
 	 * Simulate touching a specific location and dragging to a new location.
 	 *
 	 * This method was copied from {@code TouchUtils.java} in the Android Open Source Project, and modified here.
@@ -698,12 +509,10 @@ public class Solo implements ISolo {
 	 * @param stepCount How many move steps to include in the drag
 	 *
 	 */
-	
-	public void drag(float fromX, float toX, float fromY, float toY,
-					  int stepCount) {
-		scroller.drag(fromX, toX, fromY, toY, stepCount);
-	}
-	
+
+	public abstract void drag(float fromX, float toX, float fromY, float toY,
+			int stepCount);
+
 	/**
 	 * Scrolls down the screen.
 	 *
@@ -711,11 +520,8 @@ public class Solo implements ISolo {
 	 * the screen 
 	 *
 	 */
-	
-	public boolean scrollDown() {
-		return scroller.scrollDown();
-	}
-	
+
+	public abstract boolean scrollDown();
 
 	/**
 	 * Scrolls up the screen.
@@ -724,11 +530,9 @@ public class Solo implements ISolo {
 	 * the screen 
 	 *
 	 */
-	
-	public boolean scrollUp(){
-		return scroller.scrollUp();
-	}
-	
+
+	public abstract boolean scrollUp();
+
 	/**
 	 * Scrolls down a list with a given listIndex.
 	 * 
@@ -736,12 +540,9 @@ public class Solo implements ISolo {
 	 * @return true if more scrolling can be done
 	 * 
 	 */
-	
-	public boolean scrollDownList(int listIndex)
-	{
-		return scroller.scrollDownList(listIndex);
-	}
-	
+
+	public abstract boolean scrollDownList(int listIndex);
+
 	/**
 	 * Scrolls up a list with a given listIndex.
 	 * 
@@ -749,23 +550,18 @@ public class Solo implements ISolo {
 	 * @return true if more scrolling can be done
 	 * 
 	 */
-	
-	public boolean scrollUpList(int listIndex)
-	{
-		return scroller.scrollUpList(listIndex);
-	}
-	
+
+	public abstract boolean scrollUpList(int listIndex);
+
 	/**
 	 * Scrolls horizontally.
 	 *
 	 * @param side the side in which to scroll
 	 *
 	 */
-	
-	public void scrollToSide(int side) {
-		scroller.scrollToSide(side);
-	}
-	
+
+	public abstract void scrollToSide(int side);
+
 	/**
 	 * Enters text into an EditText or a NoteField with a certain index.
 	 *
@@ -773,22 +569,18 @@ public class Solo implements ISolo {
 	 * @param text the text string that is to be entered into the text field
 	 *
 	 */
-	
-	public void enterText(int index, String text) {
-		textEnterer.enterText(index, text);		
-	}
-	
+
+	public abstract void enterText(int index, String text);
+
 	/**
 	 * Clicks on an image with a certain index.
 	 *
 	 * @param index the index of the image to be clicked
 	 *
 	 */
-	
-	public void clickOnImage(int index) {
-		clicker.clickOnImage(index);
-	}
-	
+
+	public abstract void clickOnImage(int index);
+
 	/**
 	 * Returns an ArrayList of the images contained in the current
 	 * activity.
@@ -796,24 +588,18 @@ public class Solo implements ISolo {
 	 * @return ArrayList of the images contained in the current activity
 	 *
 	 */
-	
-	public ArrayList<ImageView> getCurrentImageViews() {
-		ArrayList<ImageView> imageViewList = viewFetcher.getCurrentImageViews();
-		return imageViewList;
-	}
-	
+
+	public abstract ArrayList<ImageView> getCurrentImageViews();
+
 	/**
 	 * Returns an EditText with a certain index.
 	 *
 	 * @return the EditText with a specified index
 	 *
 	 */
-	
-	public EditText getEditText(int index) {
-		EditText editText = viewFetcher.getEditText(index);
-		return editText;
-	}
-	
+
+	public abstract EditText getEditText(int index);
+
 	/**
 	 * Returns a button with a certain index.
 	 *
@@ -821,12 +607,9 @@ public class Solo implements ISolo {
 	 * @return the button with the specific index
 	 *
 	 */
-	
-	public Button getButton(int index) {
-		Button button = viewFetcher.getButton(index);
-		return button;
-	}
-	
+
+	public abstract Button getButton(int index);
+
 	/**
 	 * Returns the number of buttons located in the current
 	 * activity.
@@ -835,13 +618,9 @@ public class Solo implements ISolo {
 	 * @deprecated legacy method that is not needed anymore
 	 *
 	 */
-	
-	public int getCurrenButtonsCount() {
-		int number = viewFetcher.getCurrenButtonsCount();
-		return number;
-	}
-	
-	
+
+	public abstract int getCurrenButtonsCount();
+
 	/**
 	 * Returns an ArrayList of all the edit texts located in the
 	 * current activity.
@@ -849,13 +628,9 @@ public class Solo implements ISolo {
 	 * @return an ArrayList of the edit texts located in the current activity
 	 *
 	 */
-	
-	public ArrayList<EditText> getCurrentEditTexts() {
-		ArrayList<EditText> editTextList = viewFetcher.getCurrentEditTexts();
-		return editTextList;
-		
-	}
-	
+
+	public abstract ArrayList<EditText> getCurrentEditTexts();
+
 	/**
 	 * Returns an ArrayList of all the list views located in the current activity.
 	 * 
@@ -864,24 +639,18 @@ public class Solo implements ISolo {
 	 * 
 	 */
 
-	public ArrayList<ListView> getCurrentListViews() {
-		ArrayList<ListView> listViewList = viewFetcher.getCurrentListViews();
-		return listViewList;
-	}
+	public abstract ArrayList<ListView> getCurrentListViews();
 
-      /**
-     	* Returns an ArrayList of all the scroll views located in the current activity.
-     	*
-     	*
-     	* @return an ArrayList of the scroll views located in the current activity
-     	*
-     	*/
-	
-    public ArrayList<ScrollView> getCurrentScrollViews() {
-        return viewFetcher.getCurrentScrollViews();
-    }
+	/**
+	 * Returns an ArrayList of all the scroll views located in the current activity.
+	 *
+	 *
+	 * @return an ArrayList of the scroll views located in the current activity
+	 *
+	 */
 
-	
+	public abstract ArrayList<ScrollView> getCurrentScrollViews();
+
 	/**
 	 * Returns an ArrayList of spinners (drop-down menus) located in the current
 	 * activity.
@@ -889,13 +658,9 @@ public class Solo implements ISolo {
 	 * @return an ArrayList of the spinners located in the current activity or view
 	 *
 	 */
-	
-	public ArrayList<Spinner> getCurrentSpinners()
-	{
-		ArrayList<Spinner> spinnerList = viewFetcher.getCurrentSpinners();
-		return spinnerList;
-	}
-	
+
+	public abstract ArrayList<Spinner> getCurrentSpinners();
+
 	/**
 	 * Returns an ArrayList of the text views located in the current
 	 * activity.
@@ -906,13 +671,9 @@ public class Solo implements ISolo {
 	 * @return an ArrayList of the text views located in the current activity or view
 	 *
 	 */
-	
-	public ArrayList<TextView> getCurrentTextViews(View parent) {
-		ArrayList<TextView> textViewList = viewFetcher.getCurrentTextViews(parent);
-		return textViewList;
-		
-	}
-	
+
+	public abstract ArrayList<TextView> getCurrentTextViews(View parent);
+
 	/**
 	 * Returns an ArrayList of the grid views located in the current
 	 * activity.
@@ -920,13 +681,9 @@ public class Solo implements ISolo {
 	 * @return an ArrayList of the grid views located in the current activity
 	 *
 	 */
-	
-	public ArrayList<GridView> getCurrentGridViews() {
-		ArrayList<GridView> gridViewList = viewFetcher.getCurrentGridViews();
-		return gridViewList;
-	}
-	
-	
+
+	public abstract ArrayList<GridView> getCurrentGridViews();
+
 	/**
 	 * Returns an ArrayList with the buttons located in the current
 	 * activity.
@@ -934,12 +691,9 @@ public class Solo implements ISolo {
 	 * @return and ArrayList of the buttons located in the current activity
 	 * 
 	 */
-	
-	public ArrayList<Button> getCurrentButtons() {
-		ArrayList<Button> buttonList = viewFetcher.getCurrentButtons();
-		return buttonList;
-	}
-	
+
+	public abstract ArrayList<Button> getCurrentButtons();
+
 	/**
 	 * Returns an ArrayList with the toggle buttons located in the current
 	 * activity.
@@ -947,12 +701,9 @@ public class Solo implements ISolo {
 	 * @return and ArrayList of the toggle buttons located in the current activity
 	 *
 	 */
-	
-	public ArrayList<ToggleButton> getCurrentToggleButtons() {
-		ArrayList<ToggleButton> toggleButtonList = viewFetcher.getCurrentToggleButtons();
-		return toggleButtonList;
-	}
-	
+
+	public abstract ArrayList<ToggleButton> getCurrentToggleButtons();
+
 	/**
 	 * Returns an ArrayList of the radio buttons contained in the current
 	 * activity.
@@ -960,11 +711,9 @@ public class Solo implements ISolo {
 	 * @return ArrayList of the radio buttons contained in the current activity
 	 *
 	 */
-	
-	public ArrayList<RadioButton> getCurrentRadioButtons() {
-		return viewFetcher.getCurrentRadioButtons();
-	}
-	
+
+	public abstract ArrayList<RadioButton> getCurrentRadioButtons();
+
 	/**
 	 * Returns an ArrayList of the check boxes contained in the current
 	 * activity.
@@ -972,12 +721,9 @@ public class Solo implements ISolo {
 	 * @return ArrayList of the check boxes contained in the current activity
 	 *
 	 */
-	
-	public ArrayList<CheckBox> getCurrentCheckBoxes()
-	{
-		return viewFetcher.getCurrentCheckBoxes();
-	}
-	
+
+	public abstract ArrayList<CheckBox> getCurrentCheckBoxes();
+
 	/**
 	 * Returns an ArrayList of the image buttons contained in the current
 	 * activity.
@@ -985,36 +731,26 @@ public class Solo implements ISolo {
 	 * @return ArrayList of the image buttons contained in the current activity
 	 *
 	 */
-	
-	public ArrayList<ImageButton> getCurrentImageButtons()
-	{
-		return viewFetcher.getCurrentImageButtons();
-	}
-	
+
+	public abstract ArrayList<ImageButton> getCurrentImageButtons();
+
 	/**
 	 * Checks if a radio button with a given index is checked.
 	 * 
 	 * @param index of the radio button to check
 	 * @return true if radio button is checked and false if it is not checked
 	 */
-	
-	public boolean isRadioButtonChecked(int index)
-	{
-		return robotiumUtils.isRadioButtonChecked(index);
-	}
-	
+
+	public abstract boolean isRadioButtonChecked(int index);
+
 	/**
 	 * Checks if a check box with a given index is checked.
 	 * 
 	 * @param index of the check box to check
 	 * @return true if check box is checked and false if it is not checked
 	 */
-	
-	public boolean isCheckBoxChecked(int index)
-	{
-		return robotiumUtils.isCheckBoxChecked(index);
-	}
-	
+
+	public abstract boolean isCheckBoxChecked(int index);
 
 	/**
 	 * Tells Robotium to send a key: Right, Left, Up, Down, Enter, Menu or Delete.
@@ -1022,34 +758,24 @@ public class Solo implements ISolo {
 	 * @param key the key to be sent. Use Solo.RIGHT/LEFT/UP/DOWN/ENTER/MENU/DELETE
 	 * 
 	 */
-	
-	public void sendKey(int key)
-	{
-		robotiumUtils.sendKey(key);
-	}
-	
+
+	public abstract void sendKey(int key);
+
 	/**
 	 * Returns to the given Activity.
 	 * @param name the name of the Activity to be returned to e.g. "MyActivity"
 	 */
-	
-	public void goBackToActivity(String name)
-	{
-		activitiyUtils.goBackToActivity(name);
-	}
-	
+
+	public abstract void goBackToActivity(String name);
+
 	/**
 	 * Waits for the given Activity.
 	 * @param name the name of the Activity to wait for e.g. "MyActivity"
 	 * @param timeout the amount of time in milliseconds to wait
 	 * @return true if Activity appears before the timeout and false if it does not
 	 */
-	
-	public boolean waitForActivity(String name, int timeout)
-	{
-		return activitiyUtils.waitForActivity(name, timeout);
-	}
-	
+
+	public abstract boolean waitForActivity(String name, int timeout);
 
 	/**
 	 * Robotium will sleep for a specified time.
@@ -1057,22 +783,14 @@ public class Solo implements ISolo {
 	 * @param time the time in milliseconds that Robotium should sleep 
 	 * 
 	 */
-	
-	public void sleep(int time)
-	{
-		RobotiumUtils.sleep(time);
-	}
-	
-	
+
+	public abstract void sleep(int time);
+
 	/**
 	 *
 	 * All activites that have been active are finished.
 	 *
 	 */
-	
-	public void finalize() throws Throwable {
-		activitiyUtils.finalize();
-	}
-	
-	
+	public abstract void finalize() throws Throwable;
+
 }

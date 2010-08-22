@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -82,25 +81,10 @@ public class RemoteControlActivity extends Activity implements OnClickListener {
 
 			@Override
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-					int arg3) {
-				
-			}
+					int arg3) { }
         };
         serverPort.addTextChangedListener(watcher);
-        
-        serverPort.setOnFocusChangeListener(new OnFocusChangeListener(){
-
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-			
-				if(hasFocus) {
-					getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-				} else {
-					
-				}
-			}});
-
-        
+      
         setServiceEnabled(false, false);
         
 
