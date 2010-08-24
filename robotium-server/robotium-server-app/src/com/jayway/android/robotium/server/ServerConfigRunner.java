@@ -1,28 +1,37 @@
 package com.jayway.android.robotium.server;
 
-import com.jayway.android.robotium.solo.ISolo;
-import com.jayway.android.robotium.solo.Solo;
-
 import android.app.Activity;
 import android.app.Instrumentation;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
+
+/**
+ * ServerConfigRunner is a simple adb instrumentation utility that 
+ * helps to configure Robotium server port remotely. 
+ * 
+ * @author Jing Dong jing.dong@activars.com
+ *
+ */
 public class ServerConfigRunner extends Instrumentation {
 	
+	/** hide **/
 	private static String TAG = "ServerLauncher";
+	/** port number argument key **/
 	private static String ARGUMENT_SERVER_PORT = "port";
-	
+	/** default port number **/
 	private int portNum = 8080;
 	
+	/**
+	 * Obtains the port number from arguments. 
+	 * If there are no argument for port configuration, the default port number 
+	 * is 8080.
+	 */
+	@Override
 	public void onCreate(Bundle arguments) {
 		super.onCreate(arguments);
-		// arguments can be: launch the server
-		// 					 shutdown server
-		//   				 setup port
-		// 
+
 		if (arguments != null) {
 			String portNumStr = arguments.getString(ARGUMENT_SERVER_PORT);
 			portNum = Integer.valueOf(portNumStr);
@@ -36,27 +45,12 @@ public class ServerConfigRunner extends Instrumentation {
 		start();
 	}
 	
+	
+	@Override
 	public void onStart() {
 		super.onStart();
-		// start server
-//		
-//		//turning these off
-//		stopAllocCounting();
-//		stopProfiling();
-//		
-//		Intent intent = new Intent(Intent.ACTION_MAIN);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        intent.setClass(getTargetContext(), RemoteControlActivity.class);
-//        RemoteControlActivity rca = (RemoteControlActivity)startActivitySync(intent);
-//        
-//		ISolo solo = new Solo(this, rca);
-//		solo.clickOnButton(0);
-//		while(!ServiceHelper.isServiceRunning(this.getTargetContext(), "com.jayway.android.robotium.server")) {
-//			solo.sleep(1000);
-//		}
-//		waitForIdleSync();
-		// output result
 		
+		// output port information
 		Bundle result = new Bundle();
 		result.putInt(ARGUMENT_SERVER_PORT, this.portNum);
 		// exit
