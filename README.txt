@@ -10,15 +10,15 @@ All documentation is there.
    /robotium
         |
         |
-        |-robotium-client
+        |-/robotium-client
         | (part of the remote control client API)
         |
-        |-robotium-server
+        |-/robotium-server
         | (part of the remote control server component running on Android device/emulator)
         |      |
-        |      |-robotium-server-app
+        |      |-/robotium-server-app
         |
-        |-robotium-solo
+        |-/robotium-solo
           (standalone Robotium API that works with standard Android test suite)
 
 
@@ -30,3 +30,5 @@ All documentation is there.
      - Maven Versions plugin
  For those who working on Eclipse, there are plugins available at
      - m2eclipse: http://m2eclipse.sonatype.org/
+ note: the android application doesn't use Maven build because Maven(including some Android plugins) 
+       doesn't play nicely for building the apk.  

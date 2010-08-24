@@ -11,10 +11,13 @@
         </activity>
 
     <service android:name=".RemoteService"></service>
+
+<uses-library android:name="android.test.runner"></uses-library>
 </application>
     <uses-sdk android:minSdkVersion="4" />
-    <uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
-
-<uses-permission android:name="android.permission.INTERNET"></uses-permission>
-</manifest> 
+    
+<uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
+<uses-permission android:name="android.permission.INTERNET"/>
+<instrumentation android:targetPackage="com.jayway.android.robotium.server" android:name="ServerConfigRunner"></instrumentation>
+<instrumentation android:targetPackage="com.example.android.notepad" android:name="InstrumentationRunner"></instrumentation>
+</manifest>

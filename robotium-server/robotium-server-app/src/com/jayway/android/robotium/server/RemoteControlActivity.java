@@ -1,8 +1,12 @@
 package com.jayway.android.robotium.server;
 
+import java.util.List;
+
 import com.jayway.android.robotium.server.R;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,11 +35,12 @@ public class RemoteControlActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        
         buttonStartService = (Button) findViewById(R.id.buttonStartService);
         buttonStopService = (Button) findViewById(R.id.buttonStopService);
         serverPort = (EditText) findViewById(R.id.portEditText);
         
-        SharedPreferences preferences = getPreferences(0);
+        SharedPreferences preferences = getSharedPreferences(PREFS, 0);
         int portNumberValue = preferences.getInt("portNum", 8080);
         Log.d(TAG, "pref loaded: " + portNumberValue);
         serverPort.setText(String.valueOf(portNumberValue));
@@ -84,11 +89,10 @@ public class RemoteControlActivity extends Activity implements OnClickListener {
 					int arg3) { }
         };
         serverPort.addTextChangedListener(watcher);
-      
-        setServiceEnabled(false, false);
-        
-
+        checkServiceStatus();
     }
+    
+    
     
 
 	public void onClick(View arg0) {
@@ -133,4 +137,16 @@ public class RemoteControlActivity extends Activity implements OnClickListener {
 		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(serverPort.getWindowToken(), 0);
 	}
+	
+	private void checkServiceStatus() {
+		if(ServiceHelper.isServiceRunning(getBaseContext(), "com.jayway.android.robotium.server")) {
+        	setServiceEnabled(true, false);
+        	Log.d(TAG, "service is already running");
+        } else {
+        	setServiceEnabled(false, false);
+        }
+	}
+	
+	
+	
 }
