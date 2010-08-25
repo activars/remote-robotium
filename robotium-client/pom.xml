@@ -1,17 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jayway.android.robotium.remotesolo</groupId>
 	<artifactId>robotium-client</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Robotium :: Remote Solo</name>
-    <parent>
-        <groupId>com.jayway.android.robotium</groupId>
-        <artifactId>robotium</artifactId>
-        <version>1.6.1-SNAPSHOT</version>
-    </parent>
-    
-    <repositories>
+	<parent>
+		<groupId>com.jayway.android.robotium</groupId>
+		<artifactId>robotium</artifactId>
+		<version>1.6.1-SNAPSHOT</version>
+	</parent>
+
+	<repositories>
 		<repository>
 			<id>repository.jboss.org</id>
 			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
@@ -19,9 +20,17 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>powermock-repo</id>
+			<url>http://powermock.googlecode.com/svn/repo/</url>
+		</repository>
 	</repositories>
-	
-	
+	<properties>
+		<powermock.version>1.4</powermock.version>
+	</properties>
+
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.netty</groupId>
@@ -29,7 +38,7 @@
 			<version>3.2.1.Final</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
@@ -56,6 +65,19 @@
 			<type>maven-plugin</type>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.powermock.modules</groupId>
+			<artifactId>powermock-module-junit3</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock.api</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -79,5 +101,5 @@
 			</plugin>
 		</plugins>
 	</build>
-    
+
 </project>
