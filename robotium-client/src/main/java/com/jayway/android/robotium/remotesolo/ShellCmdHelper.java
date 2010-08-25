@@ -54,10 +54,10 @@ class ShellCmdHelper {
 		
 		commands.add("shell");
 		commands.add("am");
-		commands.add("startservice");
-		commands.add("-n");
-		commands.add("com.jayway.android.robotium.server/com.jayway.android.robotium.server.RemoteService");
-		
+		commands.add("broadcast");
+		commands.add("-a");
+		commands.add("com.jayway.android.robotium.server.LAUNCHSERVICE");
+
 		try {
 			executor.executeCommand("adb", commands, false);
 			// wait for a few seconds before service started

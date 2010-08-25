@@ -43,6 +43,7 @@ public class ServerConfigRunner extends Instrumentation {
 		editor.commit();
 		
 		start();
+		
 	}
 	
 	

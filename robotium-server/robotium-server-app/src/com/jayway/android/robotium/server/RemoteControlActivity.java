@@ -28,6 +28,7 @@ public class RemoteControlActivity extends Activity implements OnClickListener {
 	private static final String TAG = "Robotium Remote Control";
 	Button buttonStartService, buttonStopService;
 	EditText serverPort;
+	private boolean isServiceRunning;
 	
     /** Called when the activity is first created. */
     @Override  
@@ -88,8 +89,17 @@ public class RemoteControlActivity extends Activity implements OnClickListener {
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
 					int arg3) { }
         };
-        serverPort.addTextChangedListener(watcher);
-        checkServiceStatus();
+        serverPort.addTextChangedListener(watcher);        
+        
+    }
+    
+    /**
+     * Check if service is running already,
+     * and disable buttons if required.
+     */
+    public void onResume() {
+    	super.onResume();
+    	checkServiceStatus();
     }
     
     
@@ -139,7 +149,8 @@ public class RemoteControlActivity extends Activity implements OnClickListener {
 	}
 	
 	private void checkServiceStatus() {
-		if(ServiceHelper.isServiceRunning(getBaseContext(), "com.jayway.android.robotium.server")) {
+		isServiceRunning = ServiceHelper.isServiceRunning(getBaseContext(), "com.jayway.android.robotium.server");
+		if(isServiceRunning) {
         	setServiceEnabled(true, false);
         	Log.d(TAG, "service is already running");
         } else {
