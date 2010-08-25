@@ -12,13 +12,22 @@ import java.net.InetAddress;
   import org.jboss.netty.channel.ChannelStateEvent;
   import org.jboss.netty.channel.ExceptionEvent;
   import org.jboss.netty.channel.MessageEvent;
-  import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+
+import android.app.Activity;
+import android.app.Instrumentation;
+
+import com.jayway.android.robotium.solo.ISolo;
   
 
   public class ServerHandler extends SimpleChannelUpstreamHandler {
   
       private static final Logger logger = Logger.getLogger(
               ServerHandler.class.getName());
+      
+      private ISolo mSolo;
+      private Instrumentation mInstrumentation;
+      private Activity mActivity;
   
       @Override
       public void handleUpstream(

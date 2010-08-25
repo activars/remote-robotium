@@ -9,16 +9,12 @@ import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.app.*;
 
 public class InstrumentationRunner extends Instrumentation {
 	
 	private static final String TAG = "InstrumentationRunner";
-	
-	/** server port number argument */
-	private static final String ARGUMENT_SERVER_PORT = "port";
-	
-	private int portNum;
 	
 	Bundle mresult;
 	
@@ -35,6 +31,15 @@ public class InstrumentationRunner extends Instrumentation {
 	public void onStart() {
 		super.onStart();
 		Looper.prepare();
+		
+		Log.d(TAG, getComponentName().toString());
+		//	com.example.android.notepad
+		Log.d(TAG, getTargetContext().getPackageName());
+		Log.d(TAG, getContext().getClass().toString());
+		
+		Log.d(TAG, getTargetContext().getClass().getName());
+		Log.d(TAG, getTargetContext().getClassLoader().getClass().getName());
+		
 		//Instrumentation ints = new Instrumentation();
 		//ints.
 		//.newActivity(cl, className, intent)
@@ -48,17 +53,12 @@ public class InstrumentationRunner extends Instrumentation {
 		
 		//newActivity(Class.forName(""), "NoteList", intent);
 		//getContext().startService(service)
-		//this.finish(Activity.RESULT_OK, mresult);
+		this.finish(Activity.RESULT_OK, new Bundle());
 	}
 	
 	
 	public void onDestroy() {
 		super.onDestroy();
 	}
-	
-	
-	public ClassLoader getLoader() {
-        return InstrumentationRunner.class.getClassLoader();
-    }
 	
 }

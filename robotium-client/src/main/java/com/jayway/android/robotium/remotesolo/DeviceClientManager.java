@@ -24,12 +24,10 @@ class DeviceClientManager {
 	 * @param pcPort
 	 * @param devicePort
 	 */
-	void connectDevice(String deviceSerial, int pcPort, int devicePort) {
-		// TODO: check if all the parameters are supplied
-		DeviceClient device = new DeviceClient(deviceSerial, pcPort, devicePort);
-		device.connect();
-		
+	void addDevice(String deviceSerial, int pcPort, int devicePort) {
 		// the key is => pcPort:devicePort
+		// first need to check if the channel has been used
+		//  by another device
 		String key = pcPort + ":" + devicePort;
 		if (devices.containsKey(key))
 			throw new IllegalArgumentException(
@@ -39,7 +37,31 @@ class DeviceClientManager {
 							+ devicePort
 							+ " has already been used.\n\r"
 							+ "please use another port forwarding option if you have multiple devices");
+		
+		// TODO: check if all the parameters are supplied
+		DeviceClient device = new DeviceClient(deviceSerial, pcPort, devicePort);
+		// store the device reference
 		devices.put(key, device);
+	}
+	
+	
+	
+	void connectAll() {
+		
+		//TODO: Adding timing
+		Iterator<String> it = devices.keySet().iterator();
+		DeviceClient dc = null;
+		while (it.hasNext()) {
+			dc = devices.get(it.next());
+			
+			// starts the server on device/emulator
+			ShellCmdHelper.startRobotiumServer(dc.getDevicePort(), dc.getDeviceSerial());
+			// make device connection
+			dc.connect();
+			
+			// TODO: first connection sending Activity class info? 
+			// attempt
+		}
 	}
 
 	/**
@@ -52,6 +74,7 @@ class DeviceClientManager {
 			devices.get(it.next()).sendMessage(message);
 		}
 	}
+	
 
 	void disconnectAllDevices() {
 		Iterator<String> it = devices.keySet().iterator();

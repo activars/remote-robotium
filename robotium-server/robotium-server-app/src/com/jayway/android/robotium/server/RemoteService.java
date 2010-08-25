@@ -70,7 +70,6 @@ public class RemoteService extends Service {
 		
 		Toast.makeText(this, "Server Started", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "server listening on port " + portNumber);
-	
 	}
 
 	

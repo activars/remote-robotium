@@ -20,7 +20,50 @@ import android.widget.ToggleButton;
 import com.jayway.android.robotium.solo.ISolo;
 
 public class RemoteSolo implements ISolo {
-
+	private static Class<?> mActivityClass;
+	private DeviceClientManager devices;
+	
+	
+	/**
+	 * RemoteSolo constructor
+	 * 
+	 * @param activityClass the class of an Activity that will be instrumented
+	 */
+	public RemoteSolo(Class<?> activityClass) {
+		mActivityClass = activityClass;
+		devices = new DeviceClientManager();
+	}
+	
+	/**
+	 * Adds devices for initiating connections.
+	 * This can be called multiple times if there are several 
+	 * devices/emulators used for remote testing. 
+	 * 
+	 * @param deviceSerial device/emulator serial number. The serial number can be obtained using
+	 *        adb tool(adb devices). 
+	 * @param pcPort Port number on PC for establishing connection
+	 * @param devicePort Port number on device/emulator for establishing connection
+	 */
+	public void addDevice(String deviceSerial, int pcPort, int devicePort) {
+		devices.addDevice(deviceSerial, pcPort, devicePort);
+	}
+	
+	public void connect() {
+		devices.connectAll();
+	}
+	
+	
+	/**
+	 * The service handler is able to obtain the Activity class 
+	 * for instrumentation test
+	 * 
+	 * @return
+	 */
+	static Class<?> getActivityClassForInstrumentation() {
+		return mActivityClass;
+	}
+	
+	
 	public void assertCurrentActivity(String message, String name) {
 		// TODO Auto-generated method stub
 	}

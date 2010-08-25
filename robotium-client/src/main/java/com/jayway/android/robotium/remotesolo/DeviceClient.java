@@ -39,6 +39,30 @@ public class DeviceClient {
 		this.deviceSerial = deviceSerial;
 	}
 	
+	/**
+	 * Returns the PC port number
+	 */
+	public int getPcPort() {
+		return this.pcPort;
+	}
+	
+	/**
+	 * Returns the device port number
+	 */
+	public int getDevicePort() {
+		return this.devicePort;
+	}
+	
+	/**
+	 * Returns the device serial number
+	 */
+	public String getDeviceSerial() {
+		return this.deviceSerial;
+	}
+	
+	/**
+	 * Tries to connect to the remote device
+	 */
 	void connect() {
 
 		// configure the client
@@ -68,7 +92,7 @@ public class DeviceClient {
 	}
 
 	/**
-	 * send a message to the server
+	 * send a message to the remote device
 	 * 
 	 * @param msg
 	 * @return
@@ -86,6 +110,7 @@ public class DeviceClient {
 		return false;
 	}
 
+	
 	/**
 	 * Close the connection
 	 */
