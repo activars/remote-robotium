@@ -26,5 +26,5 @@
 <uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
 <uses-permission android:name="android.permission.INTERNET"/>
 <instrumentation android:targetPackage="com.jayway.android.robotium.server" android:name="ServerConfigRunner"></instrumentation>
-<instrumentation android:targetPackage="com.example.android.notepad" android:name="InstrumentationRunner"></instrumentation>
+<instrumentation android:targetPackage="com.example.android.notepad" android:name="com.jayway.android.robotium.server.InstrumentationRunner"></instrumentation>
 </manifest>

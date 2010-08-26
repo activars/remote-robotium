@@ -37,7 +37,12 @@ public class RemoteService extends Service {
 		}
 		if (channelGroup == null)
 			channelGroup = new DefaultChannelGroup();
+		
 		// Configure the pipeline factory.
+		// pipline created internally, the ServerHandler can be obtained by: 
+		// ((ServerHandler)bootstrap.getPipeline().get(ServerPipelineFactory.SERVER_HANDLER))
+		// or less safely:
+		// ((ServerHandler)bootstrap.getPipeline().getLast())
 		bootstrap.setPipelineFactory(new ServerPipelineFactory());
 	}
 
