@@ -31,6 +31,7 @@
 
 
 
+
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.netty</groupId>
@@ -65,19 +66,39 @@
 			<type>maven-plugin</type>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.jayway.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<version>1.0</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.powermock.modules</groupId>
 			<artifactId>powermock-module-junit3</artifactId>
 			<version>${powermock.version}</version>
-			<scope>test</scope>
+
 		</dependency>
 		<dependency>
 			<groupId>org.powermock.api</groupId>
-			<artifactId>powermock-api-mockito</artifactId>
+			<artifactId>powermock-api-easymock</artifactId>
 			<version>${powermock.version}</version>
-			<scope>test</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>asm</groupId>
+			<artifactId>asm-util</artifactId>
+			<version>3.2</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.android.robotium.common</groupId>
+			<artifactId>robotium-common</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

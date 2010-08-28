@@ -12,6 +12,7 @@
     <modules>
         <module>robotium-solo</module>
         <module>robotium-client</module>
+        <module>robotium-common</module>
     </modules>
     <properties>
         <scm.branch>master</scm.branch>
