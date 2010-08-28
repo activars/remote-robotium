@@ -13,6 +13,9 @@ All documentation is there.
         |-/robotium-client
         | (part of the remote control client API)
         |
+        |-/robotium-common
+        | (common libs, protocols used by server and client)
+        |
         |-/robotium-server
         | (part of the remote control server component running on Android device/emulator)
         |      |
