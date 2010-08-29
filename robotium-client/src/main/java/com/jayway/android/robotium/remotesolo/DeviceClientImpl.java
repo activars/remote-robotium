@@ -19,6 +19,7 @@ import com.jayway.maven.plugins.android.ExecutionException;
 public class DeviceClientImpl implements DeviceClient {
 	private int pcPort;
 	private int devicePort;
+	private Class<?> targetClass;
 	private String deviceSerial;
 	private String host;
 	private Channel channel;
@@ -91,7 +92,6 @@ public class DeviceClientImpl implements DeviceClient {
 		
 		// create proxy object for solo class
 		mSolo = (ISolo) ((DeviceClientBootstrap)bootstrap).createObjectProxy(Solo.class);
-		
 	}
 
 	/**
@@ -140,6 +140,14 @@ public class DeviceClientImpl implements DeviceClient {
 		}
 		// Shut down all thread pools to exit.
 		bootstrap.releaseExternalResources();
+	}
+
+	public Class<?> getTargetClass() {
+		return this.targetClass;
+	}
+
+	public void setTargetClass(Class<?> targetClass) {
+		this.targetClass = targetClass;
 	}
 
 }

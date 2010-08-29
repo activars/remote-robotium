@@ -3,9 +3,6 @@ package com.jayway.android.robotium.remotesolo;
 import java.util.ArrayList;
 
 import junit.framework.Assert;
-
-import org.apache.commons.lang.NotImplementedException;
-
 import android.app.Activity;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +21,6 @@ import android.widget.ToggleButton;
 import com.jayway.android.robotium.solo.ISolo;
 
 public class RemoteSolo implements ISolo {
-	private static Class<?> mActivityClass;
 	private DeviceClientManager devices;
 
 	/**
@@ -34,15 +30,15 @@ public class RemoteSolo implements ISolo {
 	 *            the class of an Activity that will be instrumented
 	 */
 	public RemoteSolo(Class<?> activityClass) {
-		mActivityClass = activityClass;
 		devices = new DeviceClientManager();
+		devices.setTargetClass(activityClass);
 	}
 
 	/**
 	 * Adds devices for initiating connections. This can be called multiple
 	 * times if there are several devices/emulators used for remote testing.
 	 * 
-	 * @param deviceSerial
+	 * @param deviceSerialAZ							`~````
 	 *            device/emulator serial number. The serial number can be
 	 *            obtained using adb tool(adb devices).
 	 * @param pcPort
@@ -56,16 +52,6 @@ public class RemoteSolo implements ISolo {
 
 	public void connect() {
 		devices.connectAll();
-	}
-
-	/**
-	 * The service handler is able to obtain the Activity class for
-	 * instrumentation test
-	 * 
-	 * @return
-	 */
-	static Class<?> getActivityClassForInstrumentation() {
-		return mActivityClass;
 	}
 
 	public void assertCurrentActivity(String message, String name) {

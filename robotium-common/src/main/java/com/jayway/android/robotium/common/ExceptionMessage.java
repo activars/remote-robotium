@@ -1,20 +1,22 @@
 package com.jayway.android.robotium.common;
 
+import org.json.simple.JSONObject;
+
 public class ExceptionMessage extends AbstractMessage {
 
 	protected Class<?> exceptionClass;
 	protected String exceptionMessage;
 	
 	
-	public ExceptionMessage(Exception ex, String message) {
+	public ExceptionMessage(Class ex, String message) {
 		init(ex, message);
 	}
 
 	public ExceptionMessage(Exception ex) {
-		init(ex, ex.getMessage());
+		init(ex.getClass(), ex.getMessage());
 	}
 	
-	private void init(Exception ex, String message) {
+	private void init(Class ex, String message) {
 		this.messageHeader = Message.HEADER_RESPONSE_EXCEPTION;
 		this.exceptionClass = ex.getClass();
 		this.exceptionMessage = message;
@@ -22,10 +24,13 @@ public class ExceptionMessage extends AbstractMessage {
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		JSONObject jsonObj = getHeader();
+		jsonObj.put(Message.JSON_ATTR_EXCEPTION_TYPE, exceptionClass.getName());
+		jsonObj.put(Message.JSON_ATTR_DESCRIPTION, (exceptionMessage != null) ? exceptionMessage : "");
+		return jsonObj.toString();
 	}
 
 }

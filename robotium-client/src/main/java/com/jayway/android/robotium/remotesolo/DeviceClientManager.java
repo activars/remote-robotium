@@ -11,10 +11,14 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 class DeviceClientManager {
 	
 	private Map<String, DeviceClientImpl> devices;
-
+	private Class<?> targetClass;
 	DeviceClientManager() {
 		// init hashmap storing references to device client
 		devices = new HashMap<String, DeviceClientImpl>();
+	}
+	
+	void setTargetClass(Class<?> targetClass) {
+		this.targetClass = targetClass;
 	}
 	
 	/**
@@ -40,6 +44,11 @@ class DeviceClientManager {
 		
 		// TODO: check if all the parameters are supplied
 		DeviceClientImpl device = new DeviceClientImpl(deviceSerial, pcPort, devicePort);
+		if (targetClass == null)
+			throw new NullPointerException("Missing target Class for intrumentation.");
+		else
+			device.setTargetClass(targetClass);
+		
 		// store the device reference
 		devices.put(key, device);
 	}

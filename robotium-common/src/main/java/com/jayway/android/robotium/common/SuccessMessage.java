@@ -8,8 +8,7 @@ public class SuccessMessage extends AbstractMessage {
 	
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return getHeader().toString();
 	}
 
 }

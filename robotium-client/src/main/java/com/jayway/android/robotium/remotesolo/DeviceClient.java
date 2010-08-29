@@ -2,6 +2,11 @@ package com.jayway.android.robotium.remotesolo;
 
 public interface DeviceClient {
 
+	
+	public abstract void setTargetClass(Class<?> targetClass);
+	
+	public abstract Class<?> getTargetClass();
+	
 	/**
 	 * Returns the PC port number
 	 */

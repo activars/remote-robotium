@@ -11,7 +11,7 @@ public class EventMessage extends AbstractMessage {
 	
 	public EventMessage(Class<?> targetObjectClass, String targetObjectId, 
 			Method methodReceived, Object[] parameters) {
-		this.messageHeader = Message.HEADER_EVENT;	
+		this.messageHeader = Message.HEADER_CLIENT_EVENT;	
 		this.targetObjectClass = targetObjectClass;
 		this.targetObjectId = targetObjectId;
 		this.methodReceived = methodReceived;
