@@ -10,11 +10,11 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
 class DeviceClientManager {
 	
-	private Map<String, DeviceClient> devices;
+	private Map<String, DeviceClientImpl> devices;
 
 	DeviceClientManager() {
 		// init hashmap storing references to device client
-		devices = new HashMap<String, DeviceClient>();
+		devices = new HashMap<String, DeviceClientImpl>();
 	}
 	
 	/**
@@ -39,7 +39,7 @@ class DeviceClientManager {
 							+ "please use another port forwarding option if you have multiple devices");
 		
 		// TODO: check if all the parameters are supplied
-		DeviceClient device = new DeviceClient(deviceSerial, pcPort, devicePort);
+		DeviceClientImpl device = new DeviceClientImpl(deviceSerial, pcPort, devicePort);
 		// store the device reference
 		devices.put(key, device);
 	}
@@ -75,6 +75,14 @@ class DeviceClientManager {
 		}
 	}
 	
+	Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments) throws Exception {
+		Iterator<String> it = devices.keySet().iterator();
+		while (it.hasNext()) {
+			return devices.get(it.next()).invokeMethod(methodToExecute, argumentTypes, arguments);
+		}
+		
+		return null;
+	}
 
 	void disconnectAllDevices() {
 		Iterator<String> it = devices.keySet().iterator();

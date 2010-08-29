@@ -2,6 +2,10 @@ package com.jayway.android.robotium.remotesolo;
 
 import java.util.ArrayList;
 
+import junit.framework.Assert;
+
+import org.apache.commons.lang.NotImplementedException;
+
 import android.app.Activity;
 import android.view.View;
 import android.widget.Button;
@@ -22,424 +26,716 @@ import com.jayway.android.robotium.solo.ISolo;
 public class RemoteSolo implements ISolo {
 	private static Class<?> mActivityClass;
 	private DeviceClientManager devices;
-	
-	
+
 	/**
 	 * RemoteSolo constructor
 	 * 
-	 * @param activityClass the class of an Activity that will be instrumented
+	 * @param activityClass
+	 *            the class of an Activity that will be instrumented
 	 */
 	public RemoteSolo(Class<?> activityClass) {
 		mActivityClass = activityClass;
 		devices = new DeviceClientManager();
 	}
-	
+
 	/**
-	 * Adds devices for initiating connections.
-	 * This can be called multiple times if there are several 
-	 * devices/emulators used for remote testing. 
+	 * Adds devices for initiating connections. This can be called multiple
+	 * times if there are several devices/emulators used for remote testing.
 	 * 
-	 * @param deviceSerial device/emulator serial number. The serial number can be obtained using
-	 *        adb tool(adb devices). 
-	 * @param pcPort Port number on PC for establishing connection
-	 * @param devicePort Port number on device/emulator for establishing connection
+	 * @param deviceSerial
+	 *            device/emulator serial number. The serial number can be
+	 *            obtained using adb tool(adb devices).
+	 * @param pcPort
+	 *            Port number on PC for establishing connection
+	 * @param devicePort
+	 *            Port number on device/emulator for establishing connection
 	 */
 	public void addDevice(String deviceSerial, int pcPort, int devicePort) {
 		devices.addDevice(deviceSerial, pcPort, devicePort);
 	}
-	
+
 	public void connect() {
 		devices.connectAll();
 	}
-	
-	
+
 	/**
-	 * The service handler is able to obtain the Activity class 
-	 * for instrumentation test
+	 * The service handler is able to obtain the Activity class for
+	 * instrumentation test
 	 * 
 	 * @return
 	 */
 	static Class<?> getActivityClassForInstrumentation() {
 		return mActivityClass;
 	}
-	
-	
+
 	public void assertCurrentActivity(String message, String name) {
-		// TODO Auto-generated method stub
+		try {
+			devices.invokeMethod("assertCurrentActivity", 
+					new Class<?>[] { String.class, String.class },
+					new Object[] { message, name });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	public void assertCurrentActivity(String message, Class expectedClass) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("assertCurrentActivity", 
+					new Class<?>[] { String.class, Class.class },
+					new Object[] { message, expectedClass });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
+	
 
 	public void assertCurrentActivity(String message, String name,
 			boolean isNewInstance) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("assertCurrentActivity", 
+					new Class<?>[] { String.class, String.class, boolean.class },
+					new Object[] { message, name, isNewInstance });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	public void assertCurrentActivity(String message, Class expectedClass,
 			boolean isNewInstance) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("assertCurrentActivity", 
+					new Class<?>[] { String.class, Class.class, boolean.class },
+					new Object[] { message, expectedClass, isNewInstance });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	public void assertLowMemory() {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("assertLowMemory", new Class<?>[] {});
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	public void clearEditText(int index) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clearEditText", 
+					new Class<?>[] { int.class },
+					new Object[] { index });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public ArrayList<TextView> clickInList(int line) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<TextView> clickInList(int line, int listIndex) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public void clickLongOnScreen(float x, float y) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickLongOnScreen", 
+					new Class<?>[] { float.class, float.class },
+					new Object[] { x, y });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickLongOnText(String text) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickLongOnText", 
+					new Class<?>[] { String.class },
+					new Object[] { text });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickLongOnText(String text, int match) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickLongOnText", 
+					new Class<?>[] { String.class, int.class },
+					new Object[] { text, match });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickLongOnTextAndPress(String text, int index) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickLongOnTextAndPress", 
+					new Class<?>[] { String.class, int.class },
+					new Object[] { text, index });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
+	
 	public void clickLongOnView(View view) {
 		// TODO Auto-generated method stub
-		
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public void clickOnButton(String name) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnButton", 
+					new Class<?>[] { String.class },
+					new Object[] { name });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+	
 
 	public boolean clickOnButton(int index) {
-		// TODO Auto-generated method stub
+		try {
+		   return  Boolean.parseBoolean(devices.invokeMethod("clickOnButton", 
+					  new Class<?>[] { int.class },
+					  new Object[] { index }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public void clickOnCheckBox(int index) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnCheckBox", 
+					new Class<?>[] { int.class },
+					new Object[] { index });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickOnEditText(int index) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnEditText", 
+					new Class<?>[] { int.class },
+					new Object[] { index });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickOnImage(int index) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnImage", 
+					new Class<?>[] { int.class },
+					new Object[] { index });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickOnImageButton(int index) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnImageButton", 
+					new Class<?>[] { int.class },
+					new Object[] { index });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickOnMenuItem(String text) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnMenuItem", 
+					new Class<?>[] { String.class },
+					new Object[] { text });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickOnRadioButton(int index) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnRadioButton", 
+					new Class<?>[] { int.class },
+					new Object[] { index });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickOnScreen(float x, float y) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnScreen", 
+					new Class<?>[] { float.class, float.class },
+					new Object[] { x, y });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickOnText(String text) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnText", 
+					new Class<?>[] { String.class },
+					new Object[] { text });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickOnText(String text, int match) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnText", 
+					new Class<?>[] { String.class, int.class },
+					new Object[] { text, match });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickOnToggleButton(String name) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnToggleButton", 
+					new Class<?>[] { String.class },
+					new Object[] { name });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void clickOnView(View view) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("clickOnView", 
+					new Class<?>[] { View.class },
+					new Object[] { view });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void drag(float fromX, float toX, float fromY, float toY,
 			int stepCount) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("drag", 
+					new Class<?>[] { float.class, float.class, float.class, float.class,
+					int.class },
+					new Object[] { fromX, toX, fromY, toY, stepCount });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void enterText(int index, String text) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("enterText", 
+					new Class<?>[] { int.class, String.class },
+					new Object[] { index, text });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public ArrayList<Activity> getAllOpenedActivities() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public Button getButton(int index) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public int getCurrenButtonsCount() {
-		// TODO Auto-generated method stub
+		try {
+			return Integer.parseInt((String) devices.invokeMethod("getCurrenButtonsCount", 
+					new Class<?>[] { }));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
 		return 0;
 	}
 
 	public Activity getCurrentActivity() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<Button> getCurrentButtons() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<CheckBox> getCurrentCheckBoxes() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<EditText> getCurrentEditTexts() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<GridView> getCurrentGridViews() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<ImageButton> getCurrentImageButtons() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<ImageView> getCurrentImageViews() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<ListView> getCurrentListViews() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<RadioButton> getCurrentRadioButtons() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<ScrollView> getCurrentScrollViews() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<Spinner> getCurrentSpinners() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<TextView> getCurrentTextViews(View parent) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<ToggleButton> getCurrentToggleButtons() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public EditText getEditText(int index) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public View getTopParent(View view) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public ArrayList<View> getViews() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("Not Implemented");
 	}
 
 	public void goBack() {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("goBack", 
+					new Class<?>[] { } );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void goBackToActivity(String name) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("goBackToActivity", 
+					new Class<?>[] { String.class },
+					new Object[] { name });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean isCheckBoxChecked(int index) {
-		// TODO Auto-generated method stub
-		return false;
+
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("isCheckBoxChecked", 
+					new Class<?>[] { int.class}, 
+					new Object[] { index } ).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;	
 	}
 
 	public boolean isRadioButtonChecked(int index) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("isRadioButtonChecked", 
+					new Class<?>[] { int.class}, 
+					new Object[] { index } ).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public void pressMenuItem(int index) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("pressMenuItem", 
+					new Class<?>[] { int.class}, 
+					new Object[] { index } );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public void pressSpinnerItem(int spinnerIndex, int itemIndex) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("pressSpinnerItem", 
+					new Class<?>[] { int.class, int.class}, 
+					new Object[] { spinnerIndex, itemIndex } );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean scrollDown() {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("scrollDown", 
+					new Class<?>[] {}).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean scrollDownList(int listIndex) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("scrollDownList", 
+					new Class<?>[] { int.class}, 
+					new Object[] { listIndex } ).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public void scrollToSide(int side) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("scrollToSide", 
+					new Class<?>[] { int.class }, 
+					new Object[] { side } );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean scrollUp() {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("scrollUp", 
+					new Class<?>[] { }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean scrollUpList(int listIndex) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("scrollUpList", 
+					new Class<?>[] { int.class }, 
+					new Object[] { listIndex }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean searchButton(String search) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("searchButton", 
+					new Class<?>[] { String.class }, 
+					new Object[] { search }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean searchButton(String search, int matches) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("searchButton", 
+					new Class<?>[] { String.class, int.class }, 
+					new Object[] { search, matches }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean searchEditText(String search) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("searchEditText", 
+					new Class<?>[] { String.class }, 
+					new Object[] { search }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean searchText(String search) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("searchText", 
+					new Class<?>[] { String.class }, 
+					new Object[] { search }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean searchText(String search, int matches) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("searchText", 
+					new Class<?>[] { String.class, int.class }, 
+					new Object[] { search, matches }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean searchText(String search, int matches, boolean scroll) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("searchText", 
+					new Class<?>[] { String.class, int.class , boolean.class}, 
+					new Object[] { search, matches, scroll }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean searchToggleButton(String search) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("searchToggleButton", 
+					new Class<?>[] { String.class }, 
+					new Object[] { search }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean searchToggleButton(String search, int matches) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("searchToggleButton", 
+					new Class<?>[] { String.class, int.class }, 
+					new Object[] { search, matches }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public void sendKey(int key) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("sendKey", 
+					new Class<?>[] { int.class }, 
+					new Object[] { key });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void setActivityOrientation(int orientation) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("setActivityOrientation", 
+					new Class<?>[] { int.class }, 
+					new Object[] { orientation });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void sleep(int time) {
-		// TODO Auto-generated method stub
-		
+		try {
+			devices.invokeMethod("sleep", 
+					new Class<?>[] { int.class }, 
+					new Object[] { time });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean waitForActivity(String name, int timeout) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("waitForActivity", 
+					new Class<?>[] { String.class, int.class }, 
+					new Object[] { name, timeout }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean waitForDialogToClose(long timeout) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("waitForDialogToClose", 
+					new Class<?>[] { long.class }, 
+					new Object[] { timeout }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean waitForText(String text) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("waitForText", 
+					new Class<?>[] { String.class }, 
+					new Object[] { text }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean waitForText(String text, int matches, long timeout) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("waitForText", 
+					new Class<?>[] { String.class, int.class, long.class }, 
+					new Object[] { text, matches, timeout }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public boolean waitForText(String text, int matches, long timeout,
 			boolean scroll) {
-		// TODO Auto-generated method stub
+		try {
+			return Boolean.parseBoolean(devices.invokeMethod("waitForText", 
+					new Class<?>[] { String.class, int.class, long.class,
+					boolean.class }, 
+					new Object[] { text, matches, timeout, scroll }).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
-	
-	// this will be the public API
+
 	public void finalize() throws Throwable {
-		//activitiyUtils.finalize();
+		try {
+			devices.invokeMethod("finalize", 
+					new Class<?>[] { int.class });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 }
