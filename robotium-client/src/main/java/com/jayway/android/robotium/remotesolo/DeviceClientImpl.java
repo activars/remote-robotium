@@ -78,10 +78,8 @@ public class DeviceClientImpl implements DeviceClient {
 
 		// Start the connection attempt.
 		ChannelFuture future = bootstrap.connect(new InetSocketAddress(
-				this.host, this.pcPort));
+				this.host, this.pcPort)); 
 		
-		// create proxy object for solo class
-		mSolo = (ISolo) ((DeviceClientBootstrap)bootstrap).createObjectProxy(Solo.class);
 		
 		// Wait until the connection attempt succeeds or fails.
 		channel = future.awaitUninterruptibly().getChannel();
@@ -90,6 +88,10 @@ public class DeviceClientImpl implements DeviceClient {
 			bootstrap.releaseExternalResources();
 			return;
 		}
+		
+		// create proxy object for solo class
+		mSolo = (ISolo) ((DeviceClientBootstrap)bootstrap).createObjectProxy(Solo.class);
+		
 	}
 
 	/**

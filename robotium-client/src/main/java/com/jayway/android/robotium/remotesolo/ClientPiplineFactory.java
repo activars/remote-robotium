@@ -9,8 +9,17 @@ import org.jboss.netty.handler.codec.frame.Delimiters;
 import org.jboss.netty.handler.codec.string.StringDecoder;
 import org.jboss.netty.handler.codec.string.StringEncoder;
 
-public class ClientPiplineFactory implements ChannelPipelineFactory {
+import com.jayway.android.robotium.remotesolo.proxy.ProxyMessageContainer;
 
+public class ClientPiplineFactory implements ChannelPipelineFactory {
+	
+	private DeviceClient device;
+	
+	public void setDeviceClient(DeviceClient device) {
+		this.device = device;
+	}
+	
+	
 	public ChannelPipeline getPipeline() throws Exception {
 		// Create a default pipeline implementation.
 		ChannelPipeline pipeline = pipeline();
@@ -21,9 +30,13 @@ public class ClientPiplineFactory implements ChannelPipelineFactory {
 		
 		pipeline.addLast("decoder", new StringDecoder());
 		pipeline.addLast("encoder", new StringEncoder());
-
+		
+		ClientHandler handler = new ClientHandler();
+		ProxyMessageContainer container = new ProxyMessageContainer();
+		container.setDeviceClient(device);
+		handler.setMessageContainer(container);
 		// and then business logic.
-		pipeline.addLast("handler", new ClientHandler());
+		pipeline.addLast("handler", handler);
 
 		return pipeline;
 	}

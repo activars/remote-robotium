@@ -15,13 +15,14 @@ public class DeviceClientBootstrapFactory {
 		ClientBootstrap bootstrap = new DeviceClientBootstrap(new NioClientSocketChannelFactory(
 				Executors.newCachedThreadPool(), Executors
 						.newCachedThreadPool()));
-		bootstrap.setPipelineFactory(new ClientPiplineFactory());
 		
-		//create message container
-		MessageContainer msgContainer = new ProxyMessageContainer();
-		msgContainer.setDeviceClient(device);
+		//PiplineFactory dependency setup
+		ClientPiplineFactory piplineFactory = new ClientPiplineFactory();
+		piplineFactory.setDeviceClient(device);
 		
-		((DeviceClientBootstrap) bootstrap).setMessageContainer(msgContainer);
+		//Bootstrap dependency setup
+		bootstrap.setPipelineFactory(piplineFactory);
+		
 		bootstrap.setOption("tcpNoDelay", true); 
 		bootstrap.setOption("keepAlive", true);
 		

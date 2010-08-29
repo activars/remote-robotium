@@ -15,9 +15,9 @@ public class TestDummy {
 //		// Typical setup()
 		RemoteSolo solo = new RemoteSolo(Class.class);
 //		// emulator
-//		solo.addDevice("emulator-5554", 5000, 5000);
+		solo.addDevice("emulator-5554", 5000, 5000);
 //		// v1.6 device
-		solo.addDevice("HT98YLZ00039", 5001, 5001);
+		//solo.addDevice("HT98YLZ00039", 5001, 5001);
 		solo.connect();
 		
 		

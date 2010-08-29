@@ -131,12 +131,12 @@ public class RemoteSolo implements ISolo {
 
 	public ArrayList<TextView> clickInList(int line) {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<TextView> clickInList(int line, int listIndex) {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public void clickLongOnScreen(float x, float y) {
@@ -182,7 +182,7 @@ public class RemoteSolo implements ISolo {
 	
 	public void clickLongOnView(View view) {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public void clickOnButton(String name) {
@@ -341,12 +341,12 @@ public class RemoteSolo implements ISolo {
 
 	public ArrayList<Activity> getAllOpenedActivities() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public Button getButton(int index) {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public int getCurrenButtonsCount() {
@@ -361,82 +361,82 @@ public class RemoteSolo implements ISolo {
 
 	public Activity getCurrentActivity() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<Button> getCurrentButtons() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<CheckBox> getCurrentCheckBoxes() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<EditText> getCurrentEditTexts() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<GridView> getCurrentGridViews() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<ImageButton> getCurrentImageButtons() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<ImageView> getCurrentImageViews() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<ListView> getCurrentListViews() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<RadioButton> getCurrentRadioButtons() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<ScrollView> getCurrentScrollViews() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<Spinner> getCurrentSpinners() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<TextView> getCurrentTextViews(View parent) {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<ToggleButton> getCurrentToggleButtons() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public EditText getEditText(int index) {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public View getTopParent(View view) {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public ArrayList<View> getViews() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public void goBack() {
