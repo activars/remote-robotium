@@ -105,13 +105,13 @@ public class RemoteControlActivity extends Activity implements OnClickListener {
 		switch (arg0.getId()) { 
 	    case R.id.buttonStartService:
 	      Log.d(TAG, "onClick: starting service");
-	      startService(new Intent(this, RemoteService.class));
+	      //startService(new Intent(this, RemoteService.class));
 	      setServiceEnabled(true, false);
 	      hideSoftInput();
 	      break;
 	    case R.id.buttonStopService:
 	      Log.d(TAG, "onClick: stopping service");
-	      stopService(new Intent(this, RemoteService.class));
+	      //stopService(new Intent(this, RemoteService.class));
 	      setServiceEnabled(false, false);
 	      hideSoftInput();
 	      break;

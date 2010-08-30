@@ -67,6 +67,11 @@ public class ProxyMessageContainer implements MessageContainer {
 	public void addMessage(Message message) {
 		receivedMessage.offer(message);
 	}
+
+	public DeviceClient getDeviceClient() {
+		return deviceClient;
+		
+	}
 	
 	
 

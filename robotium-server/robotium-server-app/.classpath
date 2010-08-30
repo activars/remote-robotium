@@ -5,6 +5,7 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="lib" path="lib/powermock-easymock-1.4-full.jar"/>
 	<classpathentry kind="lib" path="lib/netty-3.2.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/json-simple-1.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/robotium-solo"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/robotium-common"/>
 	<classpathentry kind="output" path="bin"/>

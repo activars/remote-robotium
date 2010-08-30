@@ -716,12 +716,12 @@ public class RemoteSolo implements ISolo {
 	}
 
 	public void finalize() throws Throwable {
-		try {
-			devices.invokeMethod("finalize", 
-					new Class<?>[] { int.class });
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			devices.invokeMethod("finalize", 
+//					new Class<?>[] {});
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
 }

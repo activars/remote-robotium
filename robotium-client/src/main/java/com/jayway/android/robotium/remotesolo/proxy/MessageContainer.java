@@ -8,5 +8,7 @@ public interface MessageContainer {
 	public void addMessage(Message message);
 	
 	public void setDeviceClient(DeviceClient device);
+	
+	public DeviceClient getDeviceClient();
 
 }

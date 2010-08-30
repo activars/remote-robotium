@@ -32,6 +32,14 @@ public class MessageFactory {
 	public static Message createSuccessMessage() {
 		return generateUuidForMessage(new SuccessMessage());
 	}
+	
+	public static Message createTargetActivityMessage(Class targetClass) {
+		return generateUuidForMessage(new TargetActivityMessage(targetClass));
+	}
+	
+	public static Message createTargetActivityRequestMessage() {
+		return generateUuidForMessage(new TargetActivityRequestMessage());
+	}
 
 	public static Message parseMessageString(String messageString)
 			throws ClassNotFoundException, Exception {
@@ -57,9 +65,9 @@ public class MessageFactory {
 			mMsg = new ExceptionMessage(exceptionClass, exceptionMsg);
 
 		} else if (header.equals(Message.HEADER_TARGET_ACTIVITY_CLASS)) {
-			Class<?> activityClass = Class.forName((String) jsonObj
-					.get(Message.JSON_ATTR_ACTIVITY_CLASS));
-			mMsg = new TargetActivityMessage(activityClass);
+			String activityClassName = (String) jsonObj.get(Message.JSON_ATTR_ACTIVITY_CLASS);
+			
+			mMsg = new TargetActivityMessage(activityClassName);
 
 		} else if (header.equals(Message.HEADER_REQUEST_TARGET_ACTIVITY_CLASS)) {
 			mMsg = new TargetActivityRequestMessage();

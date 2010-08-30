@@ -3,17 +3,26 @@ package com.jayway.android.robotium.common;
 import org.json.simple.JSONObject;
 
 public class TargetActivityMessage extends AbstractMessage {
-	protected Class<?> targetClass;
+	protected String targetClassName;
 	
 	public TargetActivityMessage(Class<?> targetClass) {
 		this.messageHeader = Message.HEADER_TARGET_ACTIVITY_CLASS;
-		this.targetClass = targetClass;
+		targetClassName = targetClass.getName();
+	}
+	
+	public TargetActivityMessage(String fullClassName) {
+		this.messageHeader = Message.HEADER_TARGET_ACTIVITY_CLASS;
+		targetClassName = fullClassName;
+	}
+	
+	public String getTargetClassName() {
+		return targetClassName;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public String toString() {
 		JSONObject jsonObj = getHeader();
-		jsonObj.put(Message.JSON_ATTR_ACTIVITY_CLASS, targetClass.getName());
+		jsonObj.put(Message.JSON_ATTR_ACTIVITY_CLASS, targetClassName);
 		return jsonObj.toString();
 	}
 

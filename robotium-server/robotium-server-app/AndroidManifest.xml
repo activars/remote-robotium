@@ -11,20 +11,10 @@
 			</intent-filter>
 		</activity>
 
-		<service android:name=".RemoteService">
-		</service>
-
-
-			<receiver android:name=".ServiceLaunchReceiver" android:enabled="true" android:label="Robotium">
-				<intent-filter>
-             	   <action android:name="com.jayway.android.robotium.server.LAUNCHSERVICE"></action>
-	            </intent-filter>
-			</receiver>
 </application>
     <uses-sdk android:minSdkVersion="4" />
     
 <uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
 <uses-permission android:name="android.permission.INTERNET"/>
-<instrumentation android:targetPackage="com.jayway.android.robotium.server" android:name="ServerConfigRunner"></instrumentation>
-<instrumentation android:targetPackage="com.example.android.notepad" android:name="com.jayway.android.robotium.server.InstrumentationRunner"></instrumentation>
+<instrumentation android:targetPackage="com.example.android.notepad" android:name="com.jayway.android.robotium.server.InstrumentationRunner"/>
 </manifest>

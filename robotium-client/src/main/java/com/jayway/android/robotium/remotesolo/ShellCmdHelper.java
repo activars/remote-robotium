@@ -31,40 +31,33 @@ class ShellCmdHelper {
 
 	}
 
-	// TODO: return an array of device serial.
-	static void listDevicesSerials() {
+	static void startInstrumentationServer(int port, String deviceSerial) {
 
-	}
-
-	
-	
-	static void startRobotiumServer(int port, String deviceSerial) {
-		
 		// setup port number first
-		setRobotiumServerPort(port, deviceSerial);
-		
 		CommandExecutor executor = CommandExecutor.Factory
-		.createDefaultCommmandExecutor();
+				.createDefaultCommmandExecutor();
 		List<String> commands = new ArrayList<String>();
-		
+
 		if (!deviceSerial.equals("") && deviceSerial != null) {
 			commands.add("-s");
 			commands.add(deviceSerial);
 		}
-		
+
 		commands.add("shell");
 		commands.add("am");
-		commands.add("broadcast");
-		commands.add("-a");
-		commands.add("com.jayway.android.robotium.server.LAUNCHSERVICE");
+		commands.add("instrument");
+		// instrumentation with extra argument
+		commands.add("-e");
+		// adding port number for the instrumentation server
+		commands.add("port");
+		commands.add(String.valueOf(port));
+		commands.add("com.jayway.android.robotium.server/com.jayway.android.robotium.server.InstrumentationRunner");
 
 		try {
 			executor.executeCommand("adb", commands, false);
-			// wait for a few seconds before service started
 			Thread.sleep(5000);
-			
 		} catch (ExecutionException e) {
-			//TODO: better error message
+			// TODO: better error message
 			// this happens when multiple devices connected
 			// or the envirment varialbe wasn't setup property
 			// need to have ANDROID_HOME setup
@@ -74,19 +67,17 @@ class ShellCmdHelper {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
+
 	private static void setRobotiumServerPort(int port, String deviceSerial) {
 		CommandExecutor executor = CommandExecutor.Factory
 				.createDefaultCommmandExecutor();
 		List<String> commands = new ArrayList<String>();
-		
+
 		if (!deviceSerial.equals("") && deviceSerial != null) {
 			commands.add("-s");
 			commands.add(deviceSerial);
 		}
-		
+
 		commands.add("shell");
 		commands.add("am");
 		commands.add("instrument");
@@ -94,17 +85,18 @@ class ShellCmdHelper {
 		commands.add("-e");
 		commands.add("port");
 		commands.add(Integer.toString(port));
-		commands.add("com.jayway.android.robotium.server/com.jayway.android.robotium.server.ServerConfigRunner");
+		commands
+				.add("com.jayway.android.robotium.server/com.jayway.android.robotium.server.ServerConfigRunner");
 
 		try {
 			executor.executeCommand("adb", commands, false);
 		} catch (ExecutionException e) {
-			//TODO: better error message
+			// TODO: better error message
 			// this happens when multiple devices connected
 			// or the envirment varialbe wasn't setup property
 			// need to have ANDROID_HOME setup
 			e.printStackTrace();
 		}
-		
+
 	}
 }

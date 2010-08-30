@@ -63,13 +63,11 @@ class DeviceClientManager {
 		while (it.hasNext()) {
 			dc = devices.get(it.next());
 			
-			// starts the server on device/emulator
-			ShellCmdHelper.startRobotiumServer(dc.getDevicePort(), dc.getDeviceSerial());
+			// starts the instrumentation server for this app
+			ShellCmdHelper.startInstrumentationServer(dc.getDevicePort(), dc.getDeviceSerial());
+			
 			// make device connection
 			dc.connect();
-			
-			// TODO: first connection sending Activity class info? 
-			// attempt
 		}
 	}
 

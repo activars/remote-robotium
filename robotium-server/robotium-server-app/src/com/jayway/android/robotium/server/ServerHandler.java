@@ -16,8 +16,15 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Looper;
+import android.util.Log;
 
+import com.jayway.android.robotium.common.Message;
+import com.jayway.android.robotium.common.MessageFactory;
+import com.jayway.android.robotium.common.TargetActivityMessage;
 import com.jayway.android.robotium.solo.ISolo;
 import com.jayway.android.robotium.solo.Solo;
 
@@ -25,38 +32,14 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 
 	private static final Logger logger = Logger.getLogger(ServerHandler.class
 			.getName());
+	private static final String TAG = "ServerHandler";
 
-	private static ISolo mSolo;
-	private static Instrumentation mInstrumentation;
-	private static Activity mActivity;
+	private ISolo mSolo;
+	private Instrumentation mInstrumentation;
+	private Activity mActivity;
 	
-	static void injectInstrumentation(Instrumentation inst) {
-		mInstrumentation = inst;
-		// testing code: can use injected instrumentation to run launch events
-		// as usual.
-		//
-		Intent intent = new Intent(Intent.ACTION_MAIN);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.setClassName(mInstrumentation.getTargetContext()
-				.getPackageName(), mInstrumentation.getTargetContext()
-				.getPackageName()
-				+ ".NotesList");
-		mActivity = mInstrumentation.startActivitySync(intent);
-
-		mSolo = new Solo(mInstrumentation, mActivity);
-
-		mSolo.clickOnMenuItem("Add note");
-		mSolo.assertCurrentActivity("Expected NoteEditor activity",
-				"NoteEditor"); // Assert that NoteEditor activity is opened
-		mSolo.enterText(0, "Note 1"); // Add note
-		mSolo.goBack();
-		mSolo.clickOnMenuItem("Add note"); // Clicks on menu item
-		mSolo.enterText(0, "Note 2"); // Add note
-		mSolo.goBack();
-	}
-
-	static void injectActivity(Activity act) {
-		mActivity = act;
+	public void setInstrumentation(Instrumentation instrumentation) {
+		mInstrumentation = instrumentation;
 	}
 
 	@Override
@@ -71,34 +54,66 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 	@Override
 	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e)
 			throws Exception {
-		// Send greeting for a new connection.
-		e.getChannel().write(
-				"Welcome to " + InetAddress.getLocalHost().getHostName()
-						+ "!\r\n");
-		e.getChannel().write("It is " + new Date() + " now.\r\n");
-
+		// first connection send out request for instrumentation class
+		e.getChannel().write(MessageFactory.createTargetActivityRequestMessage().toString() + "\r\n");
+		
 	}
 
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 
 		// Cast to a String first.
-		// We know it is a String because we put some codec in
-		// TelnetPipelineFactory.
 		String request = (String) e.getMessage();
-
-		// Generate and write a response.
-		String response;
-		boolean close = false;
-		if (request.length() == 0) {
-			response = "Please type something.\r\n";
-		} else if (request.toLowerCase().equals("bye")) {
-			response = "Have a good day!\r\n";
-			close = true;
-		} else {
-			response = "Did you say '" + request + "'?\r\n";
+		String response = "";
+		Message mMessage = null;
+		try {
+				mMessage =  MessageFactory.parseMessageString(request);
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
+		
+		if( mMessage instanceof TargetActivityMessage) {
+			
+			// the message contain Instrumentation information for the Activity
+			String activityClassName = ((TargetActivityMessage) mMessage).getTargetClassName();
+			// testing code: can use injected instrumentation to run launch events
+			// as usual.
+			
+			while(mInstrumentation == null) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				Log.d(TAG, "Instrumentation is null");
+			}
+			
+			Intent intent = new Intent(Intent.ACTION_MAIN);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.setClassName(mInstrumentation.getTargetContext()
+					.getPackageName(), activityClassName);
+			mActivity = mInstrumentation.startActivitySync(intent);
 
+			mSolo = new Solo(mInstrumentation, mActivity);
+
+			mSolo.clickOnMenuItem("Add note");
+			mSolo.assertCurrentActivity("Expected NoteEditor activity",
+					"NoteEditor"); // Assert that NoteEditor activity is opened
+			mSolo.enterText(0, "Note 1"); // Add note
+			mSolo.goBack();
+			mSolo.clickOnMenuItem("Add note"); // Clicks on menu item
+			mSolo.enterText(0, "Note 2"); // Add note
+			mSolo.goBack();
+			
+			response = MessageFactory.createSuccessMessage().toString() + "\r\n";
+		}
+			
+		// never close for now 
+		boolean close = false;
+		
 		// We do not need to write a ChannelBuffer here.
 		// We know the encoder inserted at ServerPipelineFactory will do the
 		// conversion.
@@ -117,4 +132,5 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 				.getCause());
 		e.getChannel().close();
 	}
+	
 }
