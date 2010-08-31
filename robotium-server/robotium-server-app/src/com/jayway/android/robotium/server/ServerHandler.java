@@ -111,13 +111,10 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 					}
 					
 				} catch (IllegalArgumentException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (InvocationTargetException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}

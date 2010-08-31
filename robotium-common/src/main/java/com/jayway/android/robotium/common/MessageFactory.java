@@ -82,8 +82,8 @@ public class MessageFactory {
 			Class<?>[] paramTypes = new Class<?>[tempParamTypes.size()];
 			Object[] params = new Object[tempParamTypes.size()];
 			for(int i = 0; i < tempParamTypes.size(); i++ ) {
-				paramTypes[i] = Class.forName(tempParamTypes.get(i).toString());
-				params[i] = TypeUtility.getObjectFromString(tempParamTypes.get(i).toString(),
+				paramTypes[i] = TypeUtility.getClassName(tempParamTypes.get(i).toString());
+				params[i] = TypeUtility.getObject(tempParamTypes.get(i).toString(),
 										tempParams.get(i).toString());
 			}
 			String methodName = jsonObj.get(Message.JSON_ATTR_METHOD_RECEIVED).toString();

@@ -44,7 +44,7 @@ public class ClientInvocationHandler implements java.lang.reflect.InvocationHand
 	}
 	
 	private boolean isSolo(Object obj) {
-		return TypeUtility.getStringValue(obj.getClass()).equals(TypeUtility.getStringValue(Solo.class));
+		return TypeUtility.getClassName(obj.getClass()).equals(TypeUtility.getClassName(Solo.class));
 	}
 
 	/**

@@ -52,14 +52,14 @@ public class EventMessage extends AbstractMessage {
 	@Override
 	public String toString() {
 		JSONObject jsonObj = getHeader();
-		jsonObj.put(Message.JSON_ATTR_TARGET_OBJECT_CLASS_NAME, TypeUtility.getStringValue(targetObjectClass));
+		jsonObj.put(Message.JSON_ATTR_TARGET_OBJECT_CLASS_NAME, TypeUtility.getClassName(targetObjectClass));
 		jsonObj.put(Message.JSON_ATTR_TARGET_OBJECT_ID, targetObjectId);
 		jsonObj.put(Message.JSON_ATTR_METHOD_RECEIVED, methodReceived.getName());
 		JSONArray paramTypes = new JSONArray();
 		JSONArray params = new JSONArray();
 		for(int i=0; i < parameterTypes.length; i++) {
-			paramTypes.add(TypeUtility.getStringValue(parameterTypes[i]));
-			params.add( TypeUtility.getStringValue(parameterTypes[i], parameters[i]));
+			paramTypes.add(TypeUtility.getClassName(parameterTypes[i]));
+			params.add(TypeUtility.getStringValue(parameterTypes[i], parameters[i]));
 		}
 		jsonObj.put(Message.JSON_ATTR_PARAMETER_TYPES, paramTypes);
 		jsonObj.put(Message.JSON_ATTR_PARAMETERS, params);

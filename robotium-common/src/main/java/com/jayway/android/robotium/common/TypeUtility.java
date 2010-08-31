@@ -3,15 +3,20 @@ package com.jayway.android.robotium.common;
 import net.sf.cglib.proxy.Enhancer;
 
 public class TypeUtility {
-
-	public static String getStringValue(Class<?> classType) {
-		if(Enhancer.isEnhanced(classType)) {
-			String[] splName = classType.getName().split("[$$]");
-			if(splName.length > 0) {
-				return splName[0];
-			}
-		}
-		return classType.getName();
+	
+	public static Class<?> getClassName(String name) throws ClassNotFoundException
+	{
+		if (name.equals("byte")) return byte.class;
+		if (name.equals("short")) return short.class;
+		if (name.equals("int")) return int.class;
+		if (name.equals("long")) return long.class;
+		if (name.equals("char")) return char.class;
+		if (name.equals("float")) return float.class;
+		if (name.equals("double")) return double.class;
+		if (name.equals("boolean")) return boolean.class;
+		if (name.equals("void")) return void.class;
+		
+		return Class.forName(name);
 	}
 
 	public static String getStringValue(Class<?> type, Object obj) {
@@ -19,7 +24,7 @@ public class TypeUtility {
 			return "null";
 		}
 
-		String fullQualifiedClassName = getStringValue(type);
+		String fullQualifiedClassName = getClassName(type);
 
 		if ( fullQualifiedClassName.equals(String.class.getName())
 				|| fullQualifiedClassName.equals(byte.class.getName())
@@ -37,8 +42,19 @@ public class TypeUtility {
 			//return "other object";
 		}
 	}
+	
+	
+	public static String getClassName(Class<?> classType) {
+		if(Enhancer.isEnhanced(classType)) {
+			String[] splName = classType.getName().split("[$$]");
+			if(splName.length > 0) {
+				return splName[0];
+			}
+		}
+		return classType.getName();
+	}
 
-	public static Object getObjectFromString(String typeName, String objectValue) {
+	public static Object getObject(String typeName, String objectValue) {
 
 		if (typeName.equals(String.class.getName())) {
 			return objectValue.toString();
