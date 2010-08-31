@@ -9,7 +9,7 @@ import org.jboss.netty.handler.codec.frame.Delimiters;
 import org.jboss.netty.handler.codec.string.StringDecoder;
 import org.jboss.netty.handler.codec.string.StringEncoder;
 
-import com.jayway.android.robotium.remotesolo.proxy.ProxyMessageContainer;
+import com.jayway.android.robotium.remotesolo.proxy.ProxyMessageSender;
 
 public class ClientPiplineFactory implements ChannelPipelineFactory {
 	
@@ -32,7 +32,7 @@ public class ClientPiplineFactory implements ChannelPipelineFactory {
 		pipeline.addLast("encoder", new StringEncoder());
 		
 		ClientHandler handler = new ClientHandler();
-		ProxyMessageContainer container = new ProxyMessageContainer();
+		ProxyMessageSender container = new ProxyMessageSender();
 		container.setDeviceClient(device);
 		handler.setMessageContainer(container);
 		// and then business logic.

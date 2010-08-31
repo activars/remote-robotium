@@ -68,13 +68,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.jayway.awaitility</groupId>
-			<artifactId>awaitility</artifactId>
-			<version>1.0</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.powermock.modules</groupId>
 			<artifactId>powermock-module-junit3</artifactId>
 			<version>${powermock.version}</version>
@@ -102,6 +95,13 @@
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
 			<version>1.1</version>
 			<type>jar</type>
 			<scope>compile</scope>

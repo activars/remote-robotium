@@ -33,9 +33,9 @@ public interface DeviceClient {
 	 * @param msg
 	 * @return
 	 */
-	public abstract boolean sendMessage(String msg);
+	public abstract void sendMessage(String msg);
 	
-	public Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments) throws Exception;
+	public Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments) throws Exception, Throwable;
 
 	/**
 	 * Close the connection

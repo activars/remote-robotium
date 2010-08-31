@@ -1,11 +1,13 @@
 package com.jayway.android.robotium.remotesolo;
 
+import java.lang.reflect.Method;
+
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
-import com.jayway.android.robotium.remotesolo.proxy.MessageContainer;
-import com.jayway.android.robotium.remotesolo.proxy.ProxyMessageContainer;
+import com.jayway.android.robotium.remotesolo.proxy.MessageSender;
+import com.jayway.android.robotium.remotesolo.proxy.ProxyMessageSender;
 
 public class DeviceClientBootstrap extends ClientBootstrap {
 	
@@ -23,7 +25,7 @@ public class DeviceClientBootstrap extends ClientBootstrap {
 		return null;
 	}
 	
-	public void setMessageContainer(MessageContainer msgContainer) {
+	public void setMessageContainer(MessageSender msgContainer) {
 		
 		ChannelHandler handler = getChannelHandler();
 		
@@ -34,7 +36,7 @@ public class DeviceClientBootstrap extends ClientBootstrap {
 		}
 	}
 	
-	public MessageContainer getMessageContainer() {
+	public MessageSender getMessageContainer() {
 		ChannelHandler handler = getChannelHandler();
 		
 		if(handler != null && handler instanceof ClientHandler) {
@@ -45,9 +47,18 @@ public class DeviceClientBootstrap extends ClientBootstrap {
 	}
 	
 	public Object createObjectProxy(Class<?> targetClass) {
-		MessageContainer container = getMessageContainer();
-		if(container != null && container instanceof ProxyMessageContainer) {
-			return ((ProxyMessageContainer)container).createProxy(targetClass);
+		MessageSender container = getMessageContainer();
+		if(container != null && container instanceof ProxyMessageSender) {
+			return ((ProxyMessageSender)container).createProxy(targetClass);
+		} else {
+			throw new NullPointerException("Failed to create proxy for target class");
+		}
+	}
+	
+	public Object invokeProxy(Object proxy, Method method, Object[] args) throws Throwable {
+		MessageSender container = getMessageContainer();
+		if(container != null && container instanceof ProxyMessageSender) {
+			return ((ProxyMessageSender)container).invokeProxy(proxy, method, args);
 		} else {
 			throw new NullPointerException("Failed to create proxy for target class");
 		}

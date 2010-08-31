@@ -48,11 +48,18 @@ public interface Message {
 	public final static String HEADER_TARGET_ACTIVITY_CLASS = "TARGET_ACTIVITY_CLASS";
 	
 	
+	/* Predefined JSON attribute keys */
 	public final static String JSON_ATTR_HEADER = "Header";
 	public final static String JSON_ATTR_MESSAGE_ID = "MessageID";
 	public final static String JSON_ATTR_DESCRIPTION = "Description";
 	public final static String JSON_ATTR_ACTIVITY_CLASS = "ActivityClass";
 	public final static String JSON_ATTR_EXCEPTION_TYPE = "ExceptionType";
+	public final static String JSON_ATTR_TARGET_OBJECT_CLASS_NAME = "TargetObjectClass";
+	public final static String JSON_ATTR_TARGET_OBJECT_ID = "TargetObjectID";
+	public final static String JSON_ATTR_METHOD_RECEIVED = "MethodReceived";
+	public final static String JSON_ATTR_PARAMETER_TYPES = "ParameterTypes";
+	public final static String JSON_ATTR_PARAMETERS = "Parameters";
+	
 	
 	
 	public Message setMessageId(UUID id);

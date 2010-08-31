@@ -3,18 +3,21 @@ package com.jayway.android.robotium.remotesolo;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
 class DeviceClientManager {
 	
-	private Map<String, DeviceClientImpl> devices;
+	private final Map<String, DeviceClientImpl> devices;
 	private Class<?> targetClass;
 	DeviceClientManager() {
 		// init hashmap storing references to device client
-		devices = new HashMap<String, DeviceClientImpl>();
+		devices = new ConcurrentHashMap<String, DeviceClientImpl>();
 	}
 	
 	void setTargetClass(Class<?> targetClass) {
@@ -59,15 +62,24 @@ class DeviceClientManager {
 		
 		//TODO: Adding timing
 		Iterator<String> it = devices.keySet().iterator();
-		DeviceClient dc = null;
+		ExecutorService pool = Executors.newFixedThreadPool(devices.size());
+
 		while (it.hasNext()) {
-			dc = devices.get(it.next());
-			
-			// starts the instrumentation server for this app
-			ShellCmdHelper.startInstrumentationServer(dc.getDevicePort(), dc.getDeviceSerial());
-			
-			// make device connection
-			dc.connect();
+			final DeviceClient dc = devices.get(it.next());
+			pool.execute(new Runnable() {
+				public void run() {
+					// starts the instrumentation server for this app
+					ShellCmdHelper.startInstrumentationServer(dc.getDevicePort(), dc.getDeviceSerial());	
+					// make device connection
+					dc.connect();	
+				}	
+			});
+		}
+		pool.shutdown();
+		try {
+			pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		} catch (InterruptedException e) {
+			 e.printStackTrace();
 		}
 	}
 
@@ -82,10 +94,15 @@ class DeviceClientManager {
 		}
 	}
 	
-	Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments) throws Exception {
+	Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments)  {
 		Iterator<String> it = devices.keySet().iterator();
 		while (it.hasNext()) {
-			return devices.get(it.next()).invokeMethod(methodToExecute, argumentTypes, arguments);
+			try {
+				return devices.get(it.next()).invokeMethod(methodToExecute, argumentTypes, arguments);
+			} catch (Throwable e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return null;

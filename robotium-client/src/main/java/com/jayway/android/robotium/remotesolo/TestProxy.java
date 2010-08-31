@@ -22,7 +22,7 @@ import org.powermock.reflect.Whitebox;
 
 import com.jayway.android.robotium.remotesolo.proxy.FinalClassInterfaceMaker;
 import com.jayway.android.robotium.remotesolo.proxy.InterfaceAdder;
-import com.jayway.android.robotium.remotesolo.proxy.ProxyMessageContainer;
+import com.jayway.android.robotium.remotesolo.proxy.ProxyMessageSender;
 import com.jayway.android.robotium.remotesolo.proxy.MyClassLoader;
 import com.jayway.android.robotium.solo.Solo;
 
@@ -90,7 +90,7 @@ public class TestProxy {
 //		ListView lv = Whitebox.newInstance(ListView.class);
 //		ListView proxobj = (ListView) ProxyMessageContainer.createProxy(lv);
 //		proxobj.findFocus();
-		ProxyMessageContainer pmc = new ProxyMessageContainer();
+		ProxyMessageSender pmc = new ProxyMessageSender();
 		Solo solo = (Solo) pmc.createProxy(Solo.class);
 		try {
 			Whitebox.invokeMethod(solo, "goBack");

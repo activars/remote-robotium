@@ -1,5 +1,6 @@
 package com.jayway.android.robotium.remotesolo;
 
+import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,8 @@ import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
+import org.objenesis.ObjenesisHelper;
+import org.objenesis.ObjenesisStd;
 import org.powermock.reflect.Whitebox;
 
 import com.jayway.android.robotium.solo.ISolo;
@@ -25,7 +28,7 @@ public class DeviceClientImpl implements DeviceClient {
 	private Channel channel;
 	private ChannelFuture lastWriteFuture;
 	private ClientBootstrap bootstrap;
-	private ISolo mSolo;
+	private Solo mSoloProxy;
 
 	public DeviceClientImpl(String deviceSerial, int pcPort, int devicePort) {
 		initialize("localhost", deviceSerial, pcPort, devicePort);
@@ -91,7 +94,7 @@ public class DeviceClientImpl implements DeviceClient {
 		}
 		
 		// create proxy object for solo class
-		mSolo = (ISolo) ((DeviceClientBootstrap)bootstrap).createObjectProxy(Solo.class);
+		mSoloProxy = (Solo) ((DeviceClientBootstrap)bootstrap).createObjectProxy(Solo.class);
 	}
 
 	/**
@@ -100,21 +103,22 @@ public class DeviceClientImpl implements DeviceClient {
 	 * @param msg
 	 * @return
 	 */
-	public boolean sendMessage(String msg) {
+	public void sendMessage(String msg) {
 		if (this.channel.isConnected()) {
-			if (!msg.endsWith("\n")) {
-				this.channel.write(msg + '\n');
+			if (!msg.endsWith("\r\n")) {
+				this.channel.write(msg + "\r\n");
 			} else {
 				this.channel.write(msg);
 			}
-			return true;
 		}
-		return false;
 	}
 	
 	
-	public Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments) throws Exception {
-		return Whitebox.invokeMethod(mSolo, methodToExecute, argumentTypes, arguments);
+	public Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments) throws Throwable {
+
+		Method receivedMethod = ISolo.class.getMethod(methodToExecute, argumentTypes);
+		
+		return ((DeviceClientBootstrap)bootstrap).invokeProxy(mSoloProxy, receivedMethod, arguments);
 	}
 
 	

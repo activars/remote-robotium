@@ -5,8 +5,8 @@ import java.util.concurrent.Executors;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
-import com.jayway.android.robotium.remotesolo.proxy.MessageContainer;
-import com.jayway.android.robotium.remotesolo.proxy.ProxyMessageContainer;
+import com.jayway.android.robotium.remotesolo.proxy.MessageSender;
+import com.jayway.android.robotium.remotesolo.proxy.ProxyMessageSender;
 
 public class DeviceClientBootstrapFactory {
 	

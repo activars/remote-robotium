@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.naming.OperationNotSupportedException;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -14,10 +15,10 @@ public class MessageFactory {
 		return msg.setMessageId(UUID.randomUUID());
 	}
 
-	public static Message createEventMessage(Class<?> targetObjectClass,
-			String targetObjectId, Method methodReceived, Object[] parameters) {
-		return generateUuidForMessage(new EventMessage(targetObjectClass,
-				targetObjectId, methodReceived, parameters));
+	public static Message createEventMessage(Class<?> targetObjectClass, String targetObjectId, 
+			Method methodReceived, Class<?>[] parameterTypes, Object... parameters) {
+		return generateUuidForMessage(new EventMessage(targetObjectClass,  targetObjectId, 
+											methodReceived,  parameterTypes,  parameters));
 	}
 
 	public static Message createExceptionMessage(Exception ex, String message) {
@@ -74,7 +75,22 @@ public class MessageFactory {
 			
 		} else if (header.equals(Message.HEADER_CLIENT_EVENT)) {
 			//TODO: create this type of messages
-			throw new UnsupportedOperationException("Not implemented yet");
+			String expectClassName = (String) jsonObj.get(Message.JSON_ATTR_TARGET_OBJECT_CLASS_NAME);
+			Class<?> expectClass = Class.forName(expectClassName);
+			JSONArray tempParamTypes = (JSONArray) jsonObj.get(Message.JSON_ATTR_PARAMETER_TYPES);
+			JSONArray tempParams = (JSONArray) jsonObj.get(Message.JSON_ATTR_PARAMETERS);
+			Class<?>[] paramTypes = new Class<?>[tempParamTypes.size()];
+			Object[] params = new Object[tempParamTypes.size()];
+			for(int i = 0; i < tempParamTypes.size(); i++ ) {
+				paramTypes[i] = Class.forName(tempParamTypes.get(i).toString());
+				params[i] = TypeUtility.getObjectFromString(tempParamTypes.get(i).toString(),
+										tempParams.get(i).toString());
+			}
+			String methodName = jsonObj.get(Message.JSON_ATTR_METHOD_RECEIVED).toString();
+			String objectID = jsonObj.get(Message.JSON_ATTR_TARGET_OBJECT_ID).toString();
+			Method classMethod = expectClass.getMethod(methodName, paramTypes);
+			
+			mMsg = new EventMessage(expectClass, objectID, classMethod, paramTypes, params);
 
 		} else if (header.equals(Message.HEADER_SERVER_EVENT)) {
 			//TODO: create this type of messages

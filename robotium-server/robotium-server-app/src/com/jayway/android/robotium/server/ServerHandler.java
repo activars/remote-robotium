@@ -1,5 +1,6 @@
 package com.jayway.android.robotium.server;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.util.Date;
 import java.util.logging.Level;
@@ -22,6 +23,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 
+import com.jayway.android.robotium.common.EventMessage;
 import com.jayway.android.robotium.common.Message;
 import com.jayway.android.robotium.common.MessageFactory;
 import com.jayway.android.robotium.common.TargetActivityMessage;
@@ -75,40 +77,51 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 		}
 		
 		if( mMessage instanceof TargetActivityMessage) {
-			
 			// the message contain Instrumentation information for the Activity
 			String activityClassName = ((TargetActivityMessage) mMessage).getTargetClassName();
-			// testing code: can use injected instrumentation to run launch events
-			// as usual.
-			
-			while(mInstrumentation == null) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				Log.d(TAG, "Instrumentation is null");
-			}
 			
 			Intent intent = new Intent(Intent.ACTION_MAIN);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			intent.setClassName(mInstrumentation.getTargetContext()
 					.getPackageName(), activityClassName);
 			mActivity = mInstrumentation.startActivitySync(intent);
-
+			// initialize the solo tool 
 			mSolo = new Solo(mInstrumentation, mActivity);
-
-			mSolo.clickOnMenuItem("Add note");
-			mSolo.assertCurrentActivity("Expected NoteEditor activity",
-					"NoteEditor"); // Assert that NoteEditor activity is opened
-			mSolo.enterText(0, "Note 1"); // Add note
-			mSolo.goBack();
-			mSolo.clickOnMenuItem("Add note"); // Clicks on menu item
-			mSolo.enterText(0, "Note 2"); // Add note
-			mSolo.goBack();
 			
-			response = MessageFactory.createSuccessMessage().toString() + "\r\n";
+			// create response message and copy the old message uuid
+			Message responseMsg = MessageFactory.createSuccessMessage();
+			responseMsg.setMessageId(mMessage.getMessageId());
+			e.getChannel().write(responseMsg.toString() + "\r\n");
+		
+		} else if (mMessage instanceof EventMessage) {
+			// a event message contains object and method was invoked
+			EventMessage eventMsg = (EventMessage) mMessage;
+			Class<?> returnType = eventMsg.getMethodReceived().getReturnType();
+			if(eventMsg.getTargetObjectClass().getName().equals(Solo.class.getName())) {
+				try {
+					Object returnValue = eventMsg.getMethodReceived().invoke(mSolo, eventMsg.getParameters());
+					if(returnType.equals(void.class)) {
+						//TODO: send success 
+						Message responseMsg = MessageFactory.createSuccessMessage();
+						responseMsg.setMessageId(mMessage.getMessageId());
+						e.getChannel().write(responseMsg.toString() + "\r\n");
+					} else {
+						//TODO: get object reference
+						//      
+					}
+					
+				} catch (IllegalArgumentException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InvocationTargetException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
 		}
 			
 		// never close for now 
@@ -128,6 +141,7 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
+		
 		logger.log(Level.WARNING, "Unexpected exception from downstream.", e
 				.getCause());
 		e.getChannel().close();

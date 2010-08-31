@@ -14,10 +14,10 @@ import com.jayway.android.robotium.common.Message;
 import com.jayway.android.robotium.common.MessageFactory;
 import com.jayway.android.robotium.common.SuccessMessage;
 import com.jayway.android.robotium.common.TargetActivityRequestMessage;
-import com.jayway.android.robotium.remotesolo.proxy.MessageContainer;
+import com.jayway.android.robotium.remotesolo.proxy.MessageSender;
 
 public class ClientHandler extends SimpleChannelHandler {
-	private MessageContainer msgContainer;
+	private MessageSender msgContainer;
 
 	private static final Logger logger = Logger.getLogger(ClientHandler.class
 			.getName());
@@ -27,11 +27,11 @@ public class ClientHandler extends SimpleChannelHandler {
 	 * 
 	 * @param container
 	 */
-	public void setMessageContainer(MessageContainer container) {
+	public void setMessageContainer(MessageSender container) {
 		this.msgContainer = container;
 	}
 
-	public MessageContainer getMessageContainer() {
+	public MessageSender getMessageContainer() {
 		return this.msgContainer;
 	}
 
@@ -47,8 +47,7 @@ public class ClientHandler extends SimpleChannelHandler {
 
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
-		// Print out the line received from the server.
-		System.out.println(e.getMessage());
+		
 		if (msgContainer != null) {
 			// msgContainer.addMessage(message)
 			String messageString = (String) e.getMessage();
@@ -60,14 +59,13 @@ public class ClientHandler extends SimpleChannelHandler {
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
+			
 
 			if (message instanceof SuccessMessage) {
 				System.out.println("Server is happy");
 
 			} else if (message instanceof TargetActivityRequestMessage) {
 				// server requested a message about Instrumentation class
-				// first run the instumenstation
-				
 				Class activityClass = msgContainer.getDeviceClient()
 						.getTargetClass();
 				e.getChannel().write(

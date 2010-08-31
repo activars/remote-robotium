@@ -1,0 +1,67 @@
+package com.jayway.android.robotium.common;
+
+import net.sf.cglib.proxy.Enhancer;
+
+public class TypeUtility {
+
+	public static String getStringValue(Class<?> classType) {
+		if(Enhancer.isEnhanced(classType)) {
+			String[] splName = classType.getName().split("[$$]");
+			if(splName.length > 0) {
+				return splName[0];
+			}
+		}
+		return classType.getName();
+	}
+
+	public static String getStringValue(Class<?> type, Object obj) {
+		if (obj == null) {
+			return "null";
+		}
+
+		String fullQualifiedClassName = getStringValue(type);
+
+		if ( fullQualifiedClassName.equals(String.class.getName())
+				|| fullQualifiedClassName.equals(byte.class.getName())
+				|| fullQualifiedClassName.equals(int.class.getName())
+				|| fullQualifiedClassName.equals(short.class.getName())
+				|| fullQualifiedClassName.equals(long.class.getName())
+				|| fullQualifiedClassName.equals(float.class.getName())
+				|| fullQualifiedClassName.equals(double.class.getName())
+				|| fullQualifiedClassName.equals(boolean.class.getName())
+				|| fullQualifiedClassName.equals(char.class.getName())) {
+			return obj.toString();
+		} else {
+			throw new UnsupportedOperationException(
+			" TODO: the type of object is not primitive, ");
+			//return "other object";
+		}
+	}
+
+	public static Object getObjectFromString(String typeName, String objectValue) {
+
+		if (typeName.equals(String.class.getName())) {
+			return objectValue.toString();
+	    } else if (typeName.equals(byte.class.getName())) {
+			return Byte.parseByte(objectValue);
+		} else if (typeName.equals(int.class.getName())) {
+			return Integer.parseInt(objectValue);
+		} else if (typeName.equals(short.class.getName())) {
+			return Short.parseShort(objectValue);
+		} else if (typeName.equals(long.class.getName())) {
+			return Long.parseLong(objectValue);
+		} else if (typeName.equals(float.class.getName())) {
+			return Float.parseFloat(objectValue);
+		} else if (typeName.equals(double.class.getName())) {
+			return Double.parseDouble(objectValue);
+		} else if (typeName.equals(boolean.class.getName())) {
+			return Boolean.parseBoolean(objectValue);
+		} else if (typeName.equals(char.class.getName())) {
+			return objectValue.toCharArray()[0];
+		} else {
+			throw new UnsupportedOperationException(
+					" TODO: the type of object is not primitive, ");
+			// return null; //?? return a proxy object ??
+		}
+	}
+}
