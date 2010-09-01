@@ -2,6 +2,8 @@ package com.jayway.android.robotium.remotesolo;
 
 import java.util.ArrayList;
 
+import com.jayway.android.robotium.solo.ISolo;
+
 import junit.framework.Assert;
 import android.app.Activity;
 import android.view.View;
@@ -18,7 +20,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.jayway.android.robotium.solo.ISolo;
 
 public class RemoteSolo implements ISolo {
 	private DeviceClientManager devices;
@@ -191,15 +192,14 @@ public class RemoteSolo implements ISolo {
 	}
 	
 
-	public boolean clickOnButton(int index) {
+	public void clickOnButton(int index) {
 		try {
-		   return  Boolean.parseBoolean(devices.invokeMethod("clickOnButton", 
+		    devices.invokeMethod("clickOnButton", 
 					  new Class<?>[] { int.class },
-					  new Object[] { index }).toString());
+					  new Object[] { index });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
 	}
 
 	public void clickOnCheckBox(int index) {

@@ -102,7 +102,7 @@ public class MessageFactory {
 			// The type of message contains value returned from an invoked method
 			Class<?> rootType = TypeUtility.getClassName(jsonObj.get(Message.JSON_ATTR_CLASS_TYPE).toString());
 			Class<?> innerClassType = TypeUtility.getClassName(jsonObj.get(Message.JSON_ATTR_INNER_CLASS_TYPE).toString());
-			boolean isInnerPrimitive = innerClassType.isPrimitive();
+			boolean isInnerPrimitiveExcludeVoid = (innerClassType.isPrimitive() && !innerClassType.equals(void.class));
 			JSONArray tempParams = (JSONArray) jsonObj.get(Message.JSON_ATTR_RETURN_VALUE);
 			ArrayList list = new ArrayList();
 			
@@ -111,7 +111,7 @@ public class MessageFactory {
 				list.add(TypeUtility.getObject(rootType.getName(), tempParams.get(0).toString()));
 			}else {
 				for(int i = 0 ; i< tempParams.size() ; i++) {
-					if(isInnerPrimitive) {
+					if(isInnerPrimitiveExcludeVoid) {
 						// the value represents the object value
 						list.add(TypeUtility.getObject(innerClassType.getName(), tempParams.get(i).toString()));
 					}else {

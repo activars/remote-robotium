@@ -5,7 +5,9 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.sf.cglib.proxy.Enhancer;
@@ -88,16 +90,29 @@ public class TestProxy {
 //			e1.printStackTrace();
 //		}
 		
-//		ListView lv = Whitebox.newInstance(ListView.class);
-		ProxyMessageSender sd = new ProxyMessageSender();
-		TextView mt = (TextView) sd.createProxy(TextView.class);
-		System.out.println(mt.getClass().getName());
-		ArrayList<TextView> tvs = new ArrayList<TextView>();
-		tvs.add(mt);
-	//	tvs.get(0).cancelLongPress();
-		((TextView)mt).cancelLongPress();
-//		proxobj.findFocus();
+////		ListView lv = Whitebox.newInstance(ListView.class);
+//		ProxyMessageSender sd = new ProxyMessageSender();
+//		TextView mt = (TextView) sd.createProxy(TextView.class);
+//		System.out.println(mt.getClass().getName());
+//		ArrayList<TextView> tvs = new ArrayList<TextView>();
+//		tvs.add(mt);
+//	//	tvs.get(0).cancelLongPress();
+//		((TextView)mt).cancelLongPress();
+////		proxobj.findFocus();
 		
+		Class<?>[] collectionInterfaces = ArrayList.class.getInterfaces();
+		boolean hasListInterface = false;
+		boolean hasCollectionInterface = false;
+		for (Class<?> c : collectionInterfaces) {
+			if (c.getName().equals(List.class.getName())) {
+				hasListInterface = true;
+			} else if (c.getName().equals(Collection.class.getName())) {
+				hasCollectionInterface = true;
+			}
+			if (hasListInterface && hasCollectionInterface)
+				break;
+		}
+		System.out.print(hasListInterface + " " + hasCollectionInterface);
 		
 	}
 	

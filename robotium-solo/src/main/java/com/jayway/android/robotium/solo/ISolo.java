@@ -447,7 +447,7 @@ public interface ISolo {
 	 *
 	 */
 
-	public abstract boolean clickOnButton(int index);
+	public abstract void clickOnButton(int index);
 
 	/**
 	 * Clicks on a radio button with a certain index.

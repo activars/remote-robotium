@@ -63,7 +63,6 @@ public class ClientHandler extends SimpleChannelHandler {
 			
 
 			if (message instanceof SuccessMessage) {
-				System.out.println("Server is happy");
 				msgContainer.addMessage(message);
 			} else if (message instanceof TargetActivityRequestMessage) {
 				// server requested a message about Instrumentation class

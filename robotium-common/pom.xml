@@ -3,11 +3,12 @@
   <parent>
     <artifactId>robotium</artifactId>
     <groupId>com.jayway.android.robotium</groupId>
-    <version>1.6.1-SNAPSHOT</version>
+    <version>1.7.1-SNAPSHOT</version>
   </parent>
   <groupId>com.jayway.android.robotium.common</groupId>
   <artifactId>robotium-common</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
   <name>Robotium :: Remote Common Libs</name>
   <dependencies>
   	<dependency>

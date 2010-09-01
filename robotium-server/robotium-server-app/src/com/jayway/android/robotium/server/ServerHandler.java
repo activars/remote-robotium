@@ -36,6 +36,7 @@ import android.util.Log;
 
 import com.jayway.android.robotium.common.EventInvokeMethodMessage;
 import com.jayway.android.robotium.common.EventReturnValueMessage;
+import com.jayway.android.robotium.common.ExceptionMessage;
 import com.jayway.android.robotium.common.Message;
 import com.jayway.android.robotium.common.MessageFactory;
 import com.jayway.android.robotium.common.TargetActivityMessage;
@@ -149,9 +150,7 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 						e.getChannel().write(responseMsg.toString() + "\r\n");
 					} else {
 						// get object reference
-						if (returnType.isPrimitive()
-								|| (!returnType.isPrimitive()
-										&& !hasListInterface && !hasCollectionInterface)) {
+						if (returnType.isPrimitive()) {
 
 							// construct return value message, copy the original
 							// message ID
@@ -163,7 +162,24 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 							e.getChannel().write(
 									responseMsg.toString() + "\r\n");
 
-						} else if (hasListInterface) {
+						} else if (!returnType.isPrimitive()
+								&& !hasListInterface && !hasCollectionInterface){ 
+							String key = UUID.randomUUID().toString();
+							// store the object in WeakHashMap for later
+							// use
+							synchronized(referencedObjects) {
+								referencedObjects.put(key, new WeakReference<Object>(returnValue));
+							}
+							Message responseMsg = new EventReturnValueMessage(
+									returnType, void.class,
+									new Object[] { key });
+							responseMsg.setMessageId(mMessage.getMessageId());
+							e.getChannel().write(
+									responseMsg.toString() + "\r\n");
+							
+						}
+						
+						else if (hasListInterface) {
 							// if the top root is list, then cast it as a list
 							// get the first element in the list to find out the
 							// class type
@@ -248,7 +264,8 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-
+		Message msg = MessageFactory.createExceptionMessage(new Exception(), e.getCause().getMessage());
+		e.getChannel().write(msg.toString() + "\r\n");
 		logger.log(Level.WARNING, "Unexpected exception from downstream.", e
 				.getCause());
 		e.getChannel().close();

@@ -29,8 +29,8 @@ public class ClientInvocationHandler implements
 	private static Map<String, String> proxyObjectsID;
 	private static Map<String, WeakReference> proxyObjects;
 	private DeviceClient device;
-	private static final int TIMEOUT = 10000;
-	private static final int SLEEP_TIME = 500;
+	private static final int TIMEOUT = 15000;
+	private static final int SLEEP_TIME = 700;
 
 	public ClientInvocationHandler() {
 		receivedMessages = Collections
@@ -79,8 +79,7 @@ public class ClientInvocationHandler implements
 			int waitedTime = 0;
 			while (!containsMessage(message)) {
 				if (waitedTime >= TIMEOUT) {
-					Assert.fail("Robotium::Timeout: \r\n"
-							+ "Server has no response.");
+					Assert.fail("Robotium::Timeout: " + "Server has no response.");
 					return void.class.newInstance();
 				}
 				Thread.sleep(SLEEP_TIME);
@@ -127,11 +126,6 @@ public class ClientInvocationHandler implements
 				if (returnValueMsg.isPrimitive() && isInnerClassVoidType) {
 					// primitive message's innerClass type is void
 					removeMessage(message);
-					System.out
-							.println(returnValueMsg.getClassType().toString());
-
-					System.out.println(returnValueMsg.getReturnValue()[0]
-							.toString());
 					return returnValueMsg.getReturnValue()[0];
 
 				} else if (returnValueMsg.isCollection()
@@ -173,9 +167,9 @@ public class ClientInvocationHandler implements
 			}
 			
 			removeMessage(message);
-			System.err.println("some other message were not catched!: " + message.toString());
+			//System.err.println("some other message were not catched!: " + message.toString());
 		}
-		System.err.println("some other message were not catched!: " + method.getName() + "/" + proxy.getClass().getName());
+		//System.err.println("some other message were not catched!: " + method.getName() + "/" + proxy.getClass().getName());
 		return null;
 		// throw new UnsupportedOperationException("Not Implemented yet");
 	}

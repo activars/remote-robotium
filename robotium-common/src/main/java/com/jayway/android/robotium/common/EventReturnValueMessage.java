@@ -72,7 +72,6 @@ public class EventReturnValueMessage extends AbstractMessage {
 		// they will be a list of object references (i.e the key in the WeakHashMap)
 		JSONArray values = new JSONArray();
 		for(int i = 0; i < returnValue.length; i ++) {
-			Log.d(TAG, returnValue[i].getClass().getName());
 			values.add(TypeUtility.getPrimitiveStringValue(returnValue[i].getClass(), returnValue[i]));
 		}
 		jsonObj.put(Message.JSON_ATTR_RETURN_VALUE, values);

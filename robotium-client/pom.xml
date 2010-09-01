@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>com.jayway.android.robotium</groupId>
 		<artifactId>robotium</artifactId>
-		<version>1.6.1-SNAPSHOT</version>
+		<version>1.7.1-SNAPSHOT</version>
 	</parent>
 
 	<repositories>
@@ -51,13 +51,6 @@
 			<artifactId>android-test</artifactId>
 			<version>[1.6_r1,1.7)</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.jayway.android.robotium</groupId>
-			<artifactId>robotium-solo</artifactId>
-			<version>1.6.1-SNAPSHOT</version>
-			<type>jar</type>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.jayway.maven.plugins.android.generation2</groupId>
@@ -103,6 +96,13 @@
 			<groupId>com.jayway.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
 			<version>1.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.android.robotium</groupId>
+			<artifactId>robotium-solo</artifactId>
+			<version>1.7.1-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
