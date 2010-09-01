@@ -1,39 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:id="@+id/widget39"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
+	android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android" android:background="@drawable/bg">
 	<TextView android:id="@+id/TextView01" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:padding="30dp"
-		android:text="Robotium Remote Service" android:textSize="20px">
+		android:text="Robotium Remote Service" android:textColor="#FFF" android:layout_gravity="center_vertical|center_horizontal|center"  android:gravity="center_vertical|center_horizontal"  android:textSize="20dp" android:shadowDy="2" android:shadowDx="2" android:shadowColor="#555">
 	</TextView>
 
 
-	<LinearLayout android:id="@+id/LinearLayout01"
-		android:layout_width="wrap_content" android:layout_height="wrap_content">
-		<TextView android:id="@+id/TextView02" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:padding="10dp"
-			android:text="Server Port:">
-		</TextView>
-		<EditText android:id="@+id/portEditText"
-			android:layout_height="wrap_content" 
-			android:focusableInTouchMode="true" 
-			android:inputType="phone" android:digits="1234567890"
-			
-			android:longClickable="false" android:singleLine="true"
-			android:layout_width="180dp">
-		</EditText>
-	</LinearLayout>
-	<LinearLayout android:id="@+id/LinearLayout02"
-		android:layout_height="wrap_content" android:padding="20dp"
-		android:layout_gravity="center" android:layout_width="wrap_content">
-		<Button android:id="@+id/buttonStartService"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:padding="20dp" android:text="Start">
-		</Button>
-		<Button android:id="@+id/buttonStopService"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:padding="20dp" android:text="Stop">
-		</Button>
-	</LinearLayout>
+	
+	
+
+
+
+
 
 </LinearLayout>
