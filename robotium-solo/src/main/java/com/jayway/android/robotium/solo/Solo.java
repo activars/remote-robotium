@@ -70,8 +70,8 @@ public class Solo implements ISolo {
 	/**
 	 * Constructor that takes in the instrumentation and the start activity.
 	 *
-	 * @param inst the instrumentation object
-	 * @param activity the start activity
+	 * @param inst the {@link Instrumentation} instance.
+	 * @param activity {@link Activity} the start activity
 	 *
 	 */
 	
@@ -118,7 +118,8 @@ public class Solo implements ISolo {
 	/**
      * Clears the value of an edit text.
      * 
-     * @param index the index of the edit text that should be cleared
+     * @param index the index of the edit text that should be cleared. 0 if only one is available
+	 *
      */
 	
     public void clearEditText(int index)
@@ -315,6 +316,7 @@ public class Solo implements ISolo {
 	 * Returns an ArrayList of all the opened/active activities.
 	 * 
 	 * @return ArrayList of all the opened activities
+	 *
 	 */
 	
 	public ArrayList<Activity> getAllOpenedActivities()
@@ -440,7 +442,7 @@ public class Solo implements ISolo {
 		clicker.clickOnScreen(x, y);
 	}
 	/**
-	 * Long clicks a specific coordinate on the screen
+	 * Long clicks a specific coordinate on the screen.
 	 *
 	 * @param x the x coordinate
 	 * @param y the y coordinate
@@ -467,7 +469,7 @@ public class Solo implements ISolo {
 	/**
 	 * Clicks on an image button with a certain index.
 	 *
-	 * @param index the index of the image button to be clicked
+	 * @param index the index of the image button to be clicked. 0 if only one is available
 	 *
 	 */
 	
@@ -489,11 +491,25 @@ public class Solo implements ISolo {
 	/**
 	 * Clicks on a menu item with a given text.
 	 * @param text the menu text that should be clicked on. Regular expressions are supported 
+	 *
 	 */
 	
 	public void clickOnMenuItem(String text)
 	{	
 		clicker.clickOnMenuItem(text);
+	}
+	
+	/**
+	 * Clicks on a menu item with a given text.
+	 * 
+	 * @param text the menu text that should be clicked on. Regular expressions are supported 
+	 * @param subMenu true if the menu item could be located in a sub menu
+	 * 
+	 */
+	
+	public void clickOnMenuItem(String text, boolean subMenu)
+	{
+		clicker.clickOnMenuItem(text, subMenu);
 	}
 	
 	/**
@@ -562,8 +578,7 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * This method is used to click on a specific text view displaying a certain
-	 * text.
+	 * Clicks on a specific view displaying a certain text. Will automatically scroll when needed.
 	 *
 	 * @param text the text that should be clicked on. Regular expressions are supported
 	 * @param match the match that should be clicked on 
@@ -575,7 +590,21 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Long clicks on a specific text view. ClickOnText() can then be
+	 * Clicks on a specific view displaying a certain text. 
+	 *
+	 * @param text the text that should be clicked on. Regular expressions are supported
+	 * @param match the match that should be clicked on 
+	 * @param scroll true if scrolling should be performed
+	 *
+	 */
+	
+	public void clickOnText(String text, int matches, boolean scroll) {
+		clicker.clickOnText(text,matches, scroll);
+	}
+	
+	
+	/**
+	 * Long clicks on a specific text view. Will automatically scroll when needed. ClickOnText() can then be
 	 * used to click on the context menu items that appear after the long click.
 	 *
 	 * @param text the text that should be clicked on. Regular expressions are supported
@@ -588,7 +617,7 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Long clicks on a specific text view. ClickOnText() can then be
+	 * Long clicks on a specific text view. Will automatically scroll when needed. ClickOnText() can then be
 	 * used to click on the context menu items that appear after the long click.
 	 *
 	 * @param text the text that should be clicked on. Regular expressions are supported
@@ -602,11 +631,26 @@ public class Solo implements ISolo {
 	}
 	
 	/**
+	 * Long clicks on a specific text view. ClickOnText() can then be
+	 * used to click on the context menu items that appear after the long click.
+	 *
+	 * @param text the text that should be clicked on. Regular expressions are supported
+	 * @param match the match that should be clicked on 
+	 * @param scroll true if scrolling should be performed
+	 *
+	 */
+	
+	public void clickLongOnText(String text, int match, boolean scroll)
+	{
+		clicker.clickLongOnText(text, match, scroll);
+	}
+	
+	/**
 	 * Long clicks on a specific text view and then selects
 	 * an item from the context menu that appears. Will automatically scroll when needed. 
 	 *
 	 * @param text the text to be clicked on. Regular expressions are supported
-	 * @param index the index of the menu item to be pressed
+	 * @param index the index of the menu item to be pressed. 0 if only one is available
 	 *
 	 */
 	
@@ -618,20 +662,17 @@ public class Solo implements ISolo {
 	 * Clicks on a button with a certain index.
 	 *
 	 * @param index the index number of the button
-	 * @return true if button with specified index is found
 	 *
 	 */
 	
-	public boolean clickOnButton(int index) {
-		boolean found = clicker.clickOnButton(index);
-		return found;
-		
+	public void clickOnButton(int index) {
+		clicker.clickOnButton(index);
 	}
 	
 	/**
 	 * Clicks on a radio button with a certain index.
 	 *
-	 * @param index the index of the radio button to be clicked
+	 * @param index the index of the radio button to be clicked. 0 if only one is available
 	 *
 	 */
 	
@@ -642,7 +683,7 @@ public class Solo implements ISolo {
 	/**
 	 * Clicks on a check box with a certain index.
 	 *
-	 * @param index the index of the check box to be clicked
+	 * @param index the index of the check box to be clicked. 0 if only one is available
 	 *
 	 */
 	
@@ -653,7 +694,7 @@ public class Solo implements ISolo {
 	/**
 	 * Clicks on an edit text with a certain index.
 	 *
-	 * @param index the index of the edit text to be clicked
+	 * @param index the index of the edit text to be clicked. 0 if only one is available
 	 *
 	 */
 	
@@ -667,6 +708,7 @@ public class Solo implements ISolo {
 	 * 
 	 * @param line the line that should be clicked
 	 * @return an array list of the text views located in the list line
+	 *
 	 */
 
 	public ArrayList<TextView> clickInList(int line) {
@@ -678,8 +720,9 @@ public class Solo implements ISolo {
 	 * return the text views that the list line is showing. 
 	 * 
 	 * @param line the line that should be clicked
-	 * @param listIndex the index of the list. E.g. Index 1 if two lists are available
+	 * @param listIndex the index of the list. 1 if two lists are available
 	 * @return an array list of the text views located in the list line
+	 *
 	 */
 	
 	public ArrayList<TextView> clickInList(int line, int listIndex) {
@@ -769,7 +812,7 @@ public class Solo implements ISolo {
 	/**
 	 * Enters text into an EditText or a NoteField with a certain index.
 	 *
-	 * @param index the index of the text field. Index 0 if only one available.
+	 * @param index the index of the text field. 0 if only one is available
 	 * @param text the text string that is to be entered into the text field
 	 *
 	 */
@@ -781,7 +824,7 @@ public class Solo implements ISolo {
 	/**
 	 * Clicks on an image with a certain index.
 	 *
-	 * @param index the index of the image to be clicked
+	 * @param index the index of the image to be clicked. 0 if only one is available
 	 *
 	 */
 	
@@ -805,7 +848,8 @@ public class Solo implements ISolo {
 	/**
 	 * Returns an EditText with a certain index.
 	 *
-	 * @return the EditText with a specified index
+	 * @param index the index of the edit text. 0 if only one is available
+	 * @return the EditText with a specified index or null if index is invalid
 	 *
 	 */
 	
@@ -817,8 +861,8 @@ public class Solo implements ISolo {
 	/**
 	 * Returns a button with a certain index.
 	 *
-	 * @param index the index of the button
-	 * @return the button with the specific index
+	 * @param index the index of the button. 0 if only one is available
+	 * @return the button with the specific index or null if index is invalid
 	 *
 	 */
 	
@@ -828,11 +872,48 @@ public class Solo implements ISolo {
 	}
 	
 	/**
+	 * Returns a text view with a certain index.
+	 *
+	 * @param index the index of the text view. 0 if only one is available
+	 * @return the text view with the specific index or null if index is invalid
+	 *
+	 */
+	
+	public TextView getText(int index) {
+		return viewFetcher.getText(index);
+	}
+	
+	/**
+	 * Returns an image view with a certain index.
+	 *
+	 * @param index the index of the imave view. 0 if only one is available
+	 * @return the image view with the specific index or null if index is invalid
+	 *
+	 */
+	
+	public ImageView getImage(int index) {
+		return viewFetcher.getImage(index);
+	}
+	
+	/**
+	 * Returns an image button with a certain index.
+	 *
+	 * @param index the index of the image button. 0 if only one is available
+	 * @return the image button with the specific index or null if index is invalid
+	 *
+	 */
+	
+	public ImageButton getImageButton(int index) {
+		return viewFetcher.getImageButton(index);
+	}
+	
+	
+	/**
 	 * Returns the number of buttons located in the current
 	 * activity.
 	 *
 	 * @return the number of buttons in the current activity
-	 * @deprecated legacy method that is not needed anymore
+	 * @deprecated legacy method that is outdated
 	 *
 	 */
 	
@@ -994,8 +1075,9 @@ public class Solo implements ISolo {
 	/**
 	 * Checks if a radio button with a given index is checked.
 	 * 
-	 * @param index of the radio button to check
+	 * @param index of the radio button to check. 0 if only one is available
 	 * @return true if radio button is checked and false if it is not checked
+	 * 
 	 */
 	
 	public boolean isRadioButtonChecked(int index)
@@ -1006,8 +1088,9 @@ public class Solo implements ISolo {
 	/**
 	 * Checks if a check box with a given index is checked.
 	 * 
-	 * @param index of the check box to check
+	 * @param index of the check box to check. 0 if only one is available
 	 * @return true if check box is checked and false if it is not checked
+	 * 
 	 */
 	
 	public boolean isCheckBoxChecked(int index)
@@ -1030,7 +1113,9 @@ public class Solo implements ISolo {
 	
 	/**
 	 * Returns to the given Activity.
+	 *
 	 * @param name the name of the Activity to be returned to e.g. "MyActivity"
+	 * 
 	 */
 	
 	public void goBackToActivity(String name)
@@ -1040,14 +1125,29 @@ public class Solo implements ISolo {
 	
 	/**
 	 * Waits for the given Activity.
+	 *
 	 * @param name the name of the Activity to wait for e.g. "MyActivity"
 	 * @param timeout the amount of time in milliseconds to wait
 	 * @return true if Activity appears before the timeout and false if it does not
+	 * 
 	 */
 	
 	public boolean waitForActivity(String name, int timeout)
 	{
 		return activitiyUtils.waitForActivity(name, timeout);
+	}
+	
+	/**
+	 * Returns a localized string.
+	 * 
+	 * @param resId the resource ID of the view
+	 * @return the localized string
+	 *
+	 */
+	
+	public String getString(int resId)
+	{
+		return activitiyUtils.getString(resId);
 	}
 	
 
