@@ -1,32 +1,51 @@
 package com.jayway.android.robotium.common;
 
+import java.util.ArrayList;
+
 import net.sf.cglib.proxy.Enhancer;
 
 public class TypeUtility {
-	
-	public static Class<?> getClassName(String name) throws ClassNotFoundException
-	{
-		if (name.equals("byte")) return byte.class;
-		if (name.equals("short")) return short.class;
-		if (name.equals("int")) return int.class;
-		if (name.equals("long")) return long.class;
-		if (name.equals("char")) return char.class;
-		if (name.equals("float")) return float.class;
-		if (name.equals("double")) return double.class;
-		if (name.equals("boolean")) return boolean.class;
-		if (name.equals("void")) return void.class;
+
+	public static Class<?> getClassName(String name)
+			throws ClassNotFoundException {
+		if (name.equals("byte"))
+			return byte.class;
+		if (name.equals("short"))
+			return short.class;
+		if (name.equals("int"))
+			return int.class;
+		if (name.equals("long"))
+			return long.class;
+		if (name.equals("char"))
+			return char.class;
+		if (name.equals("float"))
+			return float.class;
+		if (name.equals("double"))
+			return double.class;
+		if (name.equals("boolean"))
+			return boolean.class;
+		if (name.equals("void"))
+			return void.class;
 		
 		return Class.forName(name);
 	}
 
-	public static String getStringValue(Class<?> type, Object obj) {
+	public static boolean isCollectionType(Class<?> classType) {
+
+		if (classType.equals(ArrayList.class)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static String getPrimitiveStringValue(Class<?> type, Object obj) {
 		if (obj == null) {
 			return "null";
 		}
 
 		String fullQualifiedClassName = getClassName(type);
 
-		if ( fullQualifiedClassName.equals(String.class.getName())
+		if (fullQualifiedClassName.equals(String.class.getName())
 				|| fullQualifiedClassName.equals(byte.class.getName())
 				|| fullQualifiedClassName.equals(int.class.getName())
 				|| fullQualifiedClassName.equals(short.class.getName())
@@ -38,16 +57,14 @@ public class TypeUtility {
 			return obj.toString();
 		} else {
 			throw new UnsupportedOperationException(
-			" TODO: the type of object is not primitive, ");
-			//return "other object";
+					"The type of object is not primitive, ");
 		}
 	}
-	
-	
+
 	public static String getClassName(Class<?> classType) {
-		if(Enhancer.isEnhanced(classType)) {
+		if (classType.getName().contains("$$")) {
 			String[] splName = classType.getName().split("[$$]");
-			if(splName.length > 0) {
+			if (splName.length > 0) {
 				return splName[0];
 			}
 		}
@@ -58,7 +75,7 @@ public class TypeUtility {
 
 		if (typeName.equals(String.class.getName())) {
 			return objectValue.toString();
-	    } else if (typeName.equals(byte.class.getName())) {
+		} else if (typeName.equals(byte.class.getName())) {
 			return Byte.parseByte(objectValue);
 		} else if (typeName.equals(int.class.getName())) {
 			return Integer.parseInt(objectValue);

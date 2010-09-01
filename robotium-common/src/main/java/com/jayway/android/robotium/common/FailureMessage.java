@@ -11,6 +11,10 @@ public class FailureMessage extends AbstractMessage {
 		this.failureMessage = message;
 	}
 	
+	public String getMessage(){
+		return failureMessage;
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override

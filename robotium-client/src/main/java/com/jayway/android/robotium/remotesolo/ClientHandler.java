@@ -1,5 +1,6 @@
 package com.jayway.android.robotium.remotesolo;
 
+import java.awt.Container;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +50,7 @@ public class ClientHandler extends SimpleChannelHandler {
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 		
 		if (msgContainer != null) {
-			// msgContainer.addMessage(message)
+		    
 			String messageString = (String) e.getMessage();
 			Message message = null;
 			try {
@@ -63,7 +64,7 @@ public class ClientHandler extends SimpleChannelHandler {
 
 			if (message instanceof SuccessMessage) {
 				System.out.println("Server is happy");
-
+				msgContainer.addMessage(message);
 			} else if (message instanceof TargetActivityRequestMessage) {
 				// server requested a message about Instrumentation class
 				Class activityClass = msgContainer.getDeviceClient()
@@ -72,7 +73,8 @@ public class ClientHandler extends SimpleChannelHandler {
 						MessageFactory.createTargetActivityMessage(
 								activityClass).toString()
 								+ "\r\n");
-				System.out.println("Activity class sent to server");
+			} else if (message != null){
+				msgContainer.addMessage(message);
 			}
 
 		} else {

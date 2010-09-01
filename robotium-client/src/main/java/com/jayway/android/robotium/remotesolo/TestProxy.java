@@ -90,14 +90,10 @@ public class TestProxy {
 //		ListView lv = Whitebox.newInstance(ListView.class);
 //		ListView proxobj = (ListView) ProxyMessageContainer.createProxy(lv);
 //		proxobj.findFocus();
-		ProxyMessageSender pmc = new ProxyMessageSender();
-		Solo solo = (Solo) pmc.createProxy(Solo.class);
-		try {
-			Whitebox.invokeMethod(solo, "goBack");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		ArrayList<String> test = new ArrayList<String>();
+		System.out.println(void.class.isPrimitive());
+		
 	}
 	
 

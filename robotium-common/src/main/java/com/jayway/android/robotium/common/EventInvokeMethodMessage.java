@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class EventMessage extends AbstractMessage {
+public class EventInvokeMethodMessage extends AbstractMessage {
 	
 	protected Class<?> targetObjectClass;
 	protected String targetObjectId;
@@ -13,10 +13,10 @@ public class EventMessage extends AbstractMessage {
 	protected Class<?>[] parameterTypes;
 	protected Object[] parameters;
 	
-	public EventMessage(Class<?> targetObjectClass, String targetObjectId, 
+	public EventInvokeMethodMessage(Class<?> targetObjectClass, String targetObjectId, 
 			Method methodReceived, Class<?>[] parameterTypes, Object... parameters) {
 		// declares the event type is from client
-		this.messageHeader = Message.HEADER_CLIENT_EVENT;
+		this.messageHeader = Message.HEADER_INVOKE_METHOD_EVENT;
 		this.targetObjectClass = targetObjectClass;
 		this.targetObjectId = targetObjectId;
 		if(parameterTypes.length != parameters.length) {
@@ -59,7 +59,7 @@ public class EventMessage extends AbstractMessage {
 		JSONArray params = new JSONArray();
 		for(int i=0; i < parameterTypes.length; i++) {
 			paramTypes.add(TypeUtility.getClassName(parameterTypes[i]));
-			params.add(TypeUtility.getStringValue(parameterTypes[i], parameters[i]));
+			params.add(TypeUtility.getPrimitiveStringValue(parameterTypes[i], parameters[i]));
 		}
 		jsonObj.put(Message.JSON_ATTR_PARAMETER_TYPES, paramTypes);
 		jsonObj.put(Message.JSON_ATTR_PARAMETERS, params);

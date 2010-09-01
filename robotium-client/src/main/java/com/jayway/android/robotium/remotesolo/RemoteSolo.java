@@ -115,9 +115,19 @@ public class RemoteSolo implements ISolo {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<TextView> clickInList(int line) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		ArrayList<TextView> textViews = null;
+		try {
+			 textViews = (ArrayList<TextView>) devices.invokeMethod("clickInList", 
+					 new Class<?>[] { int.class },
+					 new Object[] { line });
+			 return textViews;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return textViews;
+		//TODO:
 	}
 
 	public ArrayList<TextView> clickInList(int line, int listIndex) {

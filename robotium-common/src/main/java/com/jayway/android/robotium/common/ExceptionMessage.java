@@ -22,6 +22,14 @@ public class ExceptionMessage extends AbstractMessage {
 		this.exceptionMessage = message;
 	}
 	
+	public String getExceptionName(){
+		return exceptionClass.getName();
+	}
+	
+	public String getExceptionMessage() {
+		return exceptionMessage;
+	}
+	
 	
 	
 	@SuppressWarnings("unchecked")

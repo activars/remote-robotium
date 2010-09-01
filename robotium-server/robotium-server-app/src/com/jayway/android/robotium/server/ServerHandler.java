@@ -1,8 +1,19 @@
 package com.jayway.android.robotium.server;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,10 +34,13 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 
-import com.jayway.android.robotium.common.EventMessage;
+import com.jayway.android.robotium.common.EventInvokeMethodMessage;
+import com.jayway.android.robotium.common.EventReturnValueMessage;
 import com.jayway.android.robotium.common.Message;
 import com.jayway.android.robotium.common.MessageFactory;
 import com.jayway.android.robotium.common.TargetActivityMessage;
+import com.jayway.android.robotium.common.TypeUtility;
+import com.jayway.android.robotium.common.UnsupportedMessage;
 import com.jayway.android.robotium.solo.ISolo;
 import com.jayway.android.robotium.solo.Solo;
 
@@ -39,6 +53,13 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 	private ISolo mSolo;
 	private Instrumentation mInstrumentation;
 	private Activity mActivity;
+	private static Map<String, Object> referencedObjects;
+	
+	public ServerHandler(){
+		super();
+		// stores weak reference of an object
+		referencedObjects = Collections.synchronizedMap(new WeakHashMap());
+	}
 	
 	public void setInstrumentation(Instrumentation instrumentation) {
 		mInstrumentation = instrumentation;
@@ -93,21 +114,75 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 			responseMsg.setMessageId(mMessage.getMessageId());
 			e.getChannel().write(responseMsg.toString() + "\r\n");
 		
-		} else if (mMessage instanceof EventMessage) {
+		} else if (mMessage instanceof EventInvokeMethodMessage) {
 			// a event message contains object and method was invoked
-			EventMessage eventMsg = (EventMessage) mMessage;
-			Class<?> returnType = eventMsg.getMethodReceived().getReturnType();
+			EventInvokeMethodMessage eventMsg = (EventInvokeMethodMessage) mMessage;
+			Method receivedMethod = eventMsg.getMethodReceived();
+			Class<?> returnType = receivedMethod.getReturnType();
+			// check if this has a List Collection interface and 
+			Class<?>[] collectionInterfaces = returnType.getInterfaces();
+			boolean hasListInterface = false;
+			boolean hasCollectionInterface = false;
+			for(Class<?> c : collectionInterfaces) {
+				if(c.getName().equals(List.class.getName())) {
+					hasListInterface = true;
+				} else if (c.getName().equals(Collection.class.getName())) {
+					hasCollectionInterface = true;
+				}
+				if (hasListInterface && hasCollectionInterface) break;
+			}
 			if(eventMsg.getTargetObjectClass().getName().equals(Solo.class.getName())) {
 				try {
-					Object returnValue = eventMsg.getMethodReceived().invoke(mSolo, eventMsg.getParameters());
+					 
+					Object returnValue = receivedMethod.invoke(mSolo, eventMsg.getParameters());
 					if(returnType.equals(void.class)) {
-						//TODO: send success 
+						// send success 
 						Message responseMsg = MessageFactory.createSuccessMessage();
 						responseMsg.setMessageId(mMessage.getMessageId());
 						e.getChannel().write(responseMsg.toString() + "\r\n");
 					} else {
-						//TODO: get object reference
-						//      
+						// get object reference
+						if(returnType.isPrimitive() || (!returnType.isPrimitive() && !hasListInterface
+								&& !hasCollectionInterface)) {
+							
+							// construct return value message, copy the original message ID
+							// and write to the client channel
+							Message responseMsg = new EventReturnValueMessage(returnType, void.class, new Object[]{returnValue});
+							responseMsg.setMessageId(mMessage.getMessageId());
+							e.getChannel().write(responseMsg.toString() + "\r\n");
+						
+						} else if (hasListInterface) {
+							// if the top root is list, then cast it as a list
+							// get the first element in the list to find out the class type
+							Object element = ((List<?>) returnValue).get(0);
+							Class<?> innerClassType = element.getClass();
+							// if the inner generic class is not primitive, we have to constructs an object reference
+							// and store it in the WeakHashMap
+							Message responseMsg;
+							if(!innerClassType.isPrimitive()) {
+								List<String> shouldReturnValue = new ArrayList<String>();
+								String key;
+								for(Object ele : (List<?>) returnValue) {
+									// use UUID as the object ID
+									key = UUID.randomUUID().toString();
+									shouldReturnValue.add(key);
+									// store the object in WeakHashMap for later use
+									referencedObjects.put(key, ele);
+								}
+								responseMsg = new EventReturnValueMessage(returnType, innerClassType, shouldReturnValue.toArray());
+							} else {
+								responseMsg = new EventReturnValueMessage(returnType, innerClassType, ((List<?>) returnValue).toArray());
+							}
+							
+							responseMsg.setMessageId(mMessage.getMessageId());
+							e.getChannel().write(responseMsg.toString() + "\r\n");
+						} else {
+						
+							// response an unsupported message
+							Message responseMsg = new UnsupportedMessage("Returned value only can be List, primitives and other non-collection objects.");
+							responseMsg.setMessageId(mMessage.getMessageId());
+							e.getChannel().write(responseMsg.toString() + "\r\n");
+						}
 					}
 					
 				} catch (IllegalArgumentException e1) {
@@ -117,6 +192,12 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 				} catch (InvocationTargetException e1) {
 					e1.printStackTrace();
 				}
+			} else {
+				// the event is calling on other object
+				// server should have a weak reference to the object that is referenced.
+				// TODO: event is calling on other object
+				// use UUID from message to find the object and cast it to the type.
+				Log.d(TAG, "Calling on other object and need to look up in the WeakHashMap");
 			}
 			
 		}

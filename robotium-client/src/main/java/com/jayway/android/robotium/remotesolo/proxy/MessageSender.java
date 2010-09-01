@@ -5,6 +5,9 @@ import com.jayway.android.robotium.remotesolo.DeviceClient;
 
 public interface MessageSender {
 	
+	
+	public void addMessage(Message message);
+	
 	public void setDeviceClient(DeviceClient device);
 	
 	public DeviceClient getDeviceClient();

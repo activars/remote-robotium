@@ -23,13 +23,15 @@ import java.util.UUID;
  * - TARGET_ACTIVITY_CLASS
  * ActivityClass: class name of the class(should include package.ClassName)
  * 
- * - CLIENT_EVENT and SERVER_EVENT 
+ * - EVENT_INVOKE_METHOD and EVENT_RETURN_VALUE 
  *   (contains more complex messages structure)
  * 
  * */
 public interface Message {
 	/** Client usually constructs message as an event as message header */
-	public final static String HEADER_CLIENT_EVENT = "CLIENT_EVENT";
+	public final static String HEADER_INVOKE_METHOD_EVENT = "EVENT_INVOKE_METHOD";
+	
+	public final static String HEADER_RETURN_VALUE_EVENT = "EVENT_RETURN_VALUE";
 	
 	/** Server need to send responses: success, failure  or exception */
 	/** Success: doesn't have any more messages */
@@ -38,10 +40,10 @@ public interface Message {
 	/** Failure: */
 	public final static String HEADER_RESPONSE_FAILURE = "RESPONSE_FAILURE";
 	
+	public final static String HEADER_RESPONSE_UNSUPPORTED_OPERATION = "RESPONSE_UNSUPPORTED_OPERATION";
+	
 	/** Exception: server end received exception. **/
 	public final static String HEADER_RESPONSE_EXCEPTION = "RESPONSE_EXCEPTION";
-	
-	public final static String HEADER_SERVER_EVENT = "SERVER_EVENT";
 	
 	public final static String HEADER_REQUEST_TARGET_ACTIVITY_CLASS = "REQUEST_TARGET_ACTIVITY_CLASS";
 	
@@ -59,6 +61,12 @@ public interface Message {
 	public final static String JSON_ATTR_METHOD_RECEIVED = "MethodReceived";
 	public final static String JSON_ATTR_PARAMETER_TYPES = "ParameterTypes";
 	public final static String JSON_ATTR_PARAMETERS = "Parameters";
+	public final static String JSON_ATTR_CLASS_TYPE = "ClassType";
+	public final static String JSON_ATTR_IS_PRIMITIVE = "IsPrimitive";
+	public final static String JSON_ATTR_IS_INNER_PRIMITIVE = "IsPrimitive";
+	public final static String JSON_ATTR_INNER_CLASS_TYPE = "InnerClassType";
+	public final static String JSON_ATTR_IS_COLLECTION = "IsCollection";
+	public final static String JSON_ATTR_RETURN_VALUE = "ReturnValue";
 	
 	
 	
