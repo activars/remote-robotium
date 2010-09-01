@@ -53,14 +53,14 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 	private ISolo mSolo;
 	private Instrumentation mInstrumentation;
 	private Activity mActivity;
-	private static Map<String, Object> referencedObjects;
-	
-	public ServerHandler(){
+	private Map<String, Object> referencedObjects;
+
+	public ServerHandler() {
 		super();
 		// stores weak reference of an object
 		referencedObjects = Collections.synchronizedMap(new WeakHashMap());
 	}
-	
+
 	public void setInstrumentation(Instrumentation instrumentation) {
 		mInstrumentation = instrumentation;
 	}
@@ -78,8 +78,10 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e)
 			throws Exception {
 		// first connection send out request for instrumentation class
-		e.getChannel().write(MessageFactory.createTargetActivityRequestMessage().toString() + "\r\n");
-		
+		e.getChannel().write(
+				MessageFactory.createTargetActivityRequestMessage().toString()
+						+ "\r\n");
+
 	}
 
 	@Override
@@ -90,101 +92,124 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 		String response = "";
 		Message mMessage = null;
 		try {
-				mMessage =  MessageFactory.parseMessageString(request);
+			mMessage = MessageFactory.parseMessageString(request);
 		} catch (ClassNotFoundException e1) {
 			e1.printStackTrace();
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		
-		if( mMessage instanceof TargetActivityMessage) {
+
+		if (mMessage instanceof TargetActivityMessage) {
 			// the message contain Instrumentation information for the Activity
-			String activityClassName = ((TargetActivityMessage) mMessage).getTargetClassName();
-			
+			String activityClassName = ((TargetActivityMessage) mMessage)
+					.getTargetClassName();
+
 			Intent intent = new Intent(Intent.ACTION_MAIN);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			intent.setClassName(mInstrumentation.getTargetContext()
 					.getPackageName(), activityClassName);
 			mActivity = mInstrumentation.startActivitySync(intent);
-			// initialize the solo tool 
+			// initialize the solo tool
 			mSolo = new Solo(mInstrumentation, mActivity);
-			
+
 			// create response message and copy the old message uuid
 			Message responseMsg = MessageFactory.createSuccessMessage();
 			responseMsg.setMessageId(mMessage.getMessageId());
 			e.getChannel().write(responseMsg.toString() + "\r\n");
-		
+
 		} else if (mMessage instanceof EventInvokeMethodMessage) {
 			// a event message contains object and method was invoked
 			EventInvokeMethodMessage eventMsg = (EventInvokeMethodMessage) mMessage;
 			Method receivedMethod = eventMsg.getMethodReceived();
 			Class<?> returnType = receivedMethod.getReturnType();
-			// check if this has a List Collection interface and 
+			// check if this has a List Collection interface and
 			Class<?>[] collectionInterfaces = returnType.getInterfaces();
 			boolean hasListInterface = false;
 			boolean hasCollectionInterface = false;
-			for(Class<?> c : collectionInterfaces) {
-				if(c.getName().equals(List.class.getName())) {
+			for (Class<?> c : collectionInterfaces) {
+				if (c.getName().equals(List.class.getName())) {
 					hasListInterface = true;
 				} else if (c.getName().equals(Collection.class.getName())) {
 					hasCollectionInterface = true;
 				}
-				if (hasListInterface && hasCollectionInterface) break;
+				if (hasListInterface && hasCollectionInterface)
+					break;
 			}
-			if(eventMsg.getTargetObjectClass().getName().equals(Solo.class.getName())) {
+			if (eventMsg.getTargetObjectClass().getName().equals(
+					Solo.class.getName())) {
 				try {
-					 
-					Object returnValue = receivedMethod.invoke(mSolo, eventMsg.getParameters());
-					if(returnType.equals(void.class)) {
-						// send success 
-						Message responseMsg = MessageFactory.createSuccessMessage();
+
+					Object returnValue = receivedMethod.invoke(mSolo, eventMsg
+							.getParameters());
+					if (returnType.equals(void.class)) {
+						// send success
+						Message responseMsg = MessageFactory
+								.createSuccessMessage();
 						responseMsg.setMessageId(mMessage.getMessageId());
 						e.getChannel().write(responseMsg.toString() + "\r\n");
 					} else {
 						// get object reference
-						if(returnType.isPrimitive() || (!returnType.isPrimitive() && !hasListInterface
-								&& !hasCollectionInterface)) {
-							
-							// construct return value message, copy the original message ID
+						if (returnType.isPrimitive()
+								|| (!returnType.isPrimitive()
+										&& !hasListInterface && !hasCollectionInterface)) {
+
+							// construct return value message, copy the original
+							// message ID
 							// and write to the client channel
-							Message responseMsg = new EventReturnValueMessage(returnType, void.class, new Object[]{returnValue});
+							Message responseMsg = new EventReturnValueMessage(
+									returnType, void.class,
+									new Object[] { returnValue });
 							responseMsg.setMessageId(mMessage.getMessageId());
-							e.getChannel().write(responseMsg.toString() + "\r\n");
-						
+							e.getChannel().write(
+									responseMsg.toString() + "\r\n");
+
 						} else if (hasListInterface) {
 							// if the top root is list, then cast it as a list
-							// get the first element in the list to find out the class type
+							// get the first element in the list to find out the
+							// class type
 							Object element = ((List<?>) returnValue).get(0);
 							Class<?> innerClassType = element.getClass();
-							// if the inner generic class is not primitive, we have to constructs an object reference
+							// if the inner generic class is not primitive, we
+							// have to constructs an object reference
 							// and store it in the WeakHashMap
 							Message responseMsg;
-							if(!innerClassType.isPrimitive()) {
+							if (!innerClassType.isPrimitive()) {
 								List<String> shouldReturnValue = new ArrayList<String>();
 								String key;
-								for(Object ele : (List<?>) returnValue) {
+								for (Object ele : (List<?>) returnValue) {
 									// use UUID as the object ID
 									key = UUID.randomUUID().toString();
 									shouldReturnValue.add(key);
-									// store the object in WeakHashMap for later use
-									referencedObjects.put(key, ele);
+									// store the object in WeakHashMap for later
+									// use
+									synchronized(referencedObjects) {
+										referencedObjects.put(key, new WeakReference<Object>(ele));
+									}
 								}
-								responseMsg = new EventReturnValueMessage(returnType, innerClassType, shouldReturnValue.toArray());
+								Log.d(TAG, "should return " + innerClassType.getName() + " " + shouldReturnValue.size());
+								responseMsg = new EventReturnValueMessage(
+										returnType, innerClassType,
+										shouldReturnValue.toArray());
 							} else {
-								responseMsg = new EventReturnValueMessage(returnType, innerClassType, ((List<?>) returnValue).toArray());
+								responseMsg = new EventReturnValueMessage(
+										returnType, innerClassType,
+										((List<?>) returnValue).toArray());
 							}
-							
+
 							responseMsg.setMessageId(mMessage.getMessageId());
-							e.getChannel().write(responseMsg.toString() + "\r\n");
+							e.getChannel().write(
+									responseMsg.toString() + "\r\n");
 						} else {
-						
+
 							// response an unsupported message
-							Message responseMsg = new UnsupportedMessage("Returned value only can be List, primitives and other non-collection objects.");
+							Message responseMsg = new UnsupportedMessage(
+									"Returned value only can be List, primitives and other non-collection objects.");
 							responseMsg.setMessageId(mMessage.getMessageId());
-							e.getChannel().write(responseMsg.toString() + "\r\n");
+							e.getChannel().write(
+									responseMsg.toString() + "\r\n");
 						}
 					}
-					
+
 				} catch (IllegalArgumentException e1) {
 					e1.printStackTrace();
 				} catch (IllegalAccessException e1) {
@@ -194,17 +219,21 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 				}
 			} else {
 				// the event is calling on other object
-				// server should have a weak reference to the object that is referenced.
+				// server should have a weak reference to the object that is
+				// referenced.
 				// TODO: event is calling on other object
-				// use UUID from message to find the object and cast it to the type.
-				Log.d(TAG, "Calling on other object and need to look up in the WeakHashMap");
+				// use UUID from message to find the object and cast it to the
+				// type.
+				Log
+						.d(TAG,
+								"Calling on other object and need to look up in the WeakHashMap");
 			}
-			
+
 		}
-			
-		// never close for now 
+
+		// never close for now
 		boolean close = false;
-		
+
 		// We do not need to write a ChannelBuffer here.
 		// We know the encoder inserted at ServerPipelineFactory will do the
 		// conversion.
@@ -219,10 +248,10 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-		
+
 		logger.log(Level.WARNING, "Unexpected exception from downstream.", e
 				.getCause());
 		e.getChannel().close();
 	}
-	
+
 }

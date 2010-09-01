@@ -29,6 +29,7 @@ import com.jayway.android.robotium.solo.Solo;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ListView;
+import android.widget.TextView;
 
 
 
@@ -88,11 +89,15 @@ public class TestProxy {
 //		}
 		
 //		ListView lv = Whitebox.newInstance(ListView.class);
-//		ListView proxobj = (ListView) ProxyMessageContainer.createProxy(lv);
+		ProxyMessageSender sd = new ProxyMessageSender();
+		TextView mt = (TextView) sd.createProxy(TextView.class);
+		System.out.println(mt.getClass().getName());
+		ArrayList<TextView> tvs = new ArrayList<TextView>();
+		tvs.add(mt);
+	//	tvs.get(0).cancelLongPress();
+		((TextView)mt).cancelLongPress();
 //		proxobj.findFocus();
 		
-		ArrayList<String> test = new ArrayList<String>();
-		System.out.println(void.class.isPrimitive());
 		
 	}
 	

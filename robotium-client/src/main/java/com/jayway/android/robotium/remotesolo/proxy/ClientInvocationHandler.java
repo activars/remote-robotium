@@ -1,6 +1,11 @@
 package com.jayway.android.robotium.remotesolo.proxy;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,15 +24,25 @@ import com.jayway.android.robotium.solo.Solo;
 public class ClientInvocationHandler implements
 		java.lang.reflect.InvocationHandler {
 
-	private ConcurrentHashMap<String, Message> receivedMessages;
-	private ConcurrentHashMap<Object, String> proxyObjects;
+	private MessageSender messageSender;
+	private static Map<String, Message> receivedMessages;
+	private static Map<String, String> proxyObjectsID;
+	private static Map<String, WeakReference> proxyObjects;
 	private DeviceClient device;
 	private static final int TIMEOUT = 10000;
 	private static final int SLEEP_TIME = 500;
 
 	public ClientInvocationHandler() {
-		receivedMessages = new ConcurrentHashMap<String, Message>();
-		proxyObjects = new ConcurrentHashMap<Object, String>();
+		receivedMessages = Collections
+				.synchronizedMap(new HashMap<String, Message>());
+		proxyObjectsID = Collections
+				.synchronizedMap(new HashMap<String, String>());
+		proxyObjects = Collections
+		.synchronizedMap(new WeakHashMap<String, WeakReference>());
+	}
+	
+	public void setMessageSender(MessageSender sender) {
+		messageSender = sender;
 	}
 
 	public void setDeviceClient(DeviceClient device) {
@@ -48,12 +63,14 @@ public class ClientInvocationHandler implements
 			} else {
 				// the calling object is not a Proxy for solo but maybe a remote
 				// obj
-				if (proxyObjects.contains(proxy))
-					message = MessageFactory.createEventMessage(proxy
-							.getClass(), proxyObjects.get(proxy), method,
-							method.getParameterTypes(), args);
-				else
-					System.err.println("Could not find the proxy object!");
+				synchronized (proxyObjects) {
+					if (proxyObjects.containsKey(proxy.getClass().getName()))
+						message = MessageFactory.createEventMessage(proxy
+								.getClass(), proxyObjectsID.get(proxy.getClass().getName()), method,
+								method.getParameterTypes(), args);
+					else
+						System.err.println("Could not find the proxy object!");
+				}
 			}
 
 			device.sendMessage(message.toString());
@@ -76,9 +93,12 @@ public class ClientInvocationHandler implements
 				removeMessage(message);
 				return void.class.newInstance();
 			}
-
-			Message msgFromServer = receivedMessages.get(message.getMessageId()
+			
+			Message msgFromServer;
+			synchronized (receivedMessages) {
+				msgFromServer = receivedMessages.get(message.getMessageId()
 					.toString());
+			}
 
 			if (msgFromServer instanceof FailureMessage) {
 				removeMessage(message);
@@ -104,13 +124,18 @@ public class ClientInvocationHandler implements
 						.getInnerClassType().getName().equals(
 								void.class.getName());
 
-				if (returnValueMsg.isPrimitive() ) {
+				if (returnValueMsg.isPrimitive() && isInnerClassVoidType) {
 					// primitive message's innerClass type is void
 					removeMessage(message);
-					return method.getReturnType().cast(
-							returnValueMsg.getReturnValue()[0]);
+					System.out
+							.println(returnValueMsg.getClassType().toString());
 
-				} else if (returnValueMsg.isCollection()) {
+					System.out.println(returnValueMsg.getReturnValue()[0]
+							.toString());
+					return returnValueMsg.getReturnValue()[0];
+
+				} else if (returnValueMsg.isCollection()
+						&& !isInnerClassVoidType) {
 					// then must be List collection for now
 					// as other collection types are not supported yet
 					List returnVal = (List) returnValueMsg.getClassType()
@@ -121,10 +146,16 @@ public class ClientInvocationHandler implements
 							// class in collection are not primitives
 							// we need to construct an object proxy for the
 							// object
-							shouldAdd = ProxyMessageSender
+							shouldAdd = ((ProxyMessageSender)messageSender)
 									.createProxy(returnValueMsg
 											.getInnerClassType());
-							proxyObjects.put(shouldAdd, obj.toString());
+							
+							System.out.println("proxy created for: " + returnValueMsg
+									.getInnerClassType().getName());
+							synchronized(proxyObjects) {
+								proxyObjects.put(shouldAdd.getClass().getName(), new WeakReference(obj));
+								proxyObjectsID.put(shouldAdd.getClass().getName(), obj.toString());
+							}
 						} else {
 							// collection of primitive, so just add to return
 							// list
@@ -136,29 +167,35 @@ public class ClientInvocationHandler implements
 
 					// returns the list
 					removeMessage(message);
-					return method.getReturnType().cast(returnVal);
+					return returnVal;
 				}
 
 			}
-
+			
 			removeMessage(message);
-			System.err.println("some other message were not catched!");
-
+			System.err.println("some other message were not catched!: " + message.toString());
 		}
+		System.err.println("some other message were not catched!: " + method.getName() + "/" + proxy.getClass().getName());
 		return null;
 		// throw new UnsupportedOperationException("Not Implemented yet");
 	}
 
 	public void removeMessage(Message message) {
-		receivedMessages.remove(message.getMessageId().toString());
+		synchronized (receivedMessages) {
+			receivedMessages.remove(message.getMessageId().toString());
+		}
 	}
 
 	public void addMessage(Message message) {
-		receivedMessages.put(message.getMessageId().toString(), message);
+		synchronized (receivedMessages) {
+			receivedMessages.put(message.getMessageId().toString(), message);
+		}
 	}
 
 	private boolean containsMessage(Message message) {
-		return receivedMessages.containsKey(message.getMessageId().toString());
+		synchronized (receivedMessages) {
+			return receivedMessages.containsKey(message.getMessageId().toString());
+		}
 	}
 
 	private boolean isSolo(Object obj) {

@@ -98,7 +98,7 @@ public class MessageFactory {
 			mMsg = new EventInvokeMethodMessage(expectClass, objectID, classMethod, paramTypes, params);
 
 		} else if (header.equals(Message.HEADER_RETURN_VALUE_EVENT)) {
-			System.out.println("HEADER_RETURN_VALUE_EVENT");
+			
 			// The type of message contains value returned from an invoked method
 			Class<?> rootType = TypeUtility.getClassName(jsonObj.get(Message.JSON_ATTR_CLASS_TYPE).toString());
 			Class<?> innerClassType = TypeUtility.getClassName(jsonObj.get(Message.JSON_ATTR_INNER_CLASS_TYPE).toString());
@@ -122,7 +122,6 @@ public class MessageFactory {
 			}
 			
 			mMsg = new EventReturnValueMessage(rootType, innerClassType, list.toArray());
-			System.out.println("return type:" + innerClassType.getName());
 		}
 		
 		// copy the message uuid from json to newly created message 

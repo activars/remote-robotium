@@ -127,7 +127,6 @@ public class RemoteSolo implements ISolo {
 			e.printStackTrace();
 		}
 		return textViews;
-		//TODO:
 	}
 
 	public ArrayList<TextView> clickInList(int line, int listIndex) {

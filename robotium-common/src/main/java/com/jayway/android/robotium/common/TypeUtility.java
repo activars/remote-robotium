@@ -67,7 +67,10 @@ public class TypeUtility {
 			if (splName.length > 0) {
 				return splName[0];
 			}
-		}
+		} else if (classType.equals(Boolean.class)) {
+			return boolean.class.getName();
+			//TODO: adding more primitive return type checking
+		} 
 		return classType.getName();
 	}
 

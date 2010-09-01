@@ -3,11 +3,11 @@ package com.jayway.android.robotium.common;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import android.util.Log;
+
 public class EventReturnValueMessage extends AbstractMessage {
 	
-	
-	
-	
+	private static final String TAG = "EventReturnValueMessage";
 	private boolean isPrimitive;
 	private boolean isCollection;
 	//the root type
@@ -31,7 +31,7 @@ public class EventReturnValueMessage extends AbstractMessage {
 		this.innerClassType = innerClassType;
 		this.isInnerPrimitive = innerClassType.isPrimitive();
 		// void if the returned value is not a collection, managed by MessageFactory
-		this.isCollection = innerClassType.equals(void.class);
+		this.isCollection = !innerClassType.equals(void.class);
 		this.returnValue = arguments;
 	}
 	
@@ -72,7 +72,7 @@ public class EventReturnValueMessage extends AbstractMessage {
 		// they will be a list of object references (i.e the key in the WeakHashMap)
 		JSONArray values = new JSONArray();
 		for(int i = 0; i < returnValue.length; i ++) {
-			System.out.println(returnValue[i].getClass().getName());
+			Log.d(TAG, returnValue[i].getClass().getName());
 			values.add(TypeUtility.getPrimitiveStringValue(returnValue[i].getClass(), returnValue[i]));
 		}
 		jsonObj.put(Message.JSON_ATTR_RETURN_VALUE, values);

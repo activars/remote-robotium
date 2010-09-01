@@ -1,7 +1,10 @@
 package com.jayway.android.robotium.remotesolo;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -60,7 +63,6 @@ class DeviceClientManager {
 	
 	void connectAll() {
 		
-		//TODO: Adding timing
 		Iterator<String> it = devices.keySet().iterator();
 		ExecutorService pool = Executors.newFixedThreadPool(devices.size());
 
@@ -94,18 +96,37 @@ class DeviceClientManager {
 		}
 	}
 	
-	Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments)  {
-		Iterator<String> it = devices.keySet().iterator();
+	Object invokeMethod(final String methodToExecute, final Class<?>[] argumentTypes, final Object... arguments)  {
+		final Iterator<String> it = devices.keySet().iterator();
+		ExecutorService pool = Executors.newFixedThreadPool(devices.size());
+		final Map<DeviceClient, Object> results = Collections.synchronizedMap(new HashMap<DeviceClient, Object>());
 		while (it.hasNext()) {
-			try {
-				return devices.get(it.next()).invokeMethod(methodToExecute, argumentTypes, arguments);
-			} catch (Throwable e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			final DeviceClient dc = devices.get(it.next());
+			pool.execute(new Runnable() {
+				public void run() {
+					try {
+						Object obj = dc.invokeMethod(methodToExecute, argumentTypes, arguments);
+						synchronized(results) {
+							results.put(dc, obj);
+						}
+					} catch (Throwable e) {
+						e.printStackTrace();
+					}	
+				}
+				
+			});
 		}
+		pool.shutdown();
+		try {
+			pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		} catch (InterruptedException e) {
+			 e.printStackTrace();
+		}
+		// comparing values, only for primitives
+		// collection check the collection size matches
+		return results.get(results.keySet().toArray()[0]);
 		
-		return null;
+	//	return null;
 	}
 
 	void disconnectAllDevices() {
