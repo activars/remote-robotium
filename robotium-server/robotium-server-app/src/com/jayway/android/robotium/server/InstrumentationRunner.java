@@ -67,6 +67,9 @@ public class InstrumentationRunner extends Instrumentation {
 		channelGroup.add(channel);
 		Log.d(TAG, "Server is now running");
 		
+		this.stopAllocCounting();
+		this.stopProfiling();
+		
 		start();
 	}
 	

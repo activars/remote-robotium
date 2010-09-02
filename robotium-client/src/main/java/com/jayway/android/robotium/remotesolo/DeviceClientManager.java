@@ -120,13 +120,12 @@ class DeviceClientManager {
 		try {
 			pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 		} catch (InterruptedException e) {
-			 e.printStackTrace();
+			 e.getCause().getMessage();
 		}
 		// comparing values, only for primitives
 		// collection check the collection size matches
 		return results.get(results.keySet().toArray()[0]);
-		
-	//	return null;
+		//TODO: comparing multiple results for consistency
 	}
 
 	void disconnectAllDevices() {

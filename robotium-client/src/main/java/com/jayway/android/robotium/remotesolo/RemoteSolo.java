@@ -54,6 +54,10 @@ public class RemoteSolo implements ISolo {
 	public void connect() {
 		devices.connectAll();
 	}
+	
+	public void disconnect() {
+		devices.disconnectAllDevices();
+	}
 
 	public void assertCurrentActivity(String message, String name) {
 		try {
@@ -175,7 +179,6 @@ public class RemoteSolo implements ISolo {
 		}
 	}
 
-	
 	public void clickLongOnView(View view) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not Implemented yet");
@@ -725,12 +728,87 @@ public class RemoteSolo implements ISolo {
 	}
 
 	public void finalize() throws Throwable {
-//		try {
-//			devices.invokeMethod("finalize", 
-//					new Class<?>[] {});
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		try {
+			devices.invokeMethod("finalize", 
+					new Class<?>[] {});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void clickLongOnText(String text, int match, boolean scroll) {
+		try {
+			devices.invokeMethod("clickLongOnText", 
+					new Class<?>[] {String.class, int.class, boolean.class},
+					new Object[] {text, match, scroll});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void clickOnMenuItem(String text, boolean subMenu) {
+		try {
+			devices.invokeMethod("clickOnMenuItem", 
+					new Class<?>[] {String.class, boolean.class},
+					new Object[] {text, subMenu});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void clickOnText(String text, int matches, boolean scroll) {
+		try {
+			devices.invokeMethod("clickOnText", 
+					new Class<?>[] {String.class, int.class, boolean.class},
+					new Object[] {text, matches, scroll});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public ImageView getImage(int index) {
+		try {
+			return (ImageView) devices.invokeMethod("getImage", 
+					new Class<?>[] { int.class }, 
+					new Object[] { index });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public ImageButton getImageButton(int index) {
+		try {
+			return (ImageButton) devices.invokeMethod("getImageButton", 
+					new Class<?>[] { int.class }, 
+					new Object[] { index });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String getString(int resId) {
+		try {
+			return (String) devices.invokeMethod("getString", 
+					new Class<?>[] { int.class }, 
+					new Object[] { resId });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public TextView getText(int index) {
+		try {
+			return (TextView) devices.invokeMethod("getText", 
+					new Class<?>[] { int.class }, 
+					new Object[] { index });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

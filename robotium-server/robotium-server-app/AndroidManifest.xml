@@ -17,4 +17,6 @@
 <uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
 <uses-permission android:name="android.permission.INTERNET"/>
 <instrumentation android:targetPackage="com.example.android.notepad" android:name="com.jayway.android.robotium.server.InstrumentationRunner"/>
+<uses-permission android:name="android.permission.INJECT_EVENTS"></uses-permission>
+
 </manifest>

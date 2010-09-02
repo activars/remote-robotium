@@ -1,9 +1,11 @@
-package com.jayway.android.robotium.common;
+package com.jayway.android.robotium.common.message;
 
 import java.lang.reflect.Method;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import com.jayway.android.robotium.common.util.TypeUtils;
 
 public class EventInvokeMethodMessage extends AbstractMessage {
 	
@@ -52,14 +54,14 @@ public class EventInvokeMethodMessage extends AbstractMessage {
 	@Override
 	public String toString() {
 		JSONObject jsonObj = getHeader();
-		jsonObj.put(Message.JSON_ATTR_TARGET_OBJECT_CLASS_NAME, TypeUtility.getClassName(targetObjectClass));
+		jsonObj.put(Message.JSON_ATTR_TARGET_OBJECT_CLASS_NAME, TypeUtils.getClassName(targetObjectClass));
 		jsonObj.put(Message.JSON_ATTR_TARGET_OBJECT_ID, targetObjectId);
 		jsonObj.put(Message.JSON_ATTR_METHOD_RECEIVED, methodReceived.getName());
 		JSONArray paramTypes = new JSONArray();
 		JSONArray params = new JSONArray();
 		for(int i=0; i < parameterTypes.length; i++) {
-			paramTypes.add(TypeUtility.getClassName(parameterTypes[i]));
-			params.add(TypeUtility.getPrimitiveStringValue(parameterTypes[i], parameters[i]));
+			paramTypes.add(TypeUtils.getClassName(parameterTypes[i]));
+			params.add(TypeUtils.getPrimitiveStringValue(parameterTypes[i], parameters[i]));
 		}
 		jsonObj.put(Message.JSON_ATTR_PARAMETER_TYPES, paramTypes);
 		jsonObj.put(Message.JSON_ATTR_PARAMETERS, params);

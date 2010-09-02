@@ -31,11 +31,19 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 
+
+/**
+ * Ported from Project Awaitility
+ * 
+ * @author johanhaleby
+ */
 public final class ProxyCreator {
-	
-	private ProxyCreator() {}
-	
-	public static Object create(Class<? extends Object> targetClass, InvocationHandler invocationHandler) {
+
+	private ProxyCreator() {
+	}
+
+	public static Object create(Class<? extends Object> targetClass,
+			InvocationHandler invocationHandler) {
 		Object proxy = null;
 		if (Modifier.isFinal(targetClass.getModifiers())) {
 			if (targetClassHasInterfaces(targetClass)) {
@@ -53,11 +61,13 @@ public final class ProxyCreator {
 		return proxy;
 	}
 
-	private static Object createCGLibProxy(Class<? extends Object> targetClass, final InvocationHandler invocationHandler) {
+	private static Object createCGLibProxy(Class<? extends Object> targetClass,
+			final InvocationHandler invocationHandler) {
 		Object proxy;
 		// Create CGLib Method interceptor
 		MethodInterceptor interceptor = new MethodInterceptor() {
-			public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+			public Object intercept(Object obj, Method method, Object[] args,
+					MethodProxy proxy) throws Throwable {
 				return invocationHandler.invoke(obj, method, args);
 			}
 		};
@@ -67,7 +77,8 @@ public final class ProxyCreator {
 		enhancer.setSuperclass(targetClass);
 		enhancer.setCallbackType(interceptor.getClass());
 		Class<?> proxiedClass = enhancer.createClass();
-		Enhancer.registerCallbacks(proxiedClass, new Callback[] { interceptor });
+		Enhancer
+				.registerCallbacks(proxiedClass, new Callback[] { interceptor });
 		/* To make the proxy creator work with Eclipse plugins */
 		enhancer.setClassLoader(ProxyCreator.class.getClassLoader());
 
@@ -77,23 +88,30 @@ public final class ProxyCreator {
 		return proxy;
 	}
 
-	private static Object createInterfaceProxy(Class<?> targetClass, InvocationHandler invocationHandler) {
-		return Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-				getInterfaceHierarchy(targetClass), invocationHandler);
+	private static Object createInterfaceProxy(Class<?> targetClass,
+			InvocationHandler invocationHandler) {
+		return Proxy.newProxyInstance(Thread.currentThread()
+				.getContextClassLoader(), getInterfaceHierarchy(targetClass),
+				invocationHandler);
 	}
 
-	private static boolean targetClassHasInterfaces(Class<? extends Object> targetClass) {
+	private static boolean targetClassHasInterfaces(
+			Class<? extends Object> targetClass) {
 		Class<?>[] interfaces = getInterfaceHierarchy(targetClass);
 		return interfaces != null && interfaces.length >= 1;
 	}
 
-	private static Class<?>[] getInterfaceHierarchy(Class<? extends Object> targetClass) {
+	private static Class<?>[] getInterfaceHierarchy(
+			Class<? extends Object> targetClass) {
 		if (targetClass == null || targetClass.equals(Object.class)) {
 			return new Class<?>[0];
 		}
 		Set<Class<?>> interfaces = new HashSet<Class<?>>();
-		interfaces.addAll(Arrays.asList(((Class<?>) targetClass).getInterfaces()));
-		interfaces.addAll(Arrays.asList(getInterfaceHierarchy(((Class<?>) targetClass).getSuperclass())));
+		interfaces.addAll(Arrays.asList(((Class<?>) targetClass)
+				.getInterfaces()));
+		interfaces.addAll(Arrays
+				.asList(getInterfaceHierarchy(((Class<?>) targetClass)
+						.getSuperclass())));
 		return interfaces.toArray(new Class<?>[interfaces.size()]);
 	}
 }

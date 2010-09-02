@@ -7,6 +7,6 @@
 	<classpathentry kind="lib" path="lib/netty-3.2.1.Final.jar"/>
 	<classpathentry kind="lib" path="lib/json_simple-1.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/robotium-solo"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/robotium-common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/robotium-common"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

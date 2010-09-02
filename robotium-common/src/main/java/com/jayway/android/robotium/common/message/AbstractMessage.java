@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.common;
+package com.jayway.android.robotium.common.message;
 
 import java.util.UUID;
 

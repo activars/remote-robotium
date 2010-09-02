@@ -1,23 +1,19 @@
 package com.jayway.android.robotium.remotesolo;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
+
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
-import org.objenesis.ObjenesisHelper;
-import org.objenesis.ObjenesisStd;
-import org.powermock.reflect.Whitebox;
 
-import com.jayway.android.robotium.solo.ISolo;
+import com.jayway.android.robotium.remotesolo.proxy.ClientInvocationHandler;
+import com.jayway.android.robotium.remotesolo.proxy.ProxyCreator;
 import com.jayway.android.robotium.solo.Solo;
-import com.jayway.maven.plugins.android.CommandExecutor;
-import com.jayway.maven.plugins.android.ExecutionException;
+
 
 public class DeviceClientImpl implements DeviceClient {
 	private int pcPort;
@@ -92,9 +88,6 @@ public class DeviceClientImpl implements DeviceClient {
 			bootstrap.releaseExternalResources();
 			return;
 		}
-		
-		// create proxy object for solo class
-		mSoloProxy = (Solo) ((DeviceClientBootstrap)bootstrap).createObjectProxy(Solo.class);
 	}
 
 	/**
@@ -116,12 +109,14 @@ public class DeviceClientImpl implements DeviceClient {
 	
 	public Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments) throws Throwable {
 
-		Method receivedMethod = ISolo.class.getMethod(methodToExecute, argumentTypes);
-		
-		return ((DeviceClientBootstrap)bootstrap).invokeProxy(mSoloProxy, receivedMethod, arguments);
+		// create Proxy object for solo class when needed
+		mSoloProxy = (Solo) ((DeviceClientBootstrap)bootstrap).createObjectProxy(Solo.class);
+		// the invoked method
+		Method receivedMethod = mSoloProxy.getClass().getMethod(methodToExecute, argumentTypes);
+		// invoke, should bubble up to the ClientInvocationHandler
+		return receivedMethod.invoke(mSoloProxy, arguments);
 	}
 
-	
 	/**
 	 * Close the connection
 	 */

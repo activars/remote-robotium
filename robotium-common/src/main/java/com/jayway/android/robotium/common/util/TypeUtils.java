@@ -1,10 +1,10 @@
-package com.jayway.android.robotium.common;
+package com.jayway.android.robotium.common.util;
 
 import java.util.ArrayList;
 
 import net.sf.cglib.proxy.Enhancer;
 
-public class TypeUtility {
+public class TypeUtils {
 
 	public static Class<?> getClassName(String name)
 			throws ClassNotFoundException {

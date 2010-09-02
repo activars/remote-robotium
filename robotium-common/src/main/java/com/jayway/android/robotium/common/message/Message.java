@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.common;
+package com.jayway.android.robotium.common.message;
 
 import java.util.UUID;
 
@@ -72,6 +72,7 @@ public interface Message {
 	
 	public Message setMessageId(UUID id);
 	
+	public String getMessageHeader();
 	
 	public UUID getMessageId();
 	

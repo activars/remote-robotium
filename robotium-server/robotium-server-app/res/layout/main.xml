@@ -3,8 +3,7 @@
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
 	android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android" android:background="@drawable/bg">
 	<TextView android:id="@+id/TextView01" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:padding="30dp"
-		android:text="Robotium Remote Service" android:textColor="#FFF" android:layout_gravity="center_vertical|center_horizontal|center"  android:gravity="center_vertical|center_horizontal"  android:textSize="20dp" android:shadowDy="2" android:shadowDx="2" android:shadowColor="#555">
+		android:layout_height="wrap_content" android:text="Robotium Remote Service" android:textColor="#FFF" android:layout_gravity="center_vertical|center_horizontal|center"  android:gravity="center_vertical|center_horizontal"  android:textSize="20dp" android:shadowDy="2" android:shadowDx="2" android:shadowColor="#555" android:padding="25dp">
 	</TextView>
 
 

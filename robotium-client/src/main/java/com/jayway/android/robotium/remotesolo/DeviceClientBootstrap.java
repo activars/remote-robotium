@@ -6,8 +6,8 @@ import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
-import com.jayway.android.robotium.remotesolo.proxy.MessageSender;
-import com.jayway.android.robotium.remotesolo.proxy.ProxyMessageSender;
+import com.jayway.android.robotium.remotesolo.proxy.ProxyManager;
+import com.jayway.android.robotium.remotesolo.proxy.ClientProxyManager;
 
 public class DeviceClientBootstrap extends ClientBootstrap {
 	
@@ -25,7 +25,7 @@ public class DeviceClientBootstrap extends ClientBootstrap {
 		return null;
 	}
 	
-	public void setMessageContainer(MessageSender msgContainer) {
+	public void setMessageContainer(ProxyManager msgContainer) {
 		
 		ChannelHandler handler = getChannelHandler();
 		
@@ -36,7 +36,7 @@ public class DeviceClientBootstrap extends ClientBootstrap {
 		}
 	}
 	
-	public MessageSender getMessageContainer() {
+	public ProxyManager getMessageContainer() {
 		ChannelHandler handler = getChannelHandler();
 		
 		if(handler != null && handler instanceof ClientHandler) {
@@ -47,18 +47,9 @@ public class DeviceClientBootstrap extends ClientBootstrap {
 	}
 	
 	public Object createObjectProxy(Class<?> targetClass) {
-		MessageSender container = getMessageContainer();
-		if(container != null && container instanceof ProxyMessageSender) {
-			return ((ProxyMessageSender)container).createProxy(targetClass);
-		} else {
-			throw new NullPointerException("Failed to create proxy for target class");
-		}
-	}
-	
-	public Object invokeProxy(Object proxy, Method method, Object[] args) throws Throwable {
-		MessageSender container = getMessageContainer();
-		if(container != null && container instanceof ProxyMessageSender) {
-			return ((ProxyMessageSender)container).invokeProxy(proxy, method, args);
+		ProxyManager container = getMessageContainer();
+		if(container != null && container instanceof ClientProxyManager) {
+			return ((ClientProxyManager)container).createProxy(targetClass);
 		} else {
 			throw new NullPointerException("Failed to create proxy for target class");
 		}

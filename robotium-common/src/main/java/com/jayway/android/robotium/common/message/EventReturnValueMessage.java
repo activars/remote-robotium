@@ -1,7 +1,9 @@
-package com.jayway.android.robotium.common;
+package com.jayway.android.robotium.common.message;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import com.jayway.android.robotium.common.util.TypeUtils;
 
 import android.util.Log;
 
@@ -63,16 +65,16 @@ public class EventReturnValueMessage extends AbstractMessage {
 	@Override
 	public String toString() {
 		JSONObject jsonObj = getHeader();
-		jsonObj.put(Message.JSON_ATTR_CLASS_TYPE, TypeUtility.getClassName(classType));
+		jsonObj.put(Message.JSON_ATTR_CLASS_TYPE, TypeUtils.getClassName(classType));
 		jsonObj.put(Message.JSON_ATTR_IS_PRIMITIVE, isPrimitive);
-		jsonObj.put(Message.JSON_ATTR_INNER_CLASS_TYPE, TypeUtility.getClassName(innerClassType));
+		jsonObj.put(Message.JSON_ATTR_INNER_CLASS_TYPE, TypeUtils.getClassName(innerClassType));
 		jsonObj.put(Message.JSON_ATTR_IS_COLLECTION, isCollection);
 		
 		// if the returned values are not collection of primitives,
 		// they will be a list of object references (i.e the key in the WeakHashMap)
 		JSONArray values = new JSONArray();
 		for(int i = 0; i < returnValue.length; i ++) {
-			values.add(TypeUtility.getPrimitiveStringValue(returnValue[i].getClass(), returnValue[i]));
+			values.add(TypeUtils.getPrimitiveStringValue(returnValue[i].getClass(), returnValue[i]));
 		}
 		jsonObj.put(Message.JSON_ATTR_RETURN_VALUE, values);
 		

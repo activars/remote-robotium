@@ -11,14 +11,14 @@ import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelHandler;
 
-import com.jayway.android.robotium.common.Message;
-import com.jayway.android.robotium.common.MessageFactory;
-import com.jayway.android.robotium.common.SuccessMessage;
-import com.jayway.android.robotium.common.TargetActivityRequestMessage;
-import com.jayway.android.robotium.remotesolo.proxy.MessageSender;
+import com.jayway.android.robotium.common.message.Message;
+import com.jayway.android.robotium.common.message.MessageFactory;
+import com.jayway.android.robotium.common.message.SuccessMessage;
+import com.jayway.android.robotium.common.message.TargetActivityRequestMessage;
+import com.jayway.android.robotium.remotesolo.proxy.ProxyManager;
 
 public class ClientHandler extends SimpleChannelHandler {
-	private MessageSender msgContainer;
+	private ProxyManager proxyManager;
 
 	private static final Logger logger = Logger.getLogger(ClientHandler.class
 			.getName());
@@ -28,12 +28,12 @@ public class ClientHandler extends SimpleChannelHandler {
 	 * 
 	 * @param container
 	 */
-	public void setMessageContainer(MessageSender container) {
-		this.msgContainer = container;
+	public void setMessageContainer(ProxyManager proxyManager) {
+		this.proxyManager = proxyManager;
 	}
 
-	public MessageSender getMessageContainer() {
-		return this.msgContainer;
+	public ProxyManager getMessageContainer() {
+		return this.proxyManager;
 	}
 
 	@Override
@@ -44,12 +44,12 @@ public class ClientHandler extends SimpleChannelHandler {
 		}
 
 		super.handleUpstream(ctx, e);
-	}
+ 	}
 
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 		
-		if (msgContainer != null) {
+		if (proxyManager != null) {
 		    
 			String messageString = (String) e.getMessage();
 			Message message = null;
@@ -63,17 +63,17 @@ public class ClientHandler extends SimpleChannelHandler {
 			
 
 			if (message instanceof SuccessMessage) {
-				msgContainer.addMessage(message);
+				proxyManager.addMessage(message);
 			} else if (message instanceof TargetActivityRequestMessage) {
 				// server requested a message about Instrumentation class
-				Class activityClass = msgContainer.getDeviceClient()
+				Class activityClass = proxyManager.getDeviceClient()
 						.getTargetClass();
 				e.getChannel().write(
 						MessageFactory.createTargetActivityMessage(
 								activityClass).toString()
 								+ "\r\n");
 			} else if (message != null){
-				msgContainer.addMessage(message);
+				proxyManager.addMessage(message);
 			}
 
 		} else {

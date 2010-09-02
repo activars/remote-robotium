@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.common;
+package com.jayway.android.robotium.common.message;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -9,6 +9,8 @@ import javax.naming.OperationNotSupportedException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+
+import com.jayway.android.robotium.common.util.TypeUtils;
 
 public class MessageFactory {
 
@@ -87,8 +89,8 @@ public class MessageFactory {
 			Class<?>[] paramTypes = new Class<?>[tempParamTypes.size()];
 			Object[] params = new Object[tempParamTypes.size()];
 			for(int i = 0; i < tempParamTypes.size(); i++ ) {
-				paramTypes[i] = TypeUtility.getClassName(tempParamTypes.get(i).toString());
-				params[i] = TypeUtility.getObject(tempParamTypes.get(i).toString(),
+				paramTypes[i] = TypeUtils.getClassName(tempParamTypes.get(i).toString());
+				params[i] = TypeUtils.getObject(tempParamTypes.get(i).toString(),
 										tempParams.get(i).toString());
 			}
 			String methodName = jsonObj.get(Message.JSON_ATTR_METHOD_RECEIVED).toString();
@@ -100,20 +102,20 @@ public class MessageFactory {
 		} else if (header.equals(Message.HEADER_RETURN_VALUE_EVENT)) {
 			
 			// The type of message contains value returned from an invoked method
-			Class<?> rootType = TypeUtility.getClassName(jsonObj.get(Message.JSON_ATTR_CLASS_TYPE).toString());
-			Class<?> innerClassType = TypeUtility.getClassName(jsonObj.get(Message.JSON_ATTR_INNER_CLASS_TYPE).toString());
+			Class<?> rootType = TypeUtils.getClassName(jsonObj.get(Message.JSON_ATTR_CLASS_TYPE).toString());
+			Class<?> innerClassType = TypeUtils.getClassName(jsonObj.get(Message.JSON_ATTR_INNER_CLASS_TYPE).toString());
 			boolean isInnerPrimitiveExcludeVoid = (innerClassType.isPrimitive() && !innerClassType.equals(void.class));
 			JSONArray tempParams = (JSONArray) jsonObj.get(Message.JSON_ATTR_RETURN_VALUE);
 			ArrayList list = new ArrayList();
 			
 			if(rootType.isPrimitive()) {
 				//primitive type only has one value
-				list.add(TypeUtility.getObject(rootType.getName(), tempParams.get(0).toString()));
+				list.add(TypeUtils.getObject(rootType.getName(), tempParams.get(0).toString()));
 			}else {
 				for(int i = 0 ; i< tempParams.size() ; i++) {
 					if(isInnerPrimitiveExcludeVoid) {
 						// the value represents the object value
-						list.add(TypeUtility.getObject(innerClassType.getName(), tempParams.get(i).toString()));
+						list.add(TypeUtils.getObject(innerClassType.getName(), tempParams.get(i).toString()));
 					}else {
 						// the value represents the remote object references(i.e. the UUID)
 						list.add(tempParams.get(i).toString());

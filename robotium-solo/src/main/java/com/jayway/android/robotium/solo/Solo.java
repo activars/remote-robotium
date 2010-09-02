@@ -1,8 +1,6 @@
 package com.jayway.android.robotium.solo;
 
 import java.util.ArrayList;
-
-
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.view.View;

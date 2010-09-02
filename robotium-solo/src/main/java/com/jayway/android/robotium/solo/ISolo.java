@@ -51,7 +51,8 @@ public interface ISolo {
 	/**
 	 * Clears the value of an edit text.
 	 * 
-	 * @param index the index of the edit text that should be cleared
+	 * @param index the index of the edit text that should be cleared. 0 if only one is available
+	 *
 	 */
 
 	public abstract void clearEditText(int index);
@@ -206,6 +207,7 @@ public interface ISolo {
 	 * Returns an ArrayList of all the opened/active activities.
 	 * 
 	 * @return ArrayList of all the opened activities
+	 *
 	 */
 
 	public abstract ArrayList<Activity> getAllOpenedActivities();
@@ -303,7 +305,7 @@ public interface ISolo {
 	public abstract void clickOnScreen(float x, float y);
 
 	/**
-	 * Long clicks a specific coordinate on the screen
+	 * Long clicks a specific coordinate on the screen.
 	 *
 	 * @param x the x coordinate
 	 * @param y the y coordinate
@@ -324,7 +326,7 @@ public interface ISolo {
 	/**
 	 * Clicks on an image button with a certain index.
 	 *
-	 * @param index the index of the image button to be clicked
+	 * @param index the index of the image button to be clicked. 0 if only one is available
 	 *
 	 */
 
@@ -342,9 +344,20 @@ public interface ISolo {
 	/**
 	 * Clicks on a menu item with a given text.
 	 * @param text the menu text that should be clicked on. Regular expressions are supported 
+	 *
 	 */
 
 	public abstract void clickOnMenuItem(String text);
+
+	/**
+	 * Clicks on a menu item with a given text.
+	 * 
+	 * @param text the menu text that should be clicked on. Regular expressions are supported 
+	 * @param subMenu true if the menu item could be located in a sub menu
+	 * 
+	 */
+
+	public abstract void clickOnMenuItem(String text, boolean subMenu);
 
 	/**
 	 * Presses a MenuItem with a certain index. Index 0 is the first item in the 
@@ -397,8 +410,7 @@ public interface ISolo {
 	public abstract void clickOnText(String text);
 
 	/**
-	 * This method is used to click on a specific text view displaying a certain
-	 * text.
+	 * Clicks on a specific view displaying a certain text. Will automatically scroll when needed.
 	 *
 	 * @param text the text that should be clicked on. Regular expressions are supported
 	 * @param match the match that should be clicked on 
@@ -408,7 +420,18 @@ public interface ISolo {
 	public abstract void clickOnText(String text, int match);
 
 	/**
-	 * Long clicks on a specific text view. ClickOnText() can then be
+	 * Clicks on a specific view displaying a certain text. 
+	 *
+	 * @param text the text that should be clicked on. Regular expressions are supported
+	 * @param match the match that should be clicked on 
+	 * @param scroll true if scrolling should be performed
+	 *
+	 */
+
+	public abstract void clickOnText(String text, int matches, boolean scroll);
+
+	/**
+	 * Long clicks on a specific text view. Will automatically scroll when needed. ClickOnText() can then be
 	 * used to click on the context menu items that appear after the long click.
 	 *
 	 * @param text the text that should be clicked on. Regular expressions are supported
@@ -418,7 +441,7 @@ public interface ISolo {
 	public abstract void clickLongOnText(String text);
 
 	/**
-	 * Long clicks on a specific text view. ClickOnText() can then be
+	 * Long clicks on a specific text view. Will automatically scroll when needed. ClickOnText() can then be
 	 * used to click on the context menu items that appear after the long click.
 	 *
 	 * @param text the text that should be clicked on. Regular expressions are supported
@@ -429,11 +452,23 @@ public interface ISolo {
 	public abstract void clickLongOnText(String text, int match);
 
 	/**
+	 * Long clicks on a specific text view. ClickOnText() can then be
+	 * used to click on the context menu items that appear after the long click.
+	 *
+	 * @param text the text that should be clicked on. Regular expressions are supported
+	 * @param match the match that should be clicked on 
+	 * @param scroll true if scrolling should be performed
+	 *
+	 */
+
+	public abstract void clickLongOnText(String text, int match, boolean scroll);
+
+	/**
 	 * Long clicks on a specific text view and then selects
 	 * an item from the context menu that appears. Will automatically scroll when needed. 
 	 *
 	 * @param text the text to be clicked on. Regular expressions are supported
-	 * @param index the index of the menu item to be pressed
+	 * @param index the index of the menu item to be pressed. 0 if only one is available
 	 *
 	 */
 
@@ -443,7 +478,6 @@ public interface ISolo {
 	 * Clicks on a button with a certain index.
 	 *
 	 * @param index the index number of the button
-	 * @return true if button with specified index is found
 	 *
 	 */
 
@@ -452,7 +486,7 @@ public interface ISolo {
 	/**
 	 * Clicks on a radio button with a certain index.
 	 *
-	 * @param index the index of the radio button to be clicked
+	 * @param index the index of the radio button to be clicked. 0 if only one is available
 	 *
 	 */
 
@@ -461,7 +495,7 @@ public interface ISolo {
 	/**
 	 * Clicks on a check box with a certain index.
 	 *
-	 * @param index the index of the check box to be clicked
+	 * @param index the index of the check box to be clicked. 0 if only one is available
 	 *
 	 */
 
@@ -470,7 +504,7 @@ public interface ISolo {
 	/**
 	 * Clicks on an edit text with a certain index.
 	 *
-	 * @param index the index of the edit text to be clicked
+	 * @param index the index of the edit text to be clicked. 0 if only one is available
 	 *
 	 */
 
@@ -482,6 +516,7 @@ public interface ISolo {
 	 * 
 	 * @param line the line that should be clicked
 	 * @return an array list of the text views located in the list line
+	 *
 	 */
 
 	public abstract ArrayList<TextView> clickInList(int line);
@@ -491,8 +526,9 @@ public interface ISolo {
 	 * return the text views that the list line is showing. 
 	 * 
 	 * @param line the line that should be clicked
-	 * @param listIndex the index of the list. E.g. Index 1 if two lists are available
+	 * @param listIndex the index of the list. 1 if two lists are available
 	 * @return an array list of the text views located in the list line
+	 *
 	 */
 
 	public abstract ArrayList<TextView> clickInList(int line, int listIndex);
@@ -565,7 +601,7 @@ public interface ISolo {
 	/**
 	 * Enters text into an EditText or a NoteField with a certain index.
 	 *
-	 * @param index the index of the text field. Index 0 if only one available.
+	 * @param index the index of the text field. 0 if only one is available
 	 * @param text the text string that is to be entered into the text field
 	 *
 	 */
@@ -575,7 +611,7 @@ public interface ISolo {
 	/**
 	 * Clicks on an image with a certain index.
 	 *
-	 * @param index the index of the image to be clicked
+	 * @param index the index of the image to be clicked. 0 if only one is available
 	 *
 	 */
 
@@ -594,7 +630,8 @@ public interface ISolo {
 	/**
 	 * Returns an EditText with a certain index.
 	 *
-	 * @return the EditText with a specified index
+	 * @param index the index of the edit text. 0 if only one is available
+	 * @return the EditText with a specified index or null if index is invalid
 	 *
 	 */
 
@@ -603,19 +640,49 @@ public interface ISolo {
 	/**
 	 * Returns a button with a certain index.
 	 *
-	 * @param index the index of the button
-	 * @return the button with the specific index
+	 * @param index the index of the button. 0 if only one is available
+	 * @return the button with the specific index or null if index is invalid
 	 *
 	 */
 
 	public abstract Button getButton(int index);
 
 	/**
+	 * Returns a text view with a certain index.
+	 *
+	 * @param index the index of the text view. 0 if only one is available
+	 * @return the text view with the specific index or null if index is invalid
+	 *
+	 */
+
+	public abstract TextView getText(int index);
+
+	/**
+	 * Returns an image view with a certain index.
+	 *
+	 * @param index the index of the imave view. 0 if only one is available
+	 * @return the image view with the specific index or null if index is invalid
+	 *
+	 */
+
+	public abstract ImageView getImage(int index);
+
+	/**
+	 * Returns an image button with a certain index.
+	 *
+	 * @param index the index of the image button. 0 if only one is available
+	 * @return the image button with the specific index or null if index is invalid
+	 *
+	 */
+
+	public abstract ImageButton getImageButton(int index);
+
+	/**
 	 * Returns the number of buttons located in the current
 	 * activity.
 	 *
 	 * @return the number of buttons in the current activity
-	 * @deprecated legacy method that is not needed anymore
+	 * @deprecated legacy method that is outdated
 	 *
 	 */
 
@@ -737,8 +804,9 @@ public interface ISolo {
 	/**
 	 * Checks if a radio button with a given index is checked.
 	 * 
-	 * @param index of the radio button to check
+	 * @param index of the radio button to check. 0 if only one is available
 	 * @return true if radio button is checked and false if it is not checked
+	 * 
 	 */
 
 	public abstract boolean isRadioButtonChecked(int index);
@@ -746,8 +814,9 @@ public interface ISolo {
 	/**
 	 * Checks if a check box with a given index is checked.
 	 * 
-	 * @param index of the check box to check
+	 * @param index of the check box to check. 0 if only one is available
 	 * @return true if check box is checked and false if it is not checked
+	 * 
 	 */
 
 	public abstract boolean isCheckBoxChecked(int index);
@@ -763,19 +832,33 @@ public interface ISolo {
 
 	/**
 	 * Returns to the given Activity.
+	 *
 	 * @param name the name of the Activity to be returned to e.g. "MyActivity"
+	 * 
 	 */
 
 	public abstract void goBackToActivity(String name);
 
 	/**
 	 * Waits for the given Activity.
+	 *
 	 * @param name the name of the Activity to wait for e.g. "MyActivity"
 	 * @param timeout the amount of time in milliseconds to wait
 	 * @return true if Activity appears before the timeout and false if it does not
+	 * 
 	 */
 
 	public abstract boolean waitForActivity(String name, int timeout);
+
+	/**
+	 * Returns a localized string.
+	 * 
+	 * @param resId the resource ID of the view
+	 * @return the localized string
+	 *
+	 */
+
+	public abstract String getString(int resId);
 
 	/**
 	 * Robotium will sleep for a specified time.
@@ -791,6 +874,7 @@ public interface ISolo {
 	 * All activites that have been active are finished.
 	 *
 	 */
+
 	public abstract void finalize() throws Throwable;
 
 }

@@ -21,6 +21,11 @@ All documentation is there.
         |      |
         |      |-/robotium-server-app
         |
+        |-/examples
+        |      |
+        |      |-/RemoteSoloExamples
+        |        
+        |
         |-/robotium-solo
           (standalone Robotium API that works with standard Android test suite)
 

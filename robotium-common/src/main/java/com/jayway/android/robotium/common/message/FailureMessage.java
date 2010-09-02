@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.common;
+package com.jayway.android.robotium.common.message;
 
 import org.json.simple.JSONObject;
 
