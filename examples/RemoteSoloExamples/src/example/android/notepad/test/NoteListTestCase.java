@@ -1,6 +1,7 @@
 package example.android.notepad.test;
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.test.suitebuilder.annotation.Smoke;
 import android.widget.TextView;
 
@@ -25,14 +26,14 @@ public class NoteListTestCase extends TestCase {
 
         		// emulators
         		solo.addDevice("emulator-5554", 5000, 5000);
-        		//solo.addDevice("emulator-5556", 5003, 5003);
-        		//solo.addDevice("emulator-5558", 5004, 5004);       
+        		solo.addDevice("emulator-5556", 5003, 5003);
+        		solo.addDevice("emulator-5558", 5004, 5004);       
 
         		// v1.6 device
-        		//solo.addDevice("HT98YLZ00039", 5001, 5001);
+        		solo.addDevice("HT98YLZ00039", 5001, 5001);
 
         		// v2.2 device
-        	    //solo.addDevice("HT04TP800408", 5002, 5002);        		
+//         	    solo.addDevice("HT04TP800408", 5002, 5002);        		
         		solo.connect();
             }
 
@@ -42,6 +43,12 @@ public class NoteListTestCase extends TestCase {
         };
         return setup;
     }
+	
+	public void testNoButton() {
+		int expectButtonCount = 0; 
+		int actualCount = solo.getCurrenButtonsCount();
+		assertEquals("Should have no buttons", actualCount, expectButtonCount);
+	}
 	
 	
 	public void testAddNote(){
@@ -56,13 +63,14 @@ public class NoteListTestCase extends TestCase {
 		 assertEquals("Note 1 and/or Note 2 are not found", expected, actual);
 	}
 	
-	
-
-	public void testNoteChange() {
+	public void testTextViewCount(){
 		ArrayList<TextView> tv = solo.clickInList(2); // Clicks on a list line
 		assertEquals(1, tv.size());
 		boolean isEmpty = tv.isEmpty();
 		assertFalse(isEmpty);
+	}
+
+	public void testNoteChange() {
 		solo.setActivityOrientation(0); // Change orientation of activity
 		solo.pressMenuItem(2); // Change title
 		solo.enterText(0, " test");

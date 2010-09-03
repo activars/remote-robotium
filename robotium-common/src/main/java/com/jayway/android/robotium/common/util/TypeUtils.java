@@ -53,7 +53,8 @@ public class TypeUtils {
 				|| fullQualifiedClassName.equals(float.class.getName())
 				|| fullQualifiedClassName.equals(double.class.getName())
 				|| fullQualifiedClassName.equals(boolean.class.getName())
-				|| fullQualifiedClassName.equals(char.class.getName())) {
+				|| fullQualifiedClassName.equals(char.class.getName())
+				|| fullQualifiedClassName.equals(CharSequence.class.getName())) {
 			return obj.toString();
 		} else {
 			throw new UnsupportedOperationException(
@@ -94,10 +95,11 @@ public class TypeUtils {
 			return Boolean.parseBoolean(objectValue);
 		} else if (typeName.equals(char.class.getName())) {
 			return objectValue.toCharArray()[0];
+		} else if (typeName.equals(CharSequence.class.getName())) {
+			return objectValue.toString();
 		} else {
 			throw new UnsupportedOperationException(
-					" TODO: the type of object is not primitive, ");
-			// return null; //?? return a proxy object ??
+					"The type of object is not primitive, ");
 		}
 	}
 }

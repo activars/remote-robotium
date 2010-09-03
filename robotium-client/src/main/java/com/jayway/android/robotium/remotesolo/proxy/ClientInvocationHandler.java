@@ -50,10 +50,14 @@ public class ClientInvocationHandler implements InvocationHandler {
 			} else {
 				// Then it could be a proxy object
 				String objRemoteID = messageWorker.getProxyObjectRemoteID(proxyObj);
+				// remove them from memory
+				messageWorker.removeProxyObject(objRemoteID);
 				if (objRemoteID != null) {
+					// construct a message and request for action
 					message = MessageFactory.createEventMessage(
 							proxyObj.getClass(), objRemoteID, method,
 							method.getParameterTypes(), args);
+					
 				} else {
 					throw new NullPointerException("the proxy object cannot be found");
 				}

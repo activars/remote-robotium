@@ -21,17 +21,15 @@ public class MessageWorker {
 
 	private static Map<String, Message> receivedMessages;
 	private static Map<String, String> proxyObjectsID;
-	@SuppressWarnings("unchecked")
-	private static Map<String, WeakReference> proxyObjectReferences;
+	private static Map<String, Object> proxyObjectReferences;
 
-	@SuppressWarnings("unchecked")
 	public MessageWorker() {
 		receivedMessages = Collections
 				.synchronizedMap(new HashMap<String, Message>());
 		proxyObjectsID = Collections
 				.synchronizedMap(new HashMap<String, String>());
 		proxyObjectReferences = Collections
-				.synchronizedMap(new WeakHashMap<String, WeakReference>());
+				.synchronizedMap(new WeakHashMap<String, Object>());
 	}
 
 	public Object digestMessage(String messageID, ProxyManager proxyManager) {
@@ -67,6 +65,12 @@ public class MessageWorker {
 		}
 		return null;
 	}
+	public void removeProxyObject(String remoteID) {
+		if(proxyObjectReferences.containsKey(remoteID)) {
+			proxyObjectsID.remove(remoteID);
+			proxyObjectReferences.remove(remoteID);
+		}
+	}
 	
 	public void addMessge(Message message) {
 		System.out.println("Msg Added: " + message.getMessageId().toString());
@@ -74,16 +78,12 @@ public class MessageWorker {
 	}
 	
 	public boolean hasResponseFor(Message message) {
-		Message msg = receivedMessages.get(message.getMessageId().toString());
-		if (msg == null) {
-			System.out.println("null");
-		}
 		return receivedMessages.containsKey(message.getMessageId().toString());
 	}
 	
 	private void addProxyObject(Object proxyObj, String remoteRef) {
 		String proxyClassName = proxyObj.getClass().getName();
-		proxyObjectReferences.put(proxyClassName, new WeakReference(proxyObj));
+		proxyObjectReferences.put(proxyClassName, proxyObj);
 		proxyObjectsID.put(proxyClassName, remoteRef);
 	}
 
@@ -138,6 +138,7 @@ public class MessageWorker {
 					// class in collection are not primitives
 					// we need to construct an object proxy for the
 					// object
+					
 					shouldAdd = proxyManager.createProxy(returnValueMsg
 							.getInnerClassType());
 
@@ -157,6 +158,14 @@ public class MessageWorker {
 
 			// returns the list
 			removeMessage(message);
+			return returnVal;
+		} else if (!returnValueMsg.isPrimitive() && isInnerClassVoidType) {
+			// the return object should be proxied
+			Object returnVal = proxyManager.createProxy(returnValueMsg
+					.getClassType());
+			Object[] ojbs = returnValueMsg.getReturnValue();
+			addProxyObject(returnVal, ojbs[0].toString());
+			
 			return returnVal;
 		}
 		return null;

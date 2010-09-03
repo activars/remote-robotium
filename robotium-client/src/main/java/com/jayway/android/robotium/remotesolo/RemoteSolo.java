@@ -69,6 +69,7 @@ public class RemoteSolo implements ISolo {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void assertCurrentActivity(String message, Class expectedClass) {
 		try {
 			devices.invokeMethod("assertCurrentActivity", 
@@ -91,6 +92,7 @@ public class RemoteSolo implements ISolo {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void assertCurrentActivity(String message, Class expectedClass,
 			boolean isNewInstance) {
 		try {
@@ -134,9 +136,16 @@ public class RemoteSolo implements ISolo {
 		return textViews;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<TextView> clickInList(int line, int listIndex) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return (ArrayList<TextView>) devices.invokeMethod("clickInList", 
+					new Class<?>[] { int.class, int.class },
+					new Object[] { line, listIndex });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+		return null;
 	}
 
 	public void clickLongOnScreen(float x, float y) {
@@ -180,8 +189,13 @@ public class RemoteSolo implements ISolo {
 	}
 
 	public void clickLongOnView(View view) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			devices.invokeMethod("clickLongOnView", 
+					new Class<?>[] { View.class },
+					new Object[] { view });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	public void clickOnButton(String name) {
@@ -337,104 +351,210 @@ public class RemoteSolo implements ISolo {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<Activity> getAllOpenedActivities() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<Activity>) devices.invokeMethod("getAllOpenedActivities", 
+					new Class<?>[] { } );
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
 	public Button getButton(int index) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return (Button) devices.invokeMethod("getButton", 
+					new Class<?>[] { int.class },
+					new Object[]{ index });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
 	public int getCurrenButtonsCount() {
 		try {
-			return Integer.parseInt((String) devices.invokeMethod("getCurrenButtonsCount", 
-					new Class<?>[] { }));
+			return  Integer.parseInt(devices.invokeMethod("getCurrenButtonsCount", 
+					new Class<?>[] { }).toString());
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		}	
-		return 0;
+		return -1;
 	}
 
 	public Activity getCurrentActivity() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (Activity) devices.invokeMethod("getCurrentActivity", 
+					new Class<?>[] {});
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<Button> getCurrentButtons() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<Button>) devices.invokeMethod("getCurrentButtons", 
+					new Class<?>[] {  });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<CheckBox> getCurrentCheckBoxes() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<CheckBox>) devices.invokeMethod("getCurrentCheckBoxes", 
+					new Class<?>[] { });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<EditText> getCurrentEditTexts() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<EditText>) devices.invokeMethod("getCurrentEditTexts", 
+					new Class<?>[] { });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<GridView> getCurrentGridViews() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<GridView>) devices.invokeMethod("getCurrentGridViews", 
+					new Class<?>[] { });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<ImageButton> getCurrentImageButtons() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<ImageButton>) devices.invokeMethod("getCurrentImageButtons", 
+					new Class<?>[] { });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<ImageView> getCurrentImageViews() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<ImageView>) devices.invokeMethod("getCurrentImageViews", 
+					new Class<?>[] { });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<ListView> getCurrentListViews() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<ListView>) devices.invokeMethod("getCurrentListViews", 
+					new Class<?>[] { });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<RadioButton> getCurrentRadioButtons() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<RadioButton>) devices.invokeMethod("getCurrentRadioButtons", 
+					new Class<?>[] { });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<ScrollView> getCurrentScrollViews() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<ScrollView>) devices.invokeMethod("getCurrentScrollViews", 
+					new Class<?>[] { });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<Spinner> getCurrentSpinners() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<Spinner>) devices.invokeMethod("getCurrentSpinners", 
+					new Class<?>[] { });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<TextView> getCurrentTextViews(View parent) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<TextView>) devices.invokeMethod("getCurrentTextViews", 
+					new Class<?>[] { View.class },
+					new Object[]{ parent });
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<ToggleButton> getCurrentToggleButtons() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<ToggleButton>) devices.invokeMethod("getCurrentToggleButtons", 
+					new Class<?>[] {} );
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
 	public EditText getEditText(int index) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (EditText) devices.invokeMethod("getEditText", 
+					new Class<?>[] { int.class }, new Object[]{ index } );
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
 	public View getTopParent(View view) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (View) devices.invokeMethod("getTopParent", 
+					new Class<?>[] { View.class }, new Object[]{ view } );
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<View> getViews() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not Implemented yet");
+		try {
+			return  (ArrayList<View>) devices.invokeMethod("getViews", 
+					new Class<?>[] {});
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}	
+		return null;
 	}
 
 	public void goBack() {
