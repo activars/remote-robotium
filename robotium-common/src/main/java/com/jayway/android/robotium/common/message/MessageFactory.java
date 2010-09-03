@@ -134,8 +134,7 @@ public class MessageFactory {
 
 	private static void copyUuidToMessage(Message msg, JSONObject jsonObj) {
 		if (msg != null & jsonObj != null) {
-			UUID uuid = UUID.fromString((String) jsonObj
-					.get(Message.JSON_ATTR_MESSAGE_ID));
+			UUID uuid = UUID.fromString((String) jsonObj.get(Message.JSON_ATTR_MESSAGE_ID));
 			msg.setMessageId(uuid);
 		}
 	}

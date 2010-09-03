@@ -23,7 +23,6 @@ import com.jayway.android.robotium.common.message.EventInvokeMethodMessage;
 import com.jayway.android.robotium.common.message.Message;
 import com.jayway.android.robotium.common.message.MessageFactory;
 import com.jayway.android.robotium.common.message.TargetActivityMessage;
-import com.jayway.android.robotium.solo.ISolo;
 import com.jayway.android.robotium.solo.Solo;
 
 class ServerHandler extends SimpleChannelUpstreamHandler {
@@ -32,7 +31,7 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 			.getName());
 	private static final String TAG = "ServerHandler";
 
-	private ISolo mSolo;
+	private Solo mSolo;
 	private Instrumentation mInstrumentation;
 	private Intent mTargetIntent;
 	private Activity mActivity;

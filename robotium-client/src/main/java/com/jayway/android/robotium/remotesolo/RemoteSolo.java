@@ -55,7 +55,7 @@ public class RemoteSolo implements ISolo {
 		devices.connectAll();
 	}
 	
-	public void disconnect() {
+	public void disconnect() throws RemoteException {
 		devices.disconnectAllDevices();
 	}
 
@@ -116,7 +116,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -129,7 +129,7 @@ public class RemoteSolo implements ISolo {
 					 new Object[] { line });
 			 return textViews;
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return textViews;
 	}
@@ -145,7 +145,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { float.class, float.class },
 					new Object[] { x, y });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -155,7 +155,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class },
 					new Object[] { text });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -165,7 +165,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class, int.class },
 					new Object[] { text, match });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -175,7 +175,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class, int.class },
 					new Object[] { text, index });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -190,7 +190,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class },
 					new Object[] { name });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 	
@@ -201,7 +201,7 @@ public class RemoteSolo implements ISolo {
 					  new Class<?>[] { int.class },
 					  new Object[] { index });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -211,7 +211,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -221,7 +221,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -231,7 +231,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -241,7 +241,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -251,7 +251,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class },
 					new Object[] { text });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -261,7 +261,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -271,7 +271,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { float.class, float.class },
 					new Object[] { x, y });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -281,7 +281,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class },
 					new Object[] { text });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -291,7 +291,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class, int.class },
 					new Object[] { text, match });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -301,7 +301,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class },
 					new Object[] { name });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -311,7 +311,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { View.class },
 					new Object[] { view });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -323,7 +323,7 @@ public class RemoteSolo implements ISolo {
 					int.class },
 					new Object[] { fromX, toX, fromY, toY, stepCount });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -333,7 +333,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class, String.class },
 					new Object[] { index, text });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -352,7 +352,7 @@ public class RemoteSolo implements ISolo {
 			return Integer.parseInt((String) devices.invokeMethod("getCurrenButtonsCount", 
 					new Class<?>[] { }));
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}	
 		return 0;
 	}
@@ -442,7 +442,7 @@ public class RemoteSolo implements ISolo {
 			devices.invokeMethod("goBack", 
 					new Class<?>[] { } );
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -452,7 +452,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class },
 					new Object[] { name });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -463,7 +463,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class}, 
 					new Object[] { index } ).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;	
 	}
@@ -474,7 +474,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class}, 
 					new Object[] { index } ).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -485,7 +485,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class}, 
 					new Object[] { index } );
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 
 	}
@@ -496,7 +496,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class, int.class}, 
 					new Object[] { spinnerIndex, itemIndex } );
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -505,7 +505,7 @@ public class RemoteSolo implements ISolo {
 			return Boolean.parseBoolean(devices.invokeMethod("scrollDown", 
 					new Class<?>[] {}).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -516,7 +516,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class}, 
 					new Object[] { listIndex } ).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -527,7 +527,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class }, 
 					new Object[] { side } );
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -536,7 +536,7 @@ public class RemoteSolo implements ISolo {
 			return Boolean.parseBoolean(devices.invokeMethod("scrollUp", 
 					new Class<?>[] { }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -547,7 +547,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class }, 
 					new Object[] { listIndex }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -558,7 +558,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class }, 
 					new Object[] { search }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -569,7 +569,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class, int.class }, 
 					new Object[] { search, matches }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -580,7 +580,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class }, 
 					new Object[] { search }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -591,7 +591,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class }, 
 					new Object[] { search }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -602,7 +602,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class, int.class }, 
 					new Object[] { search, matches }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -613,7 +613,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class, int.class , boolean.class}, 
 					new Object[] { search, matches, scroll }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -624,7 +624,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class }, 
 					new Object[] { search }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -635,7 +635,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class, int.class }, 
 					new Object[] { search, matches }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -646,7 +646,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class }, 
 					new Object[] { key });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -656,7 +656,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class }, 
 					new Object[] { orientation });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -666,7 +666,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class }, 
 					new Object[] { time });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -676,7 +676,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class, int.class }, 
 					new Object[] { name, timeout }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -687,7 +687,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { long.class }, 
 					new Object[] { timeout }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -698,7 +698,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class }, 
 					new Object[] { text }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -709,7 +709,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { String.class, int.class, long.class }, 
 					new Object[] { text, matches, timeout }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -722,7 +722,7 @@ public class RemoteSolo implements ISolo {
 					boolean.class }, 
 					new Object[] { text, matches, timeout, scroll }).toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return false;
 	}
@@ -732,7 +732,7 @@ public class RemoteSolo implements ISolo {
 			devices.invokeMethod("finalize", 
 					new Class<?>[] {});
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -742,7 +742,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] {String.class, int.class, boolean.class},
 					new Object[] {text, match, scroll});
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		
 	}
@@ -753,7 +753,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] {String.class, boolean.class},
 					new Object[] {text, subMenu});
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -763,7 +763,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] {String.class, int.class, boolean.class},
 					new Object[] {text, matches, scroll});
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -773,7 +773,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class }, 
 					new Object[] { index });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return null;
 	}
@@ -784,7 +784,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class }, 
 					new Object[] { index });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return null;
 	}
@@ -795,7 +795,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class }, 
 					new Object[] { resId });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return null;
 	}
@@ -806,7 +806,7 @@ public class RemoteSolo implements ISolo {
 					new Class<?>[] { int.class }, 
 					new Object[] { index });
 		} catch (Exception e) {
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return null;
 	}

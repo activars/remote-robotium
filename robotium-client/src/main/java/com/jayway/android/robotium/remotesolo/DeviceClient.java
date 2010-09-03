@@ -1,7 +1,8 @@
 package com.jayway.android.robotium.remotesolo;
 
-public interface DeviceClient {
+import java.util.Map;
 
+public interface DeviceClient {
 	
 	public abstract void setTargetClass(Class<?> targetClass);
 	
@@ -25,21 +26,23 @@ public interface DeviceClient {
 	/**
 	 * Tries to connect to the remote device
 	 */
-	public abstract void connect();
+	public abstract boolean connect();
 
 	/**
 	 * send a message to the remote device
 	 * 
 	 * @param msg
 	 * @return
+	 * @throws RemoteException 
 	 */
-	public abstract void sendMessage(String msg);
+	public abstract void sendMessage(String msg) throws RemoteException;
 	
 	public Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments) throws Exception, Throwable;
 
 	/**
 	 * Close the connection
+	 * @throws RemoteException 
 	 */
-	public abstract void disconnect();
+	public abstract void disconnect() throws RemoteException;
 
 }

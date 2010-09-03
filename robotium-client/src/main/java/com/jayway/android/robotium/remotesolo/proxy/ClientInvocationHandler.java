@@ -6,11 +6,13 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 
+
 import com.jayway.android.robotium.common.message.Message;
 import com.jayway.android.robotium.common.message.MessageFactory;
 import com.jayway.android.robotium.common.util.TypeUtils;
 import com.jayway.android.robotium.remotesolo.DeviceClient;
 import com.jayway.android.robotium.remotesolo.MessageWorker;
+import com.jayway.android.robotium.remotesolo.RemoteException;
 import com.jayway.android.robotium.solo.Solo;
 
 public class ClientInvocationHandler implements InvocationHandler {
@@ -18,9 +20,9 @@ public class ClientInvocationHandler implements InvocationHandler {
 	private ProxyManager proxyManager;
 	
 	private DeviceClient device;
-	private MessageWorker messageWorker;
+	private static MessageWorker messageWorker;
 	public static final int TIMEOUT = 15000;
-	public static final int SLEEP_TIME = 700;
+	public static final int SLEEP_TIME = 500;
 
 	public ClientInvocationHandler() {
 		messageWorker = new MessageWorker();
@@ -42,7 +44,7 @@ public class ClientInvocationHandler implements InvocationHandler {
 			Message message = null;
 			if (isSolo(proxyObj)) {
 				message = MessageFactory.createEventMessage(proxyObj
-						.getClass(), String.valueOf(UUID.randomUUID()),
+						.getClass(), UUID.randomUUID().toString(),
 						method, method.getParameterTypes(),
 						args);
 			} else {
@@ -58,11 +60,21 @@ public class ClientInvocationHandler implements InvocationHandler {
 			}
 			
 			device.sendMessage(message.toString());
+			System.out.println("Sent Msg: " + message.toString());
 			
 			//wait for response
-			while(!messageWorker.hasResponseFor(message))
-				Thread.sleep(1000);
-					
+			int slept = 0; 
+			boolean timedOut = false;
+			while(!messageWorker.hasResponseFor(message) ) {
+				if(slept >= TIMEOUT) {
+					break;
+				}
+				Thread.sleep(SLEEP_TIME);
+				slept += SLEEP_TIME;
+			}
+			
+			if(timedOut == true) throw new RemoteException("Server time out");
+			
 			return messageWorker.digestMessage(message.getMessageId().toString(), proxyManager);
 				
 		}

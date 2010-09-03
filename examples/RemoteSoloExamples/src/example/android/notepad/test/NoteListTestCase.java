@@ -32,7 +32,7 @@ public class NoteListTestCase extends TestCase {
         		//solo.addDevice("HT98YLZ00039", 5001, 5001);
 
         		// v2.2 device
-        		// solo.addDevice("HT04TP800408", 5002, 5002);        		
+        	    //solo.addDevice("HT04TP800408", 5002, 5002);        		
         		solo.connect();
             }
 
@@ -57,14 +57,12 @@ public class NoteListTestCase extends TestCase {
 	}
 	
 	
-	public void testNotEmpty() {
+
+	public void testNoteChange() {
 		ArrayList<TextView> tv = solo.clickInList(2); // Clicks on a list line
 		assertEquals(1, tv.size());
 		boolean isEmpty = tv.isEmpty();
 		assertFalse(isEmpty);
-	}
-	
-	public void testNoteChange() {
 		solo.setActivityOrientation(0); // Change orientation of activity
 		solo.pressMenuItem(2); // Change title
 		solo.enterText(0, " test");

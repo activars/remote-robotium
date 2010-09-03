@@ -42,6 +42,9 @@ public class InstrumentationRunner extends Instrumentation {
 		bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(
 				Executors.newCachedThreadPool(), Executors
 				.newCachedThreadPool()));
+		
+		bootstrap.setOption("keepAlive", true);
+		
 		Log.d(TAG, "Server bootstrap initialized");
 		
 		// channel group is used for closing connection properly
@@ -67,17 +70,17 @@ public class InstrumentationRunner extends Instrumentation {
 		channelGroup.add(channel);
 		Log.d(TAG, "Server is now running");
 		
-		this.stopAllocCounting();
-		this.stopProfiling();
-		
 		start();
 	}
+
 	
 	/**
 	 * Starts Instrumentation and pass itself to server handler
 	 */
 	@Override
 	public void onStart() {
+		Looper.prepare();
+		
 		Log.d(TAG, "Intrumentation started");
 	}
 	

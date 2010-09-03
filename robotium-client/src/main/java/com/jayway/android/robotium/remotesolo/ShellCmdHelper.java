@@ -31,10 +31,7 @@ class ShellCmdHelper {
 		try {
 			executor.executeCommand("adb", commands, false);
 		} catch (ExecutionException e) {
-			// this happens when multiple devices connected
-			// or the envirment varialbe wasn't setup property
-			// need to have ANDROID_HOME setup
-			e.printStackTrace();
+			System.err.println(getErrorMessage());
 		}
 
 	}
@@ -66,47 +63,15 @@ class ShellCmdHelper {
 			executor.executeCommand("adb", commands, false);
 			Thread.sleep(5000);
 		} catch (ExecutionException e) {
-			// TODO: better error message
-			// this happens when multiple devices connected
-			// or the envirment varialbe wasn't setup property
-			// need to have ANDROID_HOME setup
-			e.printStackTrace();
+			System.err.println(getErrorMessage());
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(getErrorMessage());
 		}
 	}
-
-	private static void setRobotiumServerPort(int port, String deviceSerial) {
-		CommandExecutor executor = CommandExecutor.Factory
-				.createDefaultCommmandExecutor();
-		List<String> commands = new ArrayList<String>();
-
-		if (!deviceSerial.equals("") && deviceSerial != null) {
-			commands.add("-s");
-			commands.add(deviceSerial);
-		}
-
-		commands.add("shell");
-		commands.add("am");
-		commands.add("instrument");
-		commands.add("-w");
-		commands.add("-e");
-		commands.add("port");
-		commands.add(Integer.toString(port));
-		commands
-				.add("com.jayway.android.robotium.server/com.jayway.android.robotium.server.ServerConfigRunner");
-
-		try {
-			executor.executeCommand("adb", commands, false);
-		} catch (ExecutionException e) {
-			// TODO: better error message
-			// this happens when multiple devices connected
-			// or the envirment varialbe wasn't setup property
-			// need to have ANDROID_HOME setup
-			e.printStackTrace();
-		}
-
+	
+	private static String getErrorMessage() {
+		String message = "Failed to execure command. Check if the device is connected or the ANDROID_HOME system environment is set to the SDK/tools directory.";
+		return message;
 	}
 	
 	private static Log getLog() {

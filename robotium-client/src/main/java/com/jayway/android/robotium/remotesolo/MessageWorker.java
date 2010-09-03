@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.WeakHashMap;
 
 import junit.framework.Assert;
@@ -37,25 +38,23 @@ public class MessageWorker {
 		
 		Message message = receivedMessages.get(messageID);
 		if (message == null) return null;
-		
+
 		if (message instanceof FailureMessage) {
-			removeMessage(message);
 			receivedFailureMessage((FailureMessage) message);
 
 		} else if (message instanceof ExceptionMessage) {
-			removeMessage(message);
 			receivedExceptionMessage((ExceptionMessage) message);
 
 		} else if (message instanceof UnsupportedMessage) {
-
 			receivedUnsupportedMessage((UnsupportedMessage) message);
 
 		} else if (message instanceof EventReturnValueMessage) {
-
 			return receivedEventReturnValueMessage(
 					(EventReturnValueMessage) message, proxyManager);
+			
 		} else {
 			removeMessage(message);
+			
 		}
 
 		return null;
@@ -70,13 +69,16 @@ public class MessageWorker {
 	}
 	
 	public void addMessge(Message message) {
-		System.out.println("Msg Added: " + message.toString());
+		System.out.println("Msg Added: " + message.getMessageId().toString());
 		receivedMessages.put(message.getMessageId().toString(), message);
 	}
 	
 	public boolean hasResponseFor(Message message) {
-		System.out.println("message size: " + receivedMessages.size());
-		return receivedMessages.containsKey(String.valueOf(message.getMessageId()));
+		Message msg = receivedMessages.get(message.getMessageId().toString());
+		if (msg == null) {
+			System.out.println("null");
+		}
+		return receivedMessages.containsKey(message.getMessageId().toString());
 	}
 	
 	private void addProxyObject(Object proxyObj, String remoteRef) {
@@ -119,7 +121,6 @@ public class MessageWorker {
 			// primitive message's innerClass type is void
 			removeMessage(message);
 			return returnValueMsg.getReturnValue()[0];
-
 		} else if (returnValueMsg.isCollection() && !isInnerClassVoidType) {
 			// then must be List collection for now
 			// as other collection types are not supported yet

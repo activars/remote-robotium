@@ -24,14 +24,13 @@ import com.jayway.android.robotium.common.message.EventReturnValueMessage;
 import com.jayway.android.robotium.common.message.Message;
 import com.jayway.android.robotium.common.message.MessageFactory;
 import com.jayway.android.robotium.common.message.UnsupportedMessage;
-import com.jayway.android.robotium.solo.ISolo;
 import com.jayway.android.robotium.solo.Solo;
 
 public class MessageWorker {
 	
 	private static final String TAG = "MessageWorker";
 	
-	private ISolo mSolo;
+	private Solo mSolo;
 	private Activity mActiviy;
 	private Instrumentation mInstrumentation;
 	private Intent mIntent;
@@ -43,7 +42,7 @@ public class MessageWorker {
 		referencedObjects = Collections.synchronizedMap(new WeakHashMap());
 	}
 	
-	public void setConfiguration(ISolo solo, Activity activity, Instrumentation inst, Intent intent) {
+	public void setConfiguration(Solo solo, Activity activity, Instrumentation inst, Intent intent) {
 		mSolo = solo;
 		mActiviy = activity;
 		mInstrumentation = inst;
@@ -92,6 +91,7 @@ public class MessageWorker {
 
 				Object returnValue = receivedMethod.invoke(mSolo, eventMsg
 						.getParameters());
+				Log.d(TAG, "solo.invoked.");
 				if (returnType.equals(void.class)) {
 					// send success
 					Message responseMsg = MessageFactory
@@ -201,9 +201,9 @@ public class MessageWorker {
 		Message responseMsg, Message incomingMsg) {
 		responseMsg.setMessageId(incomingMsg.getMessageId());
 		future = e.getChannel().write(responseMsg.toString() + "\r\n");
-		// Log.d(TAG, "Server replied message");
-		// Log.d(TAG, "MessageType: " + responseMsg.getMessageHeader());
-		// Log.d(TAG, "MessageType: " + responseMsg.toString());
+		 Log.d(TAG, "Server replied message");
+		 Log.d(TAG, "MessageType: " + responseMsg.getMessageHeader());
+		 Log.d(TAG, "MessageType: " + responseMsg.toString());
 		return future;
 	}
 
