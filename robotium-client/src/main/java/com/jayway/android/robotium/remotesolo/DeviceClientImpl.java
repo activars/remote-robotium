@@ -162,8 +162,9 @@ public class DeviceClientImpl implements DeviceClient {
 	public void disconnect() throws RemoteException {
 
 		if (channel != null && channel.isConnected()) {
-			String msg = "bye";
+			String msg = "disconnect";
 			lastWriteFuture = channel.write(msg + "\r\n");
+			
 			// wait until the server closes the connection.
 			channel.getCloseFuture().awaitUninterruptibly();
 
@@ -174,13 +175,10 @@ public class DeviceClientImpl implements DeviceClient {
 			// Close the connection. Make sure the close operation ends because
 			// all I/O operations are asynchronous in Netty.
 			channel.close().awaitUninterruptibly();
-		}
-		
-		// Shut down all thread pools to exit.
-		//bootstrap.releaseExternalResources();
-		devicesRepostory.remove(getKey());
-		if(this.devicesRepostory.size() == 0) {
-			throw new RemoteException("Server Error: Robotium test server is disconnected");
+
+			// Shut down all thread pools to exit.
+			bootstrap.releaseExternalResources();
+			devicesRepostory.remove(getKey());
 		}
 	}
 	

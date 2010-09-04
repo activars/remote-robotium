@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 
 
 
+import com.jayway.android.robotium.common.message.EventInvokeMethodMessage;
 import com.jayway.android.robotium.common.message.Message;
 import com.jayway.android.robotium.common.message.MessageFactory;
 import com.jayway.android.robotium.common.util.TypeUtils;
@@ -17,7 +18,7 @@ import com.jayway.android.robotium.solo.Solo;
 
 public class ClientInvocationHandler implements InvocationHandler {
 
-	private ProxyManager proxyManager;
+	private static ProxyManager proxyManager;
 	
 	private DeviceClient device;
 	private static MessageWorker messageWorker;
@@ -28,6 +29,7 @@ public class ClientInvocationHandler implements InvocationHandler {
 		messageWorker = new MessageWorker();
 	}
 
+	@SuppressWarnings("static-access")
 	public void setMessageSender(ProxyManager proxyManager) {
 		this.proxyManager = proxyManager;
 	}
@@ -48,18 +50,24 @@ public class ClientInvocationHandler implements InvocationHandler {
 						method, method.getParameterTypes(),
 						args);
 			} else {
+				
+				if(method.getName().equals("hashCode")) {
+					return System.identityHashCode(proxyObj);
+				}
+				
 				// Then it could be a proxy object
-				String objRemoteID = messageWorker.getProxyObjectRemoteID(proxyObj);
+				int sysRef = System.identityHashCode(proxyObj);
+				String objRemoteID = messageWorker.getProxyObjectRemoteID(sysRef);
 				// remove them from memory
-				messageWorker.removeProxyObject(objRemoteID);
+				// messageWorker.removeProxyObject(sysRef, proxyObj);
 				if (objRemoteID != null) {
 					// construct a message and request for action
 					message = MessageFactory.createEventMessage(
 							proxyObj.getClass(), objRemoteID, method,
 							method.getParameterTypes(), args);
-					
 				} else {
-					throw new NullPointerException("the proxy object cannot be found");
+					System.err.println("cannot find proxy object");
+					return null;
 				}
 			}
 			
@@ -79,7 +87,8 @@ public class ClientInvocationHandler implements InvocationHandler {
 			
 			if(timedOut == true) throw new RemoteException("Server time out");
 			
-			return messageWorker.digestMessage(message.getMessageId().toString(), proxyManager);
+			Object returnValue = messageWorker.digestMessage(message.getMessageId().toString(), proxyManager);
+			return returnValue;
 				
 		}
 

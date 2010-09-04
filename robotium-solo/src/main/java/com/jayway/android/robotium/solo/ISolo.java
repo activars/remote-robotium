@@ -877,4 +877,6 @@ public interface ISolo {
 
 	public abstract void finalize() throws Throwable;
 
+
 }
+	

@@ -53,8 +53,7 @@ public class TypeUtils {
 				|| fullQualifiedClassName.equals(float.class.getName())
 				|| fullQualifiedClassName.equals(double.class.getName())
 				|| fullQualifiedClassName.equals(boolean.class.getName())
-				|| fullQualifiedClassName.equals(char.class.getName())
-				|| fullQualifiedClassName.equals(CharSequence.class.getName())) {
+				|| fullQualifiedClassName.equals(char.class.getName())) {
 			return obj.toString();
 		} else {
 			throw new UnsupportedOperationException(
@@ -65,8 +64,10 @@ public class TypeUtils {
 	public static String getClassName(Class<?> classType) {
 		if (classType.getName().contains("$$")) {
 			String[] splName = classType.getName().split("[$$]");
-			if (splName.length > 0) {
-				return splName[0];
+			for(String cnm : splName) {
+				if(!cnm.trim().equals("")) {
+					return cnm;
+				}
 			}
 		} else if (classType.equals(Boolean.class)) {
 			return boolean.class.getName();
@@ -95,8 +96,6 @@ public class TypeUtils {
 			return Boolean.parseBoolean(objectValue);
 		} else if (typeName.equals(char.class.getName())) {
 			return objectValue.toCharArray()[0];
-		} else if (typeName.equals(CharSequence.class.getName())) {
-			return objectValue.toString();
 		} else {
 			throw new UnsupportedOperationException(
 					"The type of object is not primitive, ");

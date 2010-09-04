@@ -1,5 +1,6 @@
 package com.jayway.android.robotium.server;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -69,52 +70,59 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 		// We know the encoder inserted at ServerPipelineFactory will do the
 		// conversion.
 		ChannelFuture future = null;
-
-		// Cast to a String first.
-		Message mMessage = messageWorker.parseMessage((String) e.getMessage());
-		String response = "";
-
-		if (mMessage instanceof TargetActivityMessage) {
-			Log.d(TAG, ((TargetActivityMessage) mMessage).getMessageHeader());
-			// the message contain Instrumentation information for the Activity
-			String activityClassName = ((TargetActivityMessage) mMessage)
-					.getTargetClassName();
-
-			mTargetIntent = new Intent(Intent.ACTION_MAIN);
-			mTargetIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			mTargetIntent.setClassName(mInstrumentation.getTargetContext()
-					.getPackageName(), activityClassName);
-			mActivity = mInstrumentation.startActivitySync(mTargetIntent);
-
-			// initialize the solo tool
-			mSolo = new Solo(mInstrumentation, mActivity);
-			// set configuration for message worker
-			messageWorker.setConfiguration(mSolo, mActivity, mInstrumentation,
-					mTargetIntent);
-
-			// create response message and copy the old message UUID
-			Message responseMsg = MessageFactory.createSuccessMessage();
-			messageWorker.responseMessage(future, e, responseMsg, mMessage);
-
-		} else if (mMessage instanceof EventInvokeMethodMessage) {
-			EventInvokeMethodMessage msg = (EventInvokeMethodMessage) mMessage;
-			messageWorker.receivedEventInvokeMethodMessage(msg, future, e);
-		} else {
-			// the event is calling on other object
-			// server should have a weak reference to the object that is
-			// referenced.
-			// TODO: event is calling on other object
-			// use UUID from message to find the object and cast it to the
-			// type.
-			Log.d(TAG, "Calling on other object and need"
-					+ " to look up in the WeakHashMap");
-		}
-
 		// never close for now
 		boolean close = false;
+		
+		String messageString = (String) e.getMessage();
+		// Cast to a String first.
 
-		// Close the connection after sending 'Have a good day!'
-		// if the client has sent 'bye'.
+		if (messageString.equals("disconnect")) {
+			future = e.getChannel().write("Test End.\r\n");
+			close = true;
+		} else {
+
+			Message mMessage = messageWorker.parseMessage((String) e
+					.getMessage());
+			String response = "";
+
+			if (mMessage instanceof TargetActivityMessage) {
+				Log.d(TAG, ((TargetActivityMessage) mMessage)
+						.getMessageHeader());
+				// the message contain Instrumentation information for the
+				// Activity
+				String activityClassName = ((TargetActivityMessage) mMessage)
+						.getTargetClassName();
+
+				mTargetIntent = new Intent(Intent.ACTION_MAIN);
+				mTargetIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				mTargetIntent.setClassName(mInstrumentation.getTargetContext()
+						.getPackageName(), activityClassName);
+				mActivity = mInstrumentation.startActivitySync(mTargetIntent);
+
+				// initialize the solo tool
+				mSolo = new Solo(mInstrumentation, mActivity);
+				// set configuration for message worker
+				messageWorker.setConfiguration(mSolo, mActivity,
+						mInstrumentation, mTargetIntent);
+
+				// create response message and copy the old message UUID
+				Message responseMsg = MessageFactory.createSuccessMessage();
+				messageWorker.responseMessage(future, e, responseMsg, mMessage);
+
+			} else if (mMessage instanceof EventInvokeMethodMessage) {
+				EventInvokeMethodMessage msg = (EventInvokeMethodMessage) mMessage;
+				try {
+					messageWorker.receivedEventInvokeMethodMessage(msg, future, e);
+				} catch (IllegalArgumentException e1) {
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					e1.printStackTrace();
+				} catch (InvocationTargetException e1) {
+					e1.printStackTrace();
+				}
+			} 
+		}
+		
 		if (close) {
 			future.addListener(ChannelFutureListener.CLOSE);
 		}
@@ -125,11 +133,10 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 		Message msg = MessageFactory.createExceptionMessage(new Exception(), e
 				.getCause().getMessage());
 		e.getChannel().write(msg.toString() + "\r\n");
-
+		Log.d(TAG, "Server received Exception", e.getCause());
 		// exception may turn the activity off and prevent further testing.
-		messageWorker.startTargetIntent();
-
-		// e.getChannel().close();
+		//messageWorker.startTargetIntent();
+     	//e.getChannel().close();
 	}
 
 }

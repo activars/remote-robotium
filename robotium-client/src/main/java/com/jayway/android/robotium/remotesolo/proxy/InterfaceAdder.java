@@ -1,12 +1,8 @@
 package com.jayway.android.robotium.remotesolo.proxy;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
 
 public class InterfaceAdder extends ClassAdapter {
 	private Class newInterface;

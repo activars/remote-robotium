@@ -1,6 +1,7 @@
 package com.jayway.android.robotium.remotesolo;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import com.jayway.android.robotium.solo.ISolo;
 
@@ -124,16 +125,17 @@ public class RemoteSolo implements ISolo {
 
 	@SuppressWarnings("unchecked")
 	public ArrayList<TextView> clickInList(int line) {
-		ArrayList<TextView> textViews = null;
 		try {
-			 textViews = (ArrayList<TextView>) devices.invokeMethod("clickInList", 
+			
+			return (ArrayList<TextView>) devices.invokeMethod("clickInList", 
 					 new Class<?>[] { int.class },
 					 new Object[] { line });
-			 return textViews;
+
 		} catch (Exception e) {
-			Assert.fail(e.getMessage());
+			//Assert.fail(e.getMessage());
+			e.printStackTrace();
 		}
-		return textViews;
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -929,6 +931,15 @@ public class RemoteSolo implements ISolo {
 			Assert.fail(e.getMessage());
 		}
 		return null;
+	}
+	
+	public void restartActivity() {
+		try {
+			devices.invokeMethod("restartActivity", 
+					new Class<?>[] {} );
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 }

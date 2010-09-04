@@ -1,14 +1,7 @@
 package com.jayway.android.robotium.remotesolo.proxy;
 
-import java.io.IOException;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.powermock.reflect.Whitebox;
-
 
 import net.sf.cglib.proxy.InterfaceMaker;
-import net.sf.cglib.proxy.Proxy;
 
 public class FinalClassInterfaceMaker extends InterfaceMaker {
 	

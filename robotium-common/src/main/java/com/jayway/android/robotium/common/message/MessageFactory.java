@@ -8,9 +8,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import android.util.Log;
+
 import com.jayway.android.robotium.common.util.TypeUtils;
 
 public class MessageFactory {
+	
+	private static final String TAG = "MessageFactory";
 
 	private static Message generateUuidForMessage(Message msg) {
 		return msg.setMessageId(UUID.randomUUID());

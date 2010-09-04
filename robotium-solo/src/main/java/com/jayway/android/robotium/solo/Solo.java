@@ -1165,7 +1165,6 @@ public class Solo implements ISolo {
 	/**
 	 *
 	 * All activites that have been active are finished.
-	 *
 	 */
 	
 	public void finalize() throws Throwable {

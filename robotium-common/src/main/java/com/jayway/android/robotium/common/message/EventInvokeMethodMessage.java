@@ -54,6 +54,9 @@ public class EventInvokeMethodMessage extends AbstractMessage {
 	@Override
 	public String toString() {
 		JSONObject jsonObj = getHeader();
+		if(targetObjectClass.equals(CharSequence.class)) {
+			System.out.println("targeting char sequ");
+		}
 		jsonObj.put(Message.JSON_ATTR_TARGET_OBJECT_CLASS_NAME, TypeUtils.getClassName(targetObjectClass));
 		jsonObj.put(Message.JSON_ATTR_TARGET_OBJECT_ID, targetObjectId);
 		jsonObj.put(Message.JSON_ATTR_METHOD_RECEIVED, methodReceived.getName());

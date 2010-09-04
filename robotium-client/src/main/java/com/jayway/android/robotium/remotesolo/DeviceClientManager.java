@@ -89,9 +89,8 @@ class DeviceClientManager {
 						synchronized(results) {
 							results.put(dc, obj);
 						}
-					} catch (Throwable e) {}	
+					} catch (Throwable e) {e.printStackTrace();}	
 				}
-				
 			});
 		}
 		pool.shutdown();
@@ -100,8 +99,9 @@ class DeviceClientManager {
 		} catch (InterruptedException e) {}
 		// comparing values, only for primitives
 		// collection check the collection size matches
-		if(results.keySet().size() >0) {
-			return results.get(results.keySet().toArray()[0]);
+		if(results.keySet().size() > 0) {
+			Object mResult = results.get(results.keySet().toArray()[0]);
+			return mResult;
 		} else {
 			throw new RemoteException("Server could be disconnected");
 		}

@@ -1,14 +1,11 @@
 package com.jayway.android.robotium.remotesolo;
 
-import java.awt.Container;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import junit.framework.Assert;
 
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelState;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -46,9 +43,9 @@ public class ClientHandler extends SimpleChannelHandler {
 			logger.info(e.toString());
 		}
 		super.handleUpstream(ctx, e);
-		
-		
- 	}
+
+	}
+
 	public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) {
 		try {
 			super.channelClosed(ctx, e);
@@ -57,35 +54,38 @@ public class ClientHandler extends SimpleChannelHandler {
 		}
 	}
 
-
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
-		
+
 		if (proxyManager != null) {
-		    
+
 			String messageString = (String) e.getMessage();
 			Message message = null;
-			try {
-				message = MessageFactory.parseMessageString(messageString);
-			} catch (ClassNotFoundException e1) {
-				e1.printStackTrace();
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-			
+			if (messageString.equals("Test End.")) {
 
-			if (message instanceof SuccessMessage) {
-				proxyManager.addMessage(message);
-			} else if (message instanceof TargetActivityRequestMessage) {
-				// server requested a message about Instrumentation class
-				Class activityClass = proxyManager.getDeviceClient()
-						.getTargetClass();
-				e.getChannel().write(
-						MessageFactory.createTargetActivityMessage(
-								activityClass).toString()
-								+ "\r\n");
-			} else if (message != null){
-				proxyManager.addMessage(message);
+			} else {
+
+				try {
+					message = MessageFactory.parseMessageString(messageString);
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+
+				if (message instanceof SuccessMessage) {
+					proxyManager.addMessage(message);
+				} else if (message instanceof TargetActivityRequestMessage) {
+					// server requested a message about Instrumentation class
+					Class activityClass = proxyManager.getDeviceClient()
+							.getTargetClass();
+					e.getChannel().write(
+							MessageFactory.createTargetActivityMessage(
+									activityClass).toString()
+									+ "\r\n");
+				} else if (message != null) {
+					proxyManager.addMessage(message);
+				}
 			}
 
 		} else {
@@ -97,10 +97,8 @@ public class ClientHandler extends SimpleChannelHandler {
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
 		DeviceClient device = proxyManager.getDeviceClient();
-		String failMsg = String.format("Device %s caught exception: \r\n %s", device.getDeviceSerial(), e.getCause().toString());
-		try {
-			device.disconnect();
-		} catch (RemoteException e1) {Assert.fail(failMsg);}
-		
+		String failMsg = String.format("Device %s caught exception: \r\n %s",
+				device.getDeviceSerial(), e.getCause().toString());
+		Assert.fail(failMsg);
 	}
 }

@@ -9,10 +9,9 @@ import com.jayway.android.robotium.remotesolo.DeviceClient;
 public class ClientProxyManager implements ProxyManager {
 	
 	private DeviceClient deviceClient;
-	private ClientInvocationHandler invocationHandler;
+	private ClientInvocationHandler invocationHandler  = new ClientInvocationHandler();
 	
 	public ClientProxyManager() {
-		invocationHandler = new ClientInvocationHandler();
 		invocationHandler.setMessageSender(this);
 	}
 

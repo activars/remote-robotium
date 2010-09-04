@@ -174,6 +174,8 @@ class ActivityUtils {
 	{
 		return activity.getString(resId);
 	}
+
+	
 	
 	/**
 	 *
