@@ -99,6 +99,11 @@ public class ClientHandler extends SimpleChannelHandler {
 		DeviceClient device = proxyManager.getDeviceClient();
 		String failMsg = String.format("Device %s caught exception: \r\n %s",
 				device.getDeviceSerial(), e.getCause().toString());
-		Assert.fail(failMsg);
+		try {
+			device.disconnect();
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			Assert.fail(e.getCause().getMessage());
+		}
 	}
 }

@@ -19,9 +19,12 @@
 <uses-permission android:name="android.permission.INJECT_EVENTS"></uses-permission>
 
 
-<!--
+
 <instrumentation android:targetPackage="com.example.android.notepad" android:name="com.jayway.android.robotium.server.InstrumentationRunner"></instrumentation>
+
+
+<!--  
+<instrumentation android:targetPackage="sr.player" android:name="com.jayway.android.robotium.server.InstrumentationRunner"></instrumentation>
 -->
 
-<instrumentation android:targetPackage="sr.player" android:name="com.jayway.android.robotium.server.InstrumentationRunner"></instrumentation>
 </manifest>

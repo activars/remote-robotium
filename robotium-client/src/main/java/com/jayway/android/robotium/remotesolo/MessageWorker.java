@@ -24,7 +24,6 @@ public class MessageWorker {
 
 	private static Map<String, Message> receivedMessages;
 	private static Map<Integer, String> proxyObjectsRemoteID;
-	//private static Map<Integer, Object> proxyObjectReferences;
 	private static Map<Object, Object> proxyObjs;
 	private static final Object lock = new Object();
 

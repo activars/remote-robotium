@@ -44,12 +44,32 @@ public class ClientInvocationHandler implements InvocationHandler {
 		if (shouldBeRecorded(method)) {
 			
 			Message message = null;
+			// check arguments are primitives
+			Object[] checkedArgs = new Object[args.length];
+			for(int i = 0; i < args.length; i++) {
+				if(TypeUtils.isPrimitive(args[i].getClass()) || args[i].getClass().equals(Class.class)) {
+					checkedArgs[i] = args[i];
+				} else {
+					int sysRef = System.identityHashCode(proxyObj);
+					String objRemoteID = messageWorker.getProxyObjectRemoteID(sysRef);
+					if(objRemoteID != null) 
+						checkedArgs[i] = objRemoteID;
+					else 
+						throw new UnsupportedOperationException(
+						"Arguemtn type is not supported.");
+				}
+			}
+			
 			if (isSolo(proxyObj)) {
 				message = MessageFactory.createEventMessage(proxyObj
 						.getClass(), UUID.randomUUID().toString(),
 						method, method.getParameterTypes(),
-						args);
+						checkedArgs);
 			} else {
+				
+				// TODO: the invoke executes method on single remote object.
+				// The client should find the same objects on other devices and execute the invocation too!!
+				// only for non-solo based invocation
 				
 				if(method.getName().equals("hashCode")) {
 					return System.identityHashCode(proxyObj);
@@ -64,7 +84,7 @@ public class ClientInvocationHandler implements InvocationHandler {
 					// construct a message and request for action
 					message = MessageFactory.createEventMessage(
 							proxyObj.getClass(), objRemoteID, method,
-							method.getParameterTypes(), args);
+							method.getParameterTypes(), checkedArgs);
 				} else {
 					System.err.println("cannot find proxy object");
 					return null;

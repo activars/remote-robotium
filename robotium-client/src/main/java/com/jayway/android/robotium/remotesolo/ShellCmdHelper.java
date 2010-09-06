@@ -15,7 +15,7 @@ class ShellCmdHelper {
 	@SuppressWarnings("unused")
 	private static Log logger;
 
-	static void forwardingPort(int pcPort, int devicePort, String deviceSerial) {
+	static void forwardingPort(int pcPort, int devicePort, String deviceSerial) throws ExecutionException {
 		CommandExecutor executor = CommandExecutor.Factory
 				.createDefaultCommmandExecutor();
 		executor.setLogger(getLog());
@@ -28,15 +28,13 @@ class ShellCmdHelper {
 		commands.add("tcp:" + pcPort);
 		commands.add("tcp:" + devicePort);
 
-		try {
-			executor.executeCommand("adb", commands, false);
-		} catch (ExecutionException e) {
-			System.err.println(getErrorMessage());
-		}
+		
+		executor.executeCommand("adb", commands, false);
+		
 
 	}
 
-	static void startInstrumentationServer(int port, String deviceSerial) {
+	static void startInstrumentationServer(int port, String deviceSerial) throws ExecutionException, InterruptedException {
 
 		// setup port number first
 		CommandExecutor executor = CommandExecutor.Factory
@@ -59,14 +57,10 @@ class ShellCmdHelper {
 		commands.add(String.valueOf(port));
 		commands.add("com.jayway.android.robotium.server/com.jayway.android.robotium.server.InstrumentationRunner");
 
-		try {
-			executor.executeCommand("adb", commands, false);
-			Thread.sleep(5000);
-		} catch (ExecutionException e) {
-			System.err.println(getErrorMessage());
-		} catch (InterruptedException e) {
-			System.err.println(getErrorMessage());
-		}
+		
+		executor.executeCommand("adb", commands, false);
+		Thread.sleep(5000);
+		
 	}
 	
 	private static String getErrorMessage() {

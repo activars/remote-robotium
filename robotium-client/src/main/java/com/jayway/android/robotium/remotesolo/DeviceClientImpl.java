@@ -17,6 +17,7 @@ import org.jboss.netty.channel.ChannelFuture;
 import com.jayway.android.robotium.remotesolo.proxy.ClientInvocationHandler;
 import com.jayway.android.robotium.remotesolo.proxy.ProxyCreator;
 import com.jayway.android.robotium.solo.Solo;
+import com.jayway.maven.plugins.android.ExecutionException;
 
 
 public class DeviceClientImpl implements DeviceClient {
@@ -98,18 +99,24 @@ public class DeviceClientImpl implements DeviceClient {
 	
 	/**
 	 * Tries to connect to the remote device
+	 * @throws ExecutionException 
 	 */
 	public boolean connect() {
 
 		// configure the client
 		bootstrap = DeviceClientBootstrapFactory.create(this);
-		
-		// forwarding port using adb shell
-		ShellCmdHelper.forwardingPort(this.pcPort, this.devicePort,
-				this.deviceSerial);
-		
-		// starts the instrumentation server for this app
-		ShellCmdHelper.startInstrumentationServer(pcPort, deviceSerial);
+	
+		try {
+			
+			// forwarding port using adb shell
+			ShellCmdHelper.forwardingPort(this.pcPort, this.devicePort,
+					this.deviceSerial);
+			
+			// starts the instrumentation server for this app
+			ShellCmdHelper.startInstrumentationServer(pcPort, deviceSerial);
+		} catch (Exception e) {
+			this.disconnect();
+		}
 		
 		// Start the connection attempt.
 		ChannelFuture future = bootstrap.connect(new InetSocketAddress(
@@ -159,7 +166,7 @@ public class DeviceClientImpl implements DeviceClient {
 	 * Close the connection
 	 * @throws RemoteException 
 	 */
-	public void disconnect() throws RemoteException {
+	public void disconnect()  {
 
 		if (channel != null && channel.isConnected()) {
 			String msg = "disconnect";
@@ -180,6 +187,9 @@ public class DeviceClientImpl implements DeviceClient {
 			bootstrap.releaseExternalResources();
 			devicesRepostory.remove(getKey());
 		}
+		
+		devicesRepostory.remove(getKey());
+		
 	}
 	
 	public String getKey() {

@@ -26,6 +26,7 @@ import com.jayway.android.robotium.common.message.EventReturnValueMessage;
 import com.jayway.android.robotium.common.message.Message;
 import com.jayway.android.robotium.common.message.MessageFactory;
 import com.jayway.android.robotium.common.message.UnsupportedMessage;
+import com.jayway.android.robotium.common.util.TypeUtils;
 import com.jayway.android.robotium.solo.Solo;
 
 public class MessageWorker {
@@ -74,18 +75,9 @@ public class MessageWorker {
 		// Log.d(TAG, "Return type:" + returnType.getName());
 
 		// check if this has a List Collection interface and
-		Class<?>[] collectionInterfaces = returnType.getInterfaces();
-		boolean hasListInterface = false;
-		boolean hasCollectionInterface = false;
-		for (Class<?> c : collectionInterfaces) {
-			if (c.getName().equals(List.class.getName())) {
-				hasListInterface = true;
-			} else if (c.getName().equals(Collection.class.getName())) {
-				hasCollectionInterface = true;
-			}
-			if (hasListInterface && hasCollectionInterface)
-				break;
-		}
+		boolean hasListInterface = TypeUtils.hasListInterfaceType(returnType);
+		boolean hasCollectionInterface = TypeUtils.hasCollectionInterfaceType(returnType);
+
 		if (eventMsg.getTargetObjectClass().getName().equals(
 				Solo.class.getName())) {
 			Log.d(TAG, "calling on Solo base");
@@ -119,8 +111,29 @@ public class MessageWorker {
 			}
 			
 			if(realObj != null) {
+				
+				// check parameters: they could be remote references.
+				Class<?>[] tmpTypes = eventMsg.getParameterTypes();
+				Object[] tmpParams = eventMsg.getParameters();
+				Object[] checkedParams = new Object[tmpParams.length];
+				for(int i = 0; i < tmpTypes.length; i++) {
+					if(TypeUtils.isPrimitive(tmpTypes[i]) || tmpTypes[i].equals(Class.class)) {
+						checkedParams[i] = tmpParams[i];
+					} else {
+						String objRemoteID = tmpParams[i].toString();
+						Object refObj = referencedObjects.get(objRemoteID);
+						Log.d(TAG, "Object in parameter found");
+						if(refObj != null) 
+							checkedParams[i] = refObj;
+						else 
+							throw new UnsupportedOperationException(
+							"This may not be a remote object or the server lost reference.");
+					}
+				}
+			
+				
 				Log.d(TAG, "Found remote object in hashmap");
-				Object returnValue = eventMsg.getMethodReceived().invoke(realObj, eventMsg.getParameters());
+				Object returnValue = eventMsg.getMethodReceived().invoke(realObj, checkedParams);
 				Log.d(TAG, "Return value:" + returnValue.toString());
 				if(eventMsg.getMethodReceived().getReturnType().getClass().equals(void.class)) {
 					// no need to return value
