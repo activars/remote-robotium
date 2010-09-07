@@ -2,8 +2,6 @@ package com.jayway.android.robotium.remotesolo;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Map;
-
 import com.jayway.android.robotium.remotesolo.proxy.ClientProxyCreator;
 import com.jayway.android.robotium.solo.ISolo;
 import com.jayway.android.robotium.solo.Solo;

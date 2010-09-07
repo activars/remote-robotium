@@ -23,7 +23,7 @@ public class NoteListTestCase extends TestCase {
         		solo = new RemoteSolo(NotesList.class);
 
         		// emulators
-        		solo.addDevice("emulator-5554", 5000, 5000);
+        		solo.addDevice("emulator-5554", 6000, 6000);
         		solo.addDevice("emulator-5556", 5003, 5003);
         		//solo.addDevice("emulator-5558", 5004, 5004);       
 
@@ -31,7 +31,7 @@ public class NoteListTestCase extends TestCase {
         		//solo.addDevice("HT98YLZ00039", 5001, 5001);
 
         		// v2.2 device
-//         	    solo.addDevice("HT04TP800408", 5002, 5002);        		
+        		// solo.addDevice("HT04TP800408", 5002, 5002);        		
         		solo.connect();
             }
 

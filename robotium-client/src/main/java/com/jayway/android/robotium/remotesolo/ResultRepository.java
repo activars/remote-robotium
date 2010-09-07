@@ -4,13 +4,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.jayway.android.robotium.common.util.TypeUtils;
 
 public class ResultRepository {
-	// Integer key: object hashcode, Map<String,Integer>: device id, object id
-	// hashcode on other devices
+	
 	private static HashMap<Integer, HashMap<String, Integer>> objectMaps = new HashMap<Integer, HashMap<String, Integer>>();
 	
 	public Integer getRelatedObjectHashCode(Object proxyObj, DeviceClient device) {

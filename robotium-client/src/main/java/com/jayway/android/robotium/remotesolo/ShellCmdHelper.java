@@ -2,7 +2,6 @@ package com.jayway.android.robotium.remotesolo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
@@ -11,8 +10,7 @@ import com.jayway.maven.plugins.android.CommandExecutor;
 import com.jayway.maven.plugins.android.ExecutionException;
 
 class ShellCmdHelper {
-	
-	@SuppressWarnings("unused")
+
 	private static Log logger;
 
 	static void forwardingPort(int pcPort, int devicePort, String deviceSerial) throws ExecutionException {

@@ -2,7 +2,6 @@ package example.android.notepad.test;
 import java.util.ArrayList;
 
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.android.notepad.NotesList;
 import com.jayway.android.robotium.remotesolo.RemoteSolo;
@@ -32,7 +31,7 @@ public class NoteListInconsistancyTest extends TestCase {
         		//solo.addDevice("HT98YLZ00039", 5001, 5001);
 
         		// v2.2 device
-//         	    solo.addDevice("HT04TP800408", 5002, 5002);        		
+        		// solo.addDevice("HT04TP800408", 5002, 5002);        		
         		solo.connect();
             }
 

@@ -1,9 +1,6 @@
 package com.jayway.android.robotium.server;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.logging.Logger;
 
 import org.jboss.netty.channel.ChannelEvent;
@@ -83,8 +80,7 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
 
 			Message mMessage = messageWorker.parseMessage((String) e
 					.getMessage());
-			String response = "";
-
+			
 			if (mMessage instanceof TargetActivityMessage) {
 				Log.d(TAG, ((TargetActivityMessage) mMessage)
 						.getMessageHeader());

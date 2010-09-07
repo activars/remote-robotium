@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-import com.jayway.android.robotium.common.message.EventInvokeMethodMessage;
 import com.jayway.android.robotium.common.message.Message;
 import com.jayway.android.robotium.common.message.MessageFactory;
 import com.jayway.android.robotium.common.util.TypeUtils;

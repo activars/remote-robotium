@@ -11,7 +11,6 @@ import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 import android.app.Instrumentation;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;

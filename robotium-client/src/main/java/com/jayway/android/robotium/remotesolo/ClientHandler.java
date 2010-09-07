@@ -71,7 +71,7 @@ public class ClientHandler extends SimpleChannelHandler {
 					MessageWorker.addMessage(message);
 				} else if (message instanceof TargetActivityRequestMessage) {
 					// server requested a message about Instrumentation class
-					Class activityClass = device.getTargetClass();
+					Class<?> activityClass = device.getTargetClass();
 					e.getChannel().write(
 							MessageFactory.createTargetActivityMessage(
 									activityClass).toString()
@@ -94,8 +94,7 @@ public class ClientHandler extends SimpleChannelHandler {
 		try {
 			device.disconnect();
 		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
-			Assert.fail(e.getCause().getMessage());
+			Assert.fail(failMsg);
 		}
 	}
 }

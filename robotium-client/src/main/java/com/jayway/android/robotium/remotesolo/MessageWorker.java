@@ -115,6 +115,7 @@ public class MessageWorker {
 		Assert.fail("Robotium::UnsupportedMessage: " + message.getMessage());
 	}
 
+	@SuppressWarnings("unchecked")
 	private Object receivedEventReturnValueMessage(
 			EventReturnValueMessage message) {
 

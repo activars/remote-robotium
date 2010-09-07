@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import sr.player.SRPlayer;
 
 import android.test.suitebuilder.annotation.LargeTest;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.jayway.android.robotium.remotesolo.RemoteSolo;

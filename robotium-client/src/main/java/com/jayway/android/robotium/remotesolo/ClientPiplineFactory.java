@@ -9,8 +9,6 @@ import org.jboss.netty.handler.codec.frame.Delimiters;
 import org.jboss.netty.handler.codec.string.StringDecoder;
 import org.jboss.netty.handler.codec.string.StringEncoder;
 
-import com.jayway.android.robotium.remotesolo.proxy.ClientProxyCreator;
-
 public class ClientPiplineFactory implements ChannelPipelineFactory {
 	
 	private DeviceClient device;

@@ -1,7 +1,5 @@
 package com.jayway.android.robotium.remotesolo;
 
-import java.util.Map;
-
 import com.jayway.maven.plugins.android.ExecutionException;
 
 public interface DeviceClient {
