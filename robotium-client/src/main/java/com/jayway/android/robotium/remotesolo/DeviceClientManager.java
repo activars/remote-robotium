@@ -22,6 +22,7 @@ import com.jayway.android.robotium.common.util.TypeUtils;
 class DeviceClientManager {
 
 	private Class<?> targetClass;
+	private static final Object lock = new Object();
 
 	DeviceClientManager() {
 	}
@@ -48,7 +49,6 @@ class DeviceClientManager {
 		Iterator<String> it = devices.keySet().iterator();
 		ExecutorService pool = Executors.newFixedThreadPool(devices.size());
 		final ArrayList<DeviceClient> failedToConnect = new ArrayList<DeviceClient>();
-		final Object lock = new Object();
 		while (it.hasNext()) {
 			final DeviceClient dc = devices.get(it.next());
 			pool.execute(new Runnable() {
@@ -76,52 +76,13 @@ class DeviceClientManager {
 		}
 	}
 
-	Object invokeMethod(final String methodToExecute,
-			final Class<?>[] argumentTypes, final Object... arguments)
-			throws RemoteException, InconsistentResultException {
-		final Map<String, DeviceClient> devices = DeviceClientImpl
-				.getCurrentDevices();
-		Iterator<String> it = devices.keySet().iterator();
-		if (devices.size() == 0) {
-			throw new RemoteException(
-					"Server Error: Robotium test server is disconnected");
-		}
-		ExecutorService pool = Executors.newFixedThreadPool(devices.size());
-		final Map<DeviceClient, Object> results = Collections
-				.synchronizedMap(new HashMap<DeviceClient, Object>());
-		while (it.hasNext()) {
-			final DeviceClient dc = devices.get(it.next());
-			pool.execute(new Runnable() {
-				public void run() {
-					try {
-						Object obj = dc.invokeMethod(methodToExecute,
-								argumentTypes, arguments);
-						synchronized (results) {
-							results.put(dc, obj);
-						}
-					} catch (Throwable e) {
-						e.printStackTrace();
-					}
-				}
-			});
-		}
-		pool.shutdown();
-		try {
-			pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-		} catch (InterruptedException e) {
-		}
-		// comparing values, only for primitives
-		// collection check the collection size matches
-		String methodDetails = methodToExecute + ":" +  TypeUtils.getArgumentsStringValue(arguments);
-		return ResultChecker.checkConsistancy(results, methodDetails);
-	}
-
 	void disconnectAllDevices() throws RemoteException {
-		final Map<String, DeviceClient> devices = DeviceClientImpl
-				.getCurrentDevices();
-		Iterator<String> it = devices.keySet().iterator();
-		while (it.hasNext()) {
-			devices.get(it.next()).disconnect();
+		synchronized (lock) {
+			Map<String, DeviceClient> devices = DeviceClientImpl
+					.getCurrentDevices();
+			for (Object key : devices.keySet().toArray()) {
+				devices.get(key).disconnect();
+			}
 		}
 	}
 

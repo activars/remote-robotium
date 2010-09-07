@@ -67,6 +67,7 @@ public interface Message {
 	public final static String JSON_ATTR_INNER_CLASS_TYPE = "InnerClassType";
 	public final static String JSON_ATTR_IS_COLLECTION = "IsCollection";
 	public final static String JSON_ATTR_RETURN_VALUE = "ReturnValue";
+	public final static String JSON_ATTR_DEVICE_ID = "DeviceID";
 	
 	
 	

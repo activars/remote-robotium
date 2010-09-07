@@ -1,9 +1,12 @@
 package com.jayway.android.robotium.remotesolo;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Map;
 
+import com.jayway.android.robotium.remotesolo.proxy.ClientProxyCreator;
 import com.jayway.android.robotium.solo.ISolo;
+import com.jayway.android.robotium.solo.Solo;
 
 import junit.framework.Assert;
 import android.app.Activity;
@@ -62,7 +65,7 @@ public class RemoteSolo implements ISolo {
 
 	public void assertCurrentActivity(String message, String name) {
 		try {
-			devices.invokeMethod("assertCurrentActivity", 
+			invokeMethod("assertCurrentActivity", 
 					new Class<?>[] { String.class, String.class },
 					new Object[] { message, name });
 		} catch (Exception e) {
@@ -73,7 +76,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public void assertCurrentActivity(String message, Class expectedClass) {
 		try {
-			devices.invokeMethod("assertCurrentActivity", 
+			invokeMethod("assertCurrentActivity", 
 					new Class<?>[] { String.class, Class.class },
 					new Object[] { message, expectedClass });
 		} catch (Exception e) {
@@ -85,7 +88,7 @@ public class RemoteSolo implements ISolo {
 	public void assertCurrentActivity(String message, String name,
 			boolean isNewInstance) {
 		try {
-			devices.invokeMethod("assertCurrentActivity", 
+			invokeMethod("assertCurrentActivity", 
 					new Class<?>[] { String.class, String.class, boolean.class },
 					new Object[] { message, name, isNewInstance });
 		} catch (Exception e) {
@@ -97,7 +100,7 @@ public class RemoteSolo implements ISolo {
 	public void assertCurrentActivity(String message, Class expectedClass,
 			boolean isNewInstance) {
 		try {
-			devices.invokeMethod("assertCurrentActivity", 
+			invokeMethod("assertCurrentActivity", 
 					new Class<?>[] { String.class, Class.class, boolean.class },
 					new Object[] { message, expectedClass, isNewInstance });
 		} catch (Exception e) {
@@ -107,7 +110,7 @@ public class RemoteSolo implements ISolo {
 
 	public void assertLowMemory() {
 		try {
-			devices.invokeMethod("assertLowMemory", new Class<?>[] {});
+			invokeMethod("assertLowMemory", new Class<?>[] {});
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		}
@@ -115,7 +118,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clearEditText(int index) {
 		try {
-			devices.invokeMethod("clearEditText", 
+			invokeMethod("clearEditText", 
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
@@ -127,7 +130,7 @@ public class RemoteSolo implements ISolo {
 	public ArrayList<TextView> clickInList(int line) {
 		try {
 			
-			return (ArrayList<TextView>) devices.invokeMethod("clickInList", 
+			return (ArrayList<TextView>) invokeMethod("clickInList", 
 					 new Class<?>[] { int.class },
 					 new Object[] { line });
 
@@ -141,7 +144,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<TextView> clickInList(int line, int listIndex) {
 		try {
-			return (ArrayList<TextView>) devices.invokeMethod("clickInList", 
+			return (ArrayList<TextView>) invokeMethod("clickInList", 
 					new Class<?>[] { int.class, int.class },
 					new Object[] { line, listIndex });
 		} catch (Exception e) {
@@ -152,7 +155,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickLongOnScreen(float x, float y) {
 		try {
-			devices.invokeMethod("clickLongOnScreen", 
+			invokeMethod("clickLongOnScreen", 
 					new Class<?>[] { float.class, float.class },
 					new Object[] { x, y });
 		} catch (Exception e) {
@@ -162,7 +165,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickLongOnText(String text) {
 		try {
-			devices.invokeMethod("clickLongOnText", 
+			invokeMethod("clickLongOnText", 
 					new Class<?>[] { String.class },
 					new Object[] { text });
 		} catch (Exception e) {
@@ -172,7 +175,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickLongOnText(String text, int match) {
 		try {
-			devices.invokeMethod("clickLongOnText", 
+			invokeMethod("clickLongOnText", 
 					new Class<?>[] { String.class, int.class },
 					new Object[] { text, match });
 		} catch (Exception e) {
@@ -182,7 +185,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickLongOnTextAndPress(String text, int index) {
 		try {
-			devices.invokeMethod("clickLongOnTextAndPress", 
+			invokeMethod("clickLongOnTextAndPress", 
 					new Class<?>[] { String.class, int.class },
 					new Object[] { text, index });
 		} catch (Exception e) {
@@ -192,7 +195,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickLongOnView(View view) {
 		try {
-			devices.invokeMethod("clickLongOnView", 
+			invokeMethod("clickLongOnView", 
 					new Class<?>[] { View.class },
 					new Object[] { view });
 		} catch (Exception e) {
@@ -202,7 +205,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnButton(String name) {
 		try {
-			devices.invokeMethod("clickOnButton", 
+			invokeMethod("clickOnButton", 
 					new Class<?>[] { String.class },
 					new Object[] { name });
 		} catch (Exception e) {
@@ -213,7 +216,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnButton(int index) {
 		try {
-		    devices.invokeMethod("clickOnButton", 
+		    invokeMethod("clickOnButton", 
 					  new Class<?>[] { int.class },
 					  new Object[] { index });
 		} catch (Exception e) {
@@ -223,7 +226,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnCheckBox(int index) {
 		try {
-			devices.invokeMethod("clickOnCheckBox", 
+			invokeMethod("clickOnCheckBox", 
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
@@ -233,7 +236,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnEditText(int index) {
 		try {
-			devices.invokeMethod("clickOnEditText", 
+			invokeMethod("clickOnEditText", 
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
@@ -243,7 +246,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnImage(int index) {
 		try {
-			devices.invokeMethod("clickOnImage", 
+			invokeMethod("clickOnImage", 
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
@@ -253,7 +256,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnImageButton(int index) {
 		try {
-			devices.invokeMethod("clickOnImageButton", 
+			invokeMethod("clickOnImageButton", 
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
@@ -263,7 +266,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnMenuItem(String text) {
 		try {
-			devices.invokeMethod("clickOnMenuItem", 
+			invokeMethod("clickOnMenuItem", 
 					new Class<?>[] { String.class },
 					new Object[] { text });
 		} catch (Exception e) {
@@ -273,7 +276,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnRadioButton(int index) {
 		try {
-			devices.invokeMethod("clickOnRadioButton", 
+			invokeMethod("clickOnRadioButton", 
 					new Class<?>[] { int.class },
 					new Object[] { index });
 		} catch (Exception e) {
@@ -283,7 +286,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnScreen(float x, float y) {
 		try {
-			devices.invokeMethod("clickOnScreen", 
+			invokeMethod("clickOnScreen", 
 					new Class<?>[] { float.class, float.class },
 					new Object[] { x, y });
 		} catch (Exception e) {
@@ -293,7 +296,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnText(String text) {
 		try {
-			devices.invokeMethod("clickOnText", 
+			invokeMethod("clickOnText", 
 					new Class<?>[] { String.class },
 					new Object[] { text });
 		} catch (Exception e) {
@@ -303,7 +306,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnText(String text, int match) {
 		try {
-			devices.invokeMethod("clickOnText", 
+			invokeMethod("clickOnText", 
 					new Class<?>[] { String.class, int.class },
 					new Object[] { text, match });
 		} catch (Exception e) {
@@ -313,7 +316,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnToggleButton(String name) {
 		try {
-			devices.invokeMethod("clickOnToggleButton", 
+			invokeMethod("clickOnToggleButton", 
 					new Class<?>[] { String.class },
 					new Object[] { name });
 		} catch (Exception e) {
@@ -323,7 +326,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnView(View view) {
 		try {
-			devices.invokeMethod("clickOnView", 
+			invokeMethod("clickOnView", 
 					new Class<?>[] { View.class },
 					new Object[] { view });
 		} catch (Exception e) {
@@ -334,7 +337,7 @@ public class RemoteSolo implements ISolo {
 	public void drag(float fromX, float toX, float fromY, float toY,
 			int stepCount) {
 		try {
-			devices.invokeMethod("drag", 
+			invokeMethod("drag", 
 					new Class<?>[] { float.class, float.class, float.class, float.class,
 					int.class },
 					new Object[] { fromX, toX, fromY, toY, stepCount });
@@ -345,7 +348,7 @@ public class RemoteSolo implements ISolo {
 
 	public void enterText(int index, String text) {
 		try {
-			devices.invokeMethod("enterText", 
+			invokeMethod("enterText", 
 					new Class<?>[] { int.class, String.class },
 					new Object[] { index, text });
 		} catch (Exception e) {
@@ -356,7 +359,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<Activity> getAllOpenedActivities() {
 		try {
-			return  (ArrayList<Activity>) devices.invokeMethod("getAllOpenedActivities", 
+			return  (ArrayList<Activity>) invokeMethod("getAllOpenedActivities", 
 					new Class<?>[] { } );
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -366,7 +369,7 @@ public class RemoteSolo implements ISolo {
 
 	public Button getButton(int index) {
 		try {
-			return (Button) devices.invokeMethod("getButton", 
+			return (Button) invokeMethod("getButton", 
 					new Class<?>[] { int.class },
 					new Object[]{ index });
 		} catch (Exception e) {
@@ -377,7 +380,7 @@ public class RemoteSolo implements ISolo {
 
 	public int getCurrenButtonsCount() {
 		try {
-			return  Integer.parseInt(devices.invokeMethod("getCurrenButtonsCount", 
+			return  Integer.parseInt(invokeMethod("getCurrenButtonsCount", 
 					new Class<?>[] { }).toString());
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -387,7 +390,7 @@ public class RemoteSolo implements ISolo {
 
 	public Activity getCurrentActivity() {
 		try {
-			return  (Activity) devices.invokeMethod("getCurrentActivity", 
+			return  (Activity) invokeMethod("getCurrentActivity", 
 					new Class<?>[] {});
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -398,7 +401,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<Button> getCurrentButtons() {
 		try {
-			return  (ArrayList<Button>) devices.invokeMethod("getCurrentButtons", 
+			return  (ArrayList<Button>) invokeMethod("getCurrentButtons", 
 					new Class<?>[] {  });
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -409,7 +412,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<CheckBox> getCurrentCheckBoxes() {
 		try {
-			return  (ArrayList<CheckBox>) devices.invokeMethod("getCurrentCheckBoxes", 
+			return  (ArrayList<CheckBox>) invokeMethod("getCurrentCheckBoxes", 
 					new Class<?>[] { });
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -420,7 +423,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<EditText> getCurrentEditTexts() {
 		try {
-			return  (ArrayList<EditText>) devices.invokeMethod("getCurrentEditTexts", 
+			return  (ArrayList<EditText>) invokeMethod("getCurrentEditTexts", 
 					new Class<?>[] { });
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -431,7 +434,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<GridView> getCurrentGridViews() {
 		try {
-			return  (ArrayList<GridView>) devices.invokeMethod("getCurrentGridViews", 
+			return  (ArrayList<GridView>) invokeMethod("getCurrentGridViews", 
 					new Class<?>[] { });
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -442,7 +445,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<ImageButton> getCurrentImageButtons() {
 		try {
-			return  (ArrayList<ImageButton>) devices.invokeMethod("getCurrentImageButtons", 
+			return  (ArrayList<ImageButton>) invokeMethod("getCurrentImageButtons", 
 					new Class<?>[] { });
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -453,7 +456,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<ImageView> getCurrentImageViews() {
 		try {
-			return  (ArrayList<ImageView>) devices.invokeMethod("getCurrentImageViews", 
+			return  (ArrayList<ImageView>) invokeMethod("getCurrentImageViews", 
 					new Class<?>[] { });
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -464,7 +467,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<ListView> getCurrentListViews() {
 		try {
-			return  (ArrayList<ListView>) devices.invokeMethod("getCurrentListViews", 
+			return  (ArrayList<ListView>) invokeMethod("getCurrentListViews", 
 					new Class<?>[] { });
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -475,7 +478,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<RadioButton> getCurrentRadioButtons() {
 		try {
-			return  (ArrayList<RadioButton>) devices.invokeMethod("getCurrentRadioButtons", 
+			return  (ArrayList<RadioButton>) invokeMethod("getCurrentRadioButtons", 
 					new Class<?>[] { });
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -486,7 +489,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<ScrollView> getCurrentScrollViews() {
 		try {
-			return  (ArrayList<ScrollView>) devices.invokeMethod("getCurrentScrollViews", 
+			return  (ArrayList<ScrollView>) invokeMethod("getCurrentScrollViews", 
 					new Class<?>[] { });
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -497,7 +500,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<Spinner> getCurrentSpinners() {
 		try {
-			return  (ArrayList<Spinner>) devices.invokeMethod("getCurrentSpinners", 
+			return  (ArrayList<Spinner>) invokeMethod("getCurrentSpinners", 
 					new Class<?>[] { });
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -508,7 +511,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<TextView> getCurrentTextViews(View parent) {
 		try {
-			return  (ArrayList<TextView>) devices.invokeMethod("getCurrentTextViews", 
+			return  (ArrayList<TextView>) invokeMethod("getCurrentTextViews", 
 					new Class<?>[] { View.class },
 					new Object[]{ parent });
 		} catch (Exception e) {
@@ -520,7 +523,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<ToggleButton> getCurrentToggleButtons() {
 		try {
-			return  (ArrayList<ToggleButton>) devices.invokeMethod("getCurrentToggleButtons", 
+			return  (ArrayList<ToggleButton>) invokeMethod("getCurrentToggleButtons", 
 					new Class<?>[] {} );
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -530,7 +533,7 @@ public class RemoteSolo implements ISolo {
 
 	public EditText getEditText(int index) {
 		try {
-			return  (EditText) devices.invokeMethod("getEditText", 
+			return  (EditText) invokeMethod("getEditText", 
 					new Class<?>[] { int.class }, new Object[]{ index } );
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -540,7 +543,7 @@ public class RemoteSolo implements ISolo {
 
 	public View getTopParent(View view) {
 		try {
-			return  (View) devices.invokeMethod("getTopParent", 
+			return  (View) invokeMethod("getTopParent", 
 					new Class<?>[] { View.class }, new Object[]{ view } );
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -551,7 +554,7 @@ public class RemoteSolo implements ISolo {
 	@SuppressWarnings("unchecked")
 	public ArrayList<View> getViews() {
 		try {
-			return  (ArrayList<View>) devices.invokeMethod("getViews", 
+			return  (ArrayList<View>) invokeMethod("getViews", 
 					new Class<?>[] {});
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -561,7 +564,7 @@ public class RemoteSolo implements ISolo {
 
 	public void goBack() {
 		try {
-			devices.invokeMethod("goBack", 
+			invokeMethod("goBack", 
 					new Class<?>[] { } );
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -570,7 +573,7 @@ public class RemoteSolo implements ISolo {
 
 	public void goBackToActivity(String name) {
 		try {
-			devices.invokeMethod("goBackToActivity", 
+			invokeMethod("goBackToActivity", 
 					new Class<?>[] { String.class },
 					new Object[] { name });
 		} catch (Exception e) {
@@ -581,7 +584,7 @@ public class RemoteSolo implements ISolo {
 	public boolean isCheckBoxChecked(int index) {
 
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("isCheckBoxChecked", 
+			return Boolean.parseBoolean(invokeMethod("isCheckBoxChecked", 
 					new Class<?>[] { int.class}, 
 					new Object[] { index } ).toString());
 		} catch (Exception e) {
@@ -592,7 +595,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean isRadioButtonChecked(int index) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("isRadioButtonChecked", 
+			return Boolean.parseBoolean(invokeMethod("isRadioButtonChecked", 
 					new Class<?>[] { int.class}, 
 					new Object[] { index } ).toString());
 		} catch (Exception e) {
@@ -603,7 +606,7 @@ public class RemoteSolo implements ISolo {
 
 	public void pressMenuItem(int index) {
 		try {
-			devices.invokeMethod("pressMenuItem", 
+			invokeMethod("pressMenuItem", 
 					new Class<?>[] { int.class}, 
 					new Object[] { index } );
 		} catch (Exception e) {
@@ -614,7 +617,7 @@ public class RemoteSolo implements ISolo {
 
 	public void pressSpinnerItem(int spinnerIndex, int itemIndex) {
 		try {
-			devices.invokeMethod("pressSpinnerItem", 
+			invokeMethod("pressSpinnerItem", 
 					new Class<?>[] { int.class, int.class}, 
 					new Object[] { spinnerIndex, itemIndex } );
 		} catch (Exception e) {
@@ -624,7 +627,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean scrollDown() {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("scrollDown", 
+			return Boolean.parseBoolean(invokeMethod("scrollDown", 
 					new Class<?>[] {}).toString());
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -634,7 +637,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean scrollDownList(int listIndex) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("scrollDownList", 
+			return Boolean.parseBoolean(invokeMethod("scrollDownList", 
 					new Class<?>[] { int.class}, 
 					new Object[] { listIndex } ).toString());
 		} catch (Exception e) {
@@ -645,7 +648,7 @@ public class RemoteSolo implements ISolo {
 
 	public void scrollToSide(int side) {
 		try {
-			devices.invokeMethod("scrollToSide", 
+			invokeMethod("scrollToSide", 
 					new Class<?>[] { int.class }, 
 					new Object[] { side } );
 		} catch (Exception e) {
@@ -655,7 +658,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean scrollUp() {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("scrollUp", 
+			return Boolean.parseBoolean(invokeMethod("scrollUp", 
 					new Class<?>[] { }).toString());
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -665,7 +668,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean scrollUpList(int listIndex) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("scrollUpList", 
+			return Boolean.parseBoolean(invokeMethod("scrollUpList", 
 					new Class<?>[] { int.class }, 
 					new Object[] { listIndex }).toString());
 		} catch (Exception e) {
@@ -676,7 +679,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean searchButton(String search) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("searchButton", 
+			return Boolean.parseBoolean(invokeMethod("searchButton", 
 					new Class<?>[] { String.class }, 
 					new Object[] { search }).toString());
 		} catch (Exception e) {
@@ -687,7 +690,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean searchButton(String search, int matches) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("searchButton", 
+			return Boolean.parseBoolean(invokeMethod("searchButton", 
 					new Class<?>[] { String.class, int.class }, 
 					new Object[] { search, matches }).toString());
 		} catch (Exception e) {
@@ -698,7 +701,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean searchEditText(String search) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("searchEditText", 
+			return Boolean.parseBoolean(invokeMethod("searchEditText", 
 					new Class<?>[] { String.class }, 
 					new Object[] { search }).toString());
 		} catch (Exception e) {
@@ -709,7 +712,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean searchText(String search) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("searchText", 
+			return Boolean.parseBoolean(invokeMethod("searchText", 
 					new Class<?>[] { String.class }, 
 					new Object[] { search }).toString());
 		} catch (Exception e) {
@@ -720,7 +723,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean searchText(String search, int matches) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("searchText", 
+			return Boolean.parseBoolean(invokeMethod("searchText", 
 					new Class<?>[] { String.class, int.class }, 
 					new Object[] { search, matches }).toString());
 		} catch (Exception e) {
@@ -731,7 +734,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean searchText(String search, int matches, boolean scroll) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("searchText", 
+			return Boolean.parseBoolean(invokeMethod("searchText", 
 					new Class<?>[] { String.class, int.class , boolean.class}, 
 					new Object[] { search, matches, scroll }).toString());
 		} catch (Exception e) {
@@ -742,7 +745,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean searchToggleButton(String search) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("searchToggleButton", 
+			return Boolean.parseBoolean(invokeMethod("searchToggleButton", 
 					new Class<?>[] { String.class }, 
 					new Object[] { search }).toString());
 		} catch (Exception e) {
@@ -753,7 +756,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean searchToggleButton(String search, int matches) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("searchToggleButton", 
+			return Boolean.parseBoolean(invokeMethod("searchToggleButton", 
 					new Class<?>[] { String.class, int.class }, 
 					new Object[] { search, matches }).toString());
 		} catch (Exception e) {
@@ -764,7 +767,7 @@ public class RemoteSolo implements ISolo {
 
 	public void sendKey(int key) {
 		try {
-			devices.invokeMethod("sendKey", 
+			invokeMethod("sendKey", 
 					new Class<?>[] { int.class }, 
 					new Object[] { key });
 		} catch (Exception e) {
@@ -774,7 +777,7 @@ public class RemoteSolo implements ISolo {
 
 	public void setActivityOrientation(int orientation) {
 		try {
-			devices.invokeMethod("setActivityOrientation", 
+			invokeMethod("setActivityOrientation", 
 					new Class<?>[] { int.class }, 
 					new Object[] { orientation });
 		} catch (Exception e) {
@@ -784,7 +787,7 @@ public class RemoteSolo implements ISolo {
 
 	public void sleep(int time) {
 		try {
-			devices.invokeMethod("sleep", 
+			invokeMethod("sleep", 
 					new Class<?>[] { int.class }, 
 					new Object[] { time });
 		} catch (Exception e) {
@@ -794,7 +797,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean waitForActivity(String name, int timeout) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("waitForActivity", 
+			return Boolean.parseBoolean(invokeMethod("waitForActivity", 
 					new Class<?>[] { String.class, int.class }, 
 					new Object[] { name, timeout }).toString());
 		} catch (Exception e) {
@@ -805,7 +808,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean waitForDialogToClose(long timeout) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("waitForDialogToClose", 
+			return Boolean.parseBoolean(invokeMethod("waitForDialogToClose", 
 					new Class<?>[] { long.class }, 
 					new Object[] { timeout }).toString());
 		} catch (Exception e) {
@@ -816,7 +819,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean waitForText(String text) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("waitForText", 
+			return Boolean.parseBoolean(invokeMethod("waitForText", 
 					new Class<?>[] { String.class }, 
 					new Object[] { text }).toString());
 		} catch (Exception e) {
@@ -827,7 +830,7 @@ public class RemoteSolo implements ISolo {
 
 	public boolean waitForText(String text, int matches, long timeout) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("waitForText", 
+			return Boolean.parseBoolean(invokeMethod("waitForText", 
 					new Class<?>[] { String.class, int.class, long.class }, 
 					new Object[] { text, matches, timeout }).toString());
 		} catch (Exception e) {
@@ -839,7 +842,7 @@ public class RemoteSolo implements ISolo {
 	public boolean waitForText(String text, int matches, long timeout,
 			boolean scroll) {
 		try {
-			return Boolean.parseBoolean(devices.invokeMethod("waitForText", 
+			return Boolean.parseBoolean(invokeMethod("waitForText", 
 					new Class<?>[] { String.class, int.class, long.class,
 					boolean.class }, 
 					new Object[] { text, matches, timeout, scroll }).toString());
@@ -851,7 +854,7 @@ public class RemoteSolo implements ISolo {
 
 	public void finalize() throws Throwable {
 		try {
-			devices.invokeMethod("finalize", 
+			invokeMethod("finalize", 
 					new Class<?>[] {});
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -860,7 +863,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickLongOnText(String text, int match, boolean scroll) {
 		try {
-			devices.invokeMethod("clickLongOnText", 
+			invokeMethod("clickLongOnText", 
 					new Class<?>[] {String.class, int.class, boolean.class},
 					new Object[] {text, match, scroll});
 		} catch (Exception e) {
@@ -871,7 +874,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnMenuItem(String text, boolean subMenu) {
 		try {
-			devices.invokeMethod("clickOnMenuItem", 
+			invokeMethod("clickOnMenuItem", 
 					new Class<?>[] {String.class, boolean.class},
 					new Object[] {text, subMenu});
 		} catch (Exception e) {
@@ -881,7 +884,7 @@ public class RemoteSolo implements ISolo {
 
 	public void clickOnText(String text, int matches, boolean scroll) {
 		try {
-			devices.invokeMethod("clickOnText", 
+			invokeMethod("clickOnText", 
 					new Class<?>[] {String.class, int.class, boolean.class},
 					new Object[] {text, matches, scroll});
 		} catch (Exception e) {
@@ -891,7 +894,7 @@ public class RemoteSolo implements ISolo {
 
 	public ImageView getImage(int index) {
 		try {
-			return (ImageView) devices.invokeMethod("getImage", 
+			return (ImageView) invokeMethod("getImage", 
 					new Class<?>[] { int.class }, 
 					new Object[] { index });
 		} catch (Exception e) {
@@ -902,7 +905,7 @@ public class RemoteSolo implements ISolo {
 
 	public ImageButton getImageButton(int index) {
 		try {
-			return (ImageButton) devices.invokeMethod("getImageButton", 
+			return (ImageButton) invokeMethod("getImageButton", 
 					new Class<?>[] { int.class }, 
 					new Object[] { index });
 		} catch (Exception e) {
@@ -913,7 +916,7 @@ public class RemoteSolo implements ISolo {
 
 	public String getString(int resId) {
 		try {
-			return (String) devices.invokeMethod("getString", 
+			return (String) invokeMethod("getString", 
 					new Class<?>[] { int.class }, 
 					new Object[] { resId });
 		} catch (Exception e) {
@@ -924,7 +927,7 @@ public class RemoteSolo implements ISolo {
 
 	public TextView getText(int index) {
 		try {
-			return (TextView) devices.invokeMethod("getText", 
+			return (TextView) invokeMethod("getText", 
 					new Class<?>[] { int.class }, 
 					new Object[] { index });
 		} catch (Exception e) {
@@ -935,11 +938,21 @@ public class RemoteSolo implements ISolo {
 	
 	public void restartActivity() {
 		try {
-			devices.invokeMethod("restartActivity", 
+			invokeMethod("restartActivity", 
 					new Class<?>[] {} );
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		}
 	}
+	
+	private Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments) throws Exception {
+		// create Proxy object for solo class when needed
+		Solo mSoloProxy = (Solo) ClientProxyCreator.createProxy(Solo.class);
+		// the invoked method
+		Method receivedMethod = mSoloProxy.getClass().getMethod(methodToExecute, argumentTypes);
+		// invoke, should bubble up to the ClientInvocationHandler
+		return receivedMethod.invoke(mSoloProxy, arguments);
+	}
+
 
 }

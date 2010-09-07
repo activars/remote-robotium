@@ -1,29 +1,23 @@
 package com.jayway.android.robotium.remotesolo;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.WeakHashMap;
 
 import junit.framework.Assert;
-
 import com.jayway.android.robotium.common.message.EventReturnValueMessage;
 import com.jayway.android.robotium.common.message.ExceptionMessage;
 import com.jayway.android.robotium.common.message.FailureMessage;
 import com.jayway.android.robotium.common.message.Message;
 import com.jayway.android.robotium.common.message.UnsupportedMessage;
-import com.jayway.android.robotium.remotesolo.proxy.ProxyManager;
+import com.jayway.android.robotium.remotesolo.proxy.ClientProxyCreator;
 
 public class MessageWorker {
 
 	private static Map<String, Message> receivedMessages;
 	private static Map<Integer, String> proxyObjectsRemoteID;
+	private static Map<Integer, Object> proxyObjectStorage;
 	private static Map<Object, Object> proxyObjs;
 	private static final Object lock = new Object();
 
@@ -33,9 +27,11 @@ public class MessageWorker {
 		proxyObjectsRemoteID = Collections
 				.synchronizedMap(new HashMap<Integer, String>());
 		proxyObjs = new HashMap<Object, Object>();
+		proxyObjectStorage = Collections
+		.synchronizedMap(new HashMap<Integer, Object>());
 	}
 
-	public Object digestMessage(String messageID, ProxyManager proxyManager) {
+	public Object digestMessage(String messageID) {
 
 		Message message = receivedMessages.get(messageID);
 		if (message == null)
@@ -52,7 +48,7 @@ public class MessageWorker {
 
 		} else if (message instanceof EventReturnValueMessage) {
 			return receivedEventReturnValueMessage(
-					(EventReturnValueMessage) message, proxyManager);
+					(EventReturnValueMessage) message);
 		} else {
 			removeMessage(message);
 
@@ -71,10 +67,11 @@ public class MessageWorker {
 		synchronized (lock) {
 			proxyObjectsRemoteID.remove(systemObjRef);
 			proxyObjs.remove(proxyObj);
+			proxyObjs.remove(systemObjRef);
 		}
 	}
 
-	public void addMessge(Message message) {
+	public static void addMessage(Message message) {
 		System.out.println("Msg Added: " + message.getMessageId().toString());
 		receivedMessages.put(message.getMessageId().toString(), message);
 	}
@@ -82,13 +79,17 @@ public class MessageWorker {
 	public boolean hasResponseFor(Message message) {
 		return receivedMessages.containsKey(message.getMessageId().toString());
 	}
+	
+	public Object getProxyObject(int systemObjRef) {
+		return proxyObjectStorage.get(systemObjRef);
+	}
 
 	private void addProxyObject(Object proxyObj, String remoteRef) {
 		synchronized (lock) {
-		
-		int sysRef = System.identityHashCode(proxyObj);
-		proxyObjs.put(proxyObj, proxyObj);
-		proxyObjectsRemoteID.put(sysRef, remoteRef);
+			int sysRef = System.identityHashCode(proxyObj);
+			proxyObjs.put(proxyObj, proxyObj);
+			proxyObjectsRemoteID.put(sysRef, remoteRef);
+			proxyObjectStorage.put(sysRef, proxyObj);
 		}
 	}
 
@@ -115,7 +116,7 @@ public class MessageWorker {
 	}
 
 	private Object receivedEventReturnValueMessage(
-			EventReturnValueMessage message, ProxyManager proxyManager) {
+			EventReturnValueMessage message) {
 
 		EventReturnValueMessage returnValueMsg = message;
 
@@ -146,7 +147,7 @@ public class MessageWorker {
 					// we need to construct an object proxy for the
 					// object
 
-					shouldAdd = proxyManager.createProxy(returnValueMsg
+					shouldAdd = ClientProxyCreator.createProxy(returnValueMsg
 							.getInnerClassType());
 
 					System.out.println("proxy created for: "
@@ -167,7 +168,7 @@ public class MessageWorker {
 			
 		}  else if (!returnValueMsg.isPrimitive() && isInnerClassVoidType) {
 			// the return object should be proxied
-			Object returnVal = proxyManager.createProxy(returnValueMsg
+			Object returnVal = ClientProxyCreator.createProxy(returnValueMsg
 					.getClassType());
 			Object[] ojbs = returnValueMsg.getReturnValue();
 			addProxyObject(returnVal, ojbs[0].toString());

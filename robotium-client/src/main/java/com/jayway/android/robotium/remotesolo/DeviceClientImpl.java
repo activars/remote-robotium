@@ -1,28 +1,19 @@
 package com.jayway.android.robotium.remotesolo;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import junit.framework.Assert;
-
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 
-import com.jayway.android.robotium.remotesolo.proxy.ClientInvocationHandler;
-import com.jayway.android.robotium.remotesolo.proxy.ProxyCreator;
-import com.jayway.android.robotium.solo.Solo;
 import com.jayway.maven.plugins.android.ExecutionException;
 
 
 public class DeviceClientImpl implements DeviceClient {
 	
-	private static Map<String, DeviceClient> devicesRepostory =  new ConcurrentHashMap<String, DeviceClient>();
+	private static Map<String, DeviceClient> devicesRepostory =  new LinkedHashMap<String, DeviceClient>();
 	private int pcPort;
 	private int devicePort;
 	private Class<?> targetClass;
@@ -31,7 +22,6 @@ public class DeviceClientImpl implements DeviceClient {
 	private Channel channel;
 	private ChannelFuture lastWriteFuture;
 	private ClientBootstrap bootstrap;
-	private Solo mSoloProxy;
 	
 	public static DeviceClient newInstance(String deviceSerial, int pcPort, int devicePort, Class<?> targetClass) {
 		// the key is => pcPort:devicePort
@@ -152,16 +142,8 @@ public class DeviceClientImpl implements DeviceClient {
 	}
 	
 	
-	public Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments) throws Throwable {
-
-		// create Proxy object for solo class when needed
-		mSoloProxy = (Solo) ((DeviceClientBootstrap)bootstrap).createObjectProxy(Solo.class);
-		// the invoked method
-		Method receivedMethod = mSoloProxy.getClass().getMethod(methodToExecute, argumentTypes);
-		// invoke, should bubble up to the ClientInvocationHandler
-		return receivedMethod.invoke(mSoloProxy, arguments);
-	}
-
+	
+	
 	/**
 	 * Close the connection
 	 * @throws RemoteException 
@@ -185,14 +167,14 @@ public class DeviceClientImpl implements DeviceClient {
 
 			// Shut down all thread pools to exit.
 			bootstrap.releaseExternalResources();
-			devicesRepostory.remove(getKey());
+			devicesRepostory.remove(getDeviceKey());
 		}
 		
-		devicesRepostory.remove(getKey());
+		devicesRepostory.remove(getDeviceKey());
 		
 	}
 	
-	public String getKey() {
+	public String getDeviceKey() {
 		return this.pcPort + ":" + this.devicePort;
 	}
 

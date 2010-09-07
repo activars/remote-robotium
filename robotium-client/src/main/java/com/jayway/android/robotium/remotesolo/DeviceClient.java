@@ -24,6 +24,12 @@ public interface DeviceClient {
 	 * Returns the device serial number
 	 */
 	public abstract String getDeviceSerial();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getDeviceKey();
 
 	/**
 	 * Tries to connect to the remote device
@@ -40,8 +46,6 @@ public interface DeviceClient {
 	 */
 	public abstract void sendMessage(String msg) throws RemoteException;
 	
-	public Object invokeMethod(String methodToExecute, Class<?>[] argumentTypes, Object... arguments) throws Exception, Throwable;
-
 	/**
 	 * Close the connection
 	 * @throws RemoteException 

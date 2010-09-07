@@ -45,7 +45,7 @@ public class NoteListInconsistancyTest extends TestCase {
 	
 	
 	// NOTE: one of the device should have added Note 1, 
-	//      but the other one do note have Note 1.
+	//      but the other one do not have Note 1.
 	// The test should fail if search text results are not consistent on multiple devices.
 	public void testAddNote(){
 		 
@@ -57,11 +57,12 @@ public class NoteListInconsistancyTest extends TestCase {
 		 assertEquals("Note 1 and/or Note 2 are not found", expected, actual);
 	}
 	
-	public void testTextViewCount(){
+	public void testListViewEqual(){
 		ArrayList<ListView> lists = solo.getCurrentListViews();; // Clicks on a list line
 		ListView lv1 = lists.get(0);
 		ListView lv2 = lists.get(0);
-		assertEquals(lv1, lv2);
+		boolean isequal = lv1.equals(lv2);
+		assertTrue(isequal);
 	}
 
 	

@@ -15,26 +15,20 @@ import com.jayway.android.robotium.common.message.Message;
 import com.jayway.android.robotium.common.message.MessageFactory;
 import com.jayway.android.robotium.common.message.SuccessMessage;
 import com.jayway.android.robotium.common.message.TargetActivityRequestMessage;
-import com.jayway.android.robotium.remotesolo.proxy.ProxyManager;
+
 
 public class ClientHandler extends SimpleChannelHandler {
-	private ProxyManager proxyManager;
-
+	
+	private DeviceClient device;
+	
 	private static final Logger logger = Logger.getLogger(ClientHandler.class
 			.getName());
-
-	/**
-	 * Dependency injection.
-	 * 
-	 * @param container
-	 */
-	public void setMessageContainer(ProxyManager proxyManager) {
-		this.proxyManager = proxyManager;
+	
+	
+	public void setDeviceClient(DeviceClient device) {
+		this.device = device;
 	}
 
-	public ProxyManager getMessageContainer() {
-		return this.proxyManager;
-	}
 
 	@Override
 	public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e)
@@ -49,7 +43,7 @@ public class ClientHandler extends SimpleChannelHandler {
 	public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) {
 		try {
 			super.channelClosed(ctx, e);
-			proxyManager.getDeviceClient().disconnect();
+			device.disconnect();
 		} catch (Exception e1) {
 		}
 	}
@@ -57,7 +51,7 @@ public class ClientHandler extends SimpleChannelHandler {
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 
-		if (proxyManager != null) {
+		if (device != null) {
 
 			String messageString = (String) e.getMessage();
 			Message message = null;
@@ -74,17 +68,16 @@ public class ClientHandler extends SimpleChannelHandler {
 				}
 
 				if (message instanceof SuccessMessage) {
-					proxyManager.addMessage(message);
+					MessageWorker.addMessage(message);
 				} else if (message instanceof TargetActivityRequestMessage) {
 					// server requested a message about Instrumentation class
-					Class activityClass = proxyManager.getDeviceClient()
-							.getTargetClass();
+					Class activityClass = device.getTargetClass();
 					e.getChannel().write(
 							MessageFactory.createTargetActivityMessage(
 									activityClass).toString()
 									+ "\r\n");
 				} else if (message != null) {
-					proxyManager.addMessage(message);
+					MessageWorker.addMessage(message);
 				}
 			}
 
@@ -96,7 +89,6 @@ public class ClientHandler extends SimpleChannelHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-		DeviceClient device = proxyManager.getDeviceClient();
 		String failMsg = String.format("Device %s caught exception: \r\n %s",
 				device.getDeviceSerial(), e.getCause().toString());
 		try {
