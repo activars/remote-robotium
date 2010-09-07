@@ -25,8 +25,8 @@ public class SRPlayerTestCase extends TestCase {
         		solo = new RemoteSolo(SRPlayer.class);
 
         		// emulators
-        		//solo.addDevice("emulator-5554", 5000, 5000);
-        		solo.addDevice("emulator-5556", 5003, 5003);
+        		solo.addDevice("emulator-5554", 5000, 5000);
+        		//solo.addDevice("emulator-5556", 5003, 5003);
         		//solo.addDevice("emulator-5558", 5004, 5004);       
 
         		// v1.6 device
@@ -74,7 +74,8 @@ public class SRPlayerTestCase extends TestCase {
 	
 	@LargeTest
 	public void testCategories() throws InterruptedException
-	{
+	{	
+		solo.clickOnText("Kanaler");
 		solo.clickOnText("Kategorier");
 		solo.clickOnText("Musik");
 		assertTrue("Musik is not found", solo.searchText("Musik", 1, false));

@@ -133,8 +133,7 @@ public class RemoteSolo implements ISolo {
 					 new Object[] { line });
 
 		} catch (Exception e) {
-			//Assert.fail(e.getMessage());
-			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 		return null;
 	}

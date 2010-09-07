@@ -81,17 +81,13 @@ public class ResultRepository {
 						for(int i = 0; i < ((List<?>) mResult).size(); i++) {
 							keyObjRef = System.identityHashCode(((List<?>) mResult).get(i));
 							valueObjRef = System.identityHashCode(((List<?>) comparedResult).get(i));
-							if(objectMaps.containsKey(keyObjRef)) {
-								objectMaps.get(keyObjRef).put(compareKey.getDeviceKey(), valueObjRef);
-								System.out.println("Added ProxyRef key:" + keyObjRef + " value:" + valueObjRef);
-							} else {
-								HashMap<String, Integer> temp = new HashMap<String, Integer>();
-								temp.put(compareKey.getDeviceKey(), valueObjRef);
-								objectMaps.put(keyObjRef, temp);
-								System.out.println("Added ProxyRef key:" + keyObjRef + " value:" + valueObjRef);
-							}
+							addToResults(keyObjRef, valueObjRef, compareKey.getDeviceKey());
 						}
 					} else if(!isResultPrimitive && !hasListInterface && !hasCollectionInterface) {
+						int keyObjRef, valueObjRef;
+						keyObjRef = System.identityHashCode(mResult);
+						valueObjRef = System.identityHashCode(comparedResult);
+						addToResults(keyObjRef, valueObjRef, compareKey.getDeviceKey());
 						
 					}
 			}
@@ -99,6 +95,18 @@ public class ResultRepository {
 			return mResult;
 		} else {
 			throw new RemoteException("Server could be disconnected");
+		}
+	}
+	
+	private void addToResults(int keyObjRef, int valueObjRef, String deviceKey) {
+		if(objectMaps.containsKey(keyObjRef)) {
+			objectMaps.get(keyObjRef).put(deviceKey, valueObjRef);
+			System.out.println("Added ProxyRef key:" + keyObjRef + " value:" + valueObjRef);
+		} else {
+			HashMap<String, Integer> temp = new HashMap<String, Integer>();
+			temp.put(deviceKey, valueObjRef);
+			objectMaps.put(keyObjRef, temp);
+			System.out.println("Added ProxyRef key:" + keyObjRef + " value:" + valueObjRef);
 		}
 	}
 
