@@ -91,10 +91,6 @@ public class ClientHandler extends SimpleChannelHandler {
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
 		String failMsg = String.format("Device %s caught exception: \r\n %s",
 				device.getDeviceSerial(), e.getCause().toString());
-		try {
-			device.disconnect();
-		} catch (RemoteException e1) {
-			Assert.fail(failMsg);
-		}
+		
 	}
 }

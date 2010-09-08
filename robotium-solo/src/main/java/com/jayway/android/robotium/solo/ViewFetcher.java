@@ -2,7 +2,6 @@ package com.jayway.android.robotium.solo;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import android.app.Activity;
 import android.app.Instrumentation;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,18 +30,15 @@ class ViewFetcher {
 	
 	private final ArrayList<View> viewList = new ArrayList<View>();
 	private final Instrumentation inst;
-	private final ActivityUtils activityUtils;
 	
     /**
      * Constructs this object.
      *
      * @param inst the {@link Instrumentation} instance.
-	 * @param activityUtils the {@link ActivityUtils} instance.
      */
 	
-    public ViewFetcher(Instrumentation inst, ActivityUtils activityUtils) {
+    public ViewFetcher(Instrumentation inst) {
         this.inst = inst;
-        this.activityUtils = activityUtils;
     }
 	
 	
@@ -90,15 +86,13 @@ class ViewFetcher {
 	public View getActiveDecorView()
 	{
 		View [] views = getWindowDecorViews();
-		Activity activity = activityUtils.getCurrentActivity(0);
+		int []xy = new int[2];
 		if(views !=null && views.length > 0)
 		{
 			int length = views.length;
 			for(int i = length - 1; i >= 0; i--){
-				if(activity.hasWindowFocus() && activity.getWindow().getDecorView().equals(views[i])){
-					return views[i];
-				}
-				else if(!activity.hasWindowFocus() && !activity.getWindow().getDecorView().equals(views[i])){ 
+				views[i].getLocationOnScreen(xy);
+				if(xy[0] > 0 || xy[1] > 0 ){
 					return views[i];
 				}
 			}
@@ -120,13 +114,10 @@ class ViewFetcher {
 		inst.waitForIdleSync();
 		viewList.clear();
 		try {
-			View decorView = getActiveDecorView();
-			if(decorView!= null)
-				getViews(decorView);
+			if(getActiveDecorView() != null)
+				getViews(getActiveDecorView());
 			return viewList;
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
+		} catch (Throwable e) {}
 		return null;
 	}
 	
@@ -488,6 +479,7 @@ class ViewFetcher {
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 	}

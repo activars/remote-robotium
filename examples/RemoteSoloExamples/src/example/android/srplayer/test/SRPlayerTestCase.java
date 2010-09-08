@@ -25,8 +25,8 @@ public class SRPlayerTestCase extends TestCase {
         		solo = new RemoteSolo(SRPlayer.class);
 
         		// emulators
-        		solo.addDevice("emulator-5554", 5000, 5000);
-        		//solo.addDevice("emulator-5556", 5003, 5003);
+        		//solo.addDevice("emulator-5554", 5000, 5000);
+        		solo.addDevice("emulator-5556", 5008, 5008);
         		//solo.addDevice("emulator-5558", 5004, 5004);       
 
         		// v1.6 device

@@ -81,7 +81,7 @@ public class ClientInvocationHandler implements InvocationHandler {
 									obj = sendMessages(dc, dcProxyObj, method,
 											args);
 								} else {
-									throw new RemoteException("missing referenced object");
+								//	throw new RemoteException("missing referenced object");
 								}
 							}
 

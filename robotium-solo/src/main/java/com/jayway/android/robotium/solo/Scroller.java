@@ -1,5 +1,6 @@
 package com.jayway.android.robotium.solo;
 
+import junit.framework.Assert;
 import android.app.Instrumentation;
 import android.os.SystemClock;
 import android.view.MotionEvent;
@@ -65,7 +66,9 @@ class Scroller {
 		MotionEvent event = MotionEvent.obtain(downTime, eventTime,MotionEvent.ACTION_DOWN, fromX, fromY, 0);
 		try {
 			inst.sendPointerSync(event);
-		} catch (Throwable e) {}
+		} catch (Throwable e) {
+			Assert.assertTrue("Application can not be dragged!", false);
+		}
 		for (int i = 0; i < stepCount; ++i) {
 			y += yStep;
 			x += xStep;

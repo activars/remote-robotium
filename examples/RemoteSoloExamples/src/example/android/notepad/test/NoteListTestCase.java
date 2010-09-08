@@ -1,10 +1,12 @@
 package example.android.notepad.test;
 import java.util.ArrayList;
 
+import android.test.suitebuilder.annotation.Smoke;
 import android.widget.TextView;
 
 import com.example.android.notepad.NotesList;
 import com.jayway.android.robotium.remotesolo.RemoteSolo;
+import com.jayway.android.robotium.solo.Solo;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
@@ -23,15 +25,15 @@ public class NoteListTestCase extends TestCase {
         		solo = new RemoteSolo(NotesList.class);
 
         		// emulators
-        		//solo.addDevice("emulator-5554", 6000, 6000);
-        		//solo.addDevice("emulator-5556", 5003, 5003);
-        		//solo.addDevice("emulator-5558", 5004, 5004);       
+        		solo.addDevice("emulator-5554", 6000, 6000);
+//        		solo.addDevice("emulator-5556", 5003, 5003);
+//        		solo.addDevice("emulator-5558", 5004, 5004);       
 
         		// v1.6 device
-        		//solo.addDevice("HT98YLZ00039", 5001, 5001);
+//        		solo.addDevice("HT98YLZ00039", 6565, 6565);
 
         		// v2.2 device
-        		 solo.addDevice("HT04TP800408", 5002, 5002);        		
+        		//solo.addDevice("HT04TP800408", 5002, 5002);        		
         		solo.connect();
             }
 
@@ -42,15 +44,11 @@ public class NoteListTestCase extends TestCase {
         return setup;
     }
 	
-	public void testNoButton() {
-		int expectButtonCount = 0; 
-		int actualCount = solo.getCurrenButtonsCount();
-		assertEquals("Should have no buttons", actualCount, expectButtonCount);
-	}
 	
-	
-	public void testAddNote(){
+	@Smoke
+	 public void testAddNote() throws Exception {
 		 solo.clickOnMenuItem("Add note");
+		 solo.assertCurrentActivity("Expected NoteEditor activity", "NoteEditor"); //Assert that NoteEditor activity is opened
 		 solo.enterText(0, "Note 1"); //Add note
 		 solo.goBack();
 		 solo.clickOnMenuItem("Add note"); //Clicks on menu item 
@@ -59,34 +57,32 @@ public class NoteListTestCase extends TestCase {
 		 boolean expected = true;
 		 boolean actual = solo.searchText("Note 1") && solo.searchText("Note 2");
 		 assertEquals("Note 1 and/or Note 2 are not found", expected, actual);
-	}
+		
+	 }
 	
-	public void testTextViewCount(){
-		ArrayList<TextView> tv = solo.clickInList(2); // Clicks on a list line
-		assertEquals(1, tv.size());
-		boolean isEmpty = tv.isEmpty();
-		assertFalse(isEmpty);
-	}
-
-	public void testNoteChange() {
-		solo.setActivityOrientation(0); // Change orientation of activity
+	@Smoke 
+	public void testNoteChange() throws Exception {
+		solo.clickInList(2); // Clicks on a list line
+		solo.setActivityOrientation(Solo.LANDSCAPE); // Change orientation of activity
 		solo.pressMenuItem(2); // Change title
 		solo.enterText(0, " test");
 		solo.goBack();
 		solo.goBack();
 		boolean expected = true;
-		boolean actual = solo.searchText("(?i).*?note 1 test.*"); // (Regexp) case insensitive												// insensitive
+		boolean actual = solo.searchText("(?i).*?note 1 test"); // (Regexp) case insensitive												// insensitive
 		assertEquals("Note 1 test is not found", expected, actual);
+
 	}
+	
 
-
+	@Smoke
 	 public void testNoteRemove() throws Exception {
 		 solo.clickOnText("(?i).*?test.*");   //(Regexp) case insensitive/text that contains "test"
 		 solo.pressMenuItem(1);   //Delete Note 1 test
 		 boolean expected = false;   //Note 1 test & Note 2 should not be found
 		 boolean actual = solo.searchText("Note 1 test");
 		 assertEquals("Note 1 Test is found", expected, actual);  //Assert that Note 1 test is not found
- 		 solo.clickLongOnText("Note 2");
+		 solo.clickLongOnText("Note 2");
 		 solo.clickOnText("(?i).*?Delete.*");  //Clicks on Delete in the context menu
 		 actual = solo.searchText("Note 2");
 		 assertEquals("Note 2 is found", expected, actual);  //Assert that Note 2 is not found

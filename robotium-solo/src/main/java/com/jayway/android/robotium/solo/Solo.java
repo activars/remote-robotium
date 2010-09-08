@@ -65,6 +65,17 @@ public class Solo implements ISolo {
 	private final TextEnterer textEnterer;
 	private final Scroller scroller;
 	private final RobotiumUtils robotiumUtils;
+	public final static int LANDSCAPE = 0;
+	public final static int PORTRAIT = 1;
+	public final static int RIGHT = 2;
+	public final static int LEFT = 3;
+	public final static int UP = 4;
+	public final static int DOWN = 5;
+	public final static int ENTER = 6;
+	public final static int MENU = 7;
+	public final static int DELETE = 8;
+
+	
 	/**
 	 * Constructor that takes in the instrumentation and the start activity.
 	 *
@@ -75,7 +86,7 @@ public class Solo implements ISolo {
 	
 	public Solo(Instrumentation inst, Activity activity) {
         this.activitiyUtils = new ActivityUtils(inst, activity);
-        this.viewFetcher = new ViewFetcher(inst, activitiyUtils);
+        this.viewFetcher = new ViewFetcher(inst);
         this.asserter = new Asserter(activitiyUtils);
         this.dialogUtils = new DialogUtils(viewFetcher);
         this.scroller = new Scroller(inst, activitiyUtils, viewFetcher);
@@ -659,7 +670,7 @@ public class Solo implements ISolo {
 	/**
 	 * Clicks on a button with a certain index.
 	 *
-	 * @param index the index number of the button. 0 if only one is available
+	 * @param index the index number of the button
 	 *
 	 */
 	
@@ -1165,6 +1176,7 @@ public class Solo implements ISolo {
 	/**
 	 *
 	 * All activites that have been active are finished.
+	 *
 	 */
 	
 	public void finalize() throws Throwable {
