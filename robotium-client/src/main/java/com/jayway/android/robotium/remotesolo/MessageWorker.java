@@ -72,7 +72,7 @@ public class MessageWorker {
 	}
 
 	public static void addMessage(Message message) {
-		System.out.println("Msg Added: " + message.getMessageId().toString());
+		//System.out.println("Msg Added: " + message.getMessageId().toString());
 		receivedMessages.put(message.getMessageId().toString(), message);
 	}
 

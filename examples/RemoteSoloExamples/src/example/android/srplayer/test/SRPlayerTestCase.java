@@ -26,8 +26,8 @@ public class SRPlayerTestCase extends TestCase {
 
         		// emulators
         		//solo.addDevice("emulator-5554", 5000, 5000);
-        		solo.addDevice("emulator-5556", 5008, 5008);
-        		//solo.addDevice("emulator-5558", 5004, 5004);       
+        		//solo.addDevice("emulator-5556", 5008, 5008);
+        		solo.addDevice("emulator-5558", 5004, 5004);       
 
         		// v1.6 device
         		//solo.addDevice("HT98YLZ00039", 5001, 5001);

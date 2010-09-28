@@ -170,7 +170,7 @@ public class ClientInvocationHandler implements InvocationHandler {
 		}
 
 		device.sendMessage(message.toString());
-		System.out.println("Sent Msg: " + message.toString());
+		//System.out.println("Sent Msg: " + message.toString());
 
 		// wait for response
 		int slept = 0;

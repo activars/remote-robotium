@@ -26,10 +26,7 @@ class ShellCmdHelper {
 		commands.add("tcp:" + pcPort);
 		commands.add("tcp:" + devicePort);
 
-		
 		executor.executeCommand("adb", commands, false);
-		
-
 	}
 
 	static void startInstrumentationServer(int port, String deviceSerial) throws ExecutionException, InterruptedException {

@@ -31,7 +31,6 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 
-
 /**
  * Ported from Project Awaitility
  * 

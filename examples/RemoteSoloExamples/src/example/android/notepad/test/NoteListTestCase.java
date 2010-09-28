@@ -26,11 +26,13 @@ public class NoteListTestCase extends TestCase {
 
         		// emulators
         		solo.addDevice("emulator-5554", 6000, 6000);
-//        		solo.addDevice("emulator-5556", 5003, 5003);
-//        		solo.addDevice("emulator-5558", 5004, 5004);       
+        		solo.addDevice("emulator-5556", 5003, 5003);
+        	    solo.addDevice("emulator-5558", 5004, 5004);
+        	    solo.addDevice("emulator-5560", 5007, 5007);
+        	    solo.addDevice("emulator-5562", 5008, 5008);
 
         		// v1.6 device
-//        		solo.addDevice("HT98YLZ00039", 6565, 6565);
+        		//solo.addDevice("HT98YLZ00039", 6565, 6565);
 
         		// v2.2 device
         		//solo.addDevice("HT04TP800408", 5002, 5002);        		

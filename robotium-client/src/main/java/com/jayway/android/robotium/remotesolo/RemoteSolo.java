@@ -52,11 +52,17 @@ public class RemoteSolo implements ISolo {
 	public void addDevice(String deviceSerial, int pcPort, int devicePort) {
 		devices.addDevice(deviceSerial, pcPort, devicePort);
 	}
-
+	
+	/**
+	 * Attempt to connect devices to corresponding server
+	 */
 	public void connect() {
 		devices.connectAll();
 	}
 	
+	/**
+	 * Attempt to disconnect devices to corresponding server
+	 */
 	public void disconnect() throws RemoteException {
 		devices.disconnectAllDevices();
 	}

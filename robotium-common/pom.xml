@@ -3,7 +3,7 @@
   <parent>
     <artifactId>robotium</artifactId>
     <groupId>com.jayway.android.robotium</groupId>
-    <version>1.7.0</version>
+    <version>1.8.0-beta-3-SNAPSHOT</version>
   </parent>
   <groupId>com.jayway.android.robotium.common</groupId>
   <artifactId>robotium-common</artifactId>
