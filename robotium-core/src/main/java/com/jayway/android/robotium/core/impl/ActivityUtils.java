@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.solo;
+package com.jayway.android.robotium.core.impl;
 
 import java.util.ArrayList;
 import junit.framework.Assert;
@@ -17,33 +17,34 @@ import android.view.KeyEvent;
  * 
  */
 
-class ActivityUtils {
+public class ActivityUtils {
 	
 	private final Instrumentation inst;
 	private ActivityMonitor activityMonitor;
 	private Activity activity;
+    private final Sleeper sleeper;
 	private ArrayList<Activity> activityList = new ArrayList<Activity>();
-	private final int PAUS = 500;
 
 	/**
 	 * Constructor that takes in the instrumentation and the start activity.
 	 *
-	 * @param inst the {@link Instrumentation} instance.
-	 * @param activity {@link Activity} the start activity
-	 *
+	 * @param inst the {@code Instrumentation} instance.
+     * @param activity the start {@code Activity}
+     * @param sleeper the {@code Sleeper} instance
+     *
 	 */
 	
-	public ActivityUtils(Instrumentation inst, Activity activity) {
+	public ActivityUtils(Instrumentation inst, Activity activity, Sleeper sleeper) {
 		this.inst = inst;
 		this.activity = activity;
-		setupActivityMonitor();
-		
+        this.sleeper = sleeper;
+        setupActivityMonitor();
 	}
 	
 	/**
-	 * This method returns an ArrayList of all the opened/active activities.
+	 * Returns a {@code List} of all the opened/active activities.
 	 * 
-	 * @return ArrayList of all the opened activities
+	 * @return a {@code List} of all the opened/active activities
 	 * 
 	 */
 	
@@ -64,35 +65,52 @@ class ActivityUtils {
 		try {
 			IntentFilter filter = null;
 			activityMonitor = inst.addMonitor(filter, null, false);
-		} catch (Throwable e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Public method that sets the Orientation (Landscape/Portrait) for the current activity.
+	 * Sets the Orientation (Landscape/Portrait) for the current activity.
 	 * 
-	 * @param orientation the orientation to be set. 0 for landscape and 1 for portrait 
+	 * @param orientation An orientation constant such as {@link android.content.pm.ActivityInfo#SCREEN_ORIENTATION_LANDSCAPE} or {@link android.content.pm.ActivityInfo#SCREEN_ORIENTATION_PORTRAIT}.
+	 *
+	 * @see android.app.Activity#setRequestedOrientation(int)
 	 *  
 	 */
 	
 	public void setActivityOrientation(int orientation)
 	{
 		if(activity.equals(getCurrentActivity()))
-			RobotiumUtils.sleep(PAUS);
+			sleeper.sleep();
 		Activity activity = getCurrentActivity();
 		activity.setRequestedOrientation(orientation);	
 	}
 
 	/**
-	 * This method returns the current activity.
+	 * Returns the current {@code Activity}, after sleeping a default pause length.
 	 *
-	 * @return current activity
+	 * @return the current {@code Activity}
 	 *
 	 */
 	
 	public Activity getCurrentActivity() {
-		RobotiumUtils.sleep(PAUS);
-		inst.waitForIdleSync();
+	    return getCurrentActivity(true);
+	}
+	
+	/**
+	 * Returns the current {@code Activity}.
+	 *
+	 * @param shouldSleepFirst whether to sleep a default pause first
+	 * @return the current {@code Activity}
+	 * 
+	 */
+	
+	public Activity getCurrentActivity(boolean shouldSleepFirst) {
+		if(shouldSleepFirst){
+			sleeper.sleep();
+			inst.waitForIdleSync();
+		}
 		Boolean found = false;
 		if (activityMonitor != null) {
 			if (activityMonitor.getLastActivity() != null)
@@ -112,10 +130,11 @@ class ActivityUtils {
 	}
 	
 	/**
-	 * Waits for the given Activity.
-	 * @param name the name of the Activity to wait for e.g. "MyActivity"
+	 * Waits for the given {@link Activity}.
+	 *
+	 * @param name the name of the {@code Activity} to wait for e.g. {@code "MyActivity"}
 	 * @param timeout the amount of time in milliseconds to wait
-	 * @return true if Activity appears before the timeout and false if it does not
+	 * @return {@code true} if {@code Activity} appears before the timeout and {@code false} if it does not
 	 * 
 	 */
 	
@@ -134,8 +153,9 @@ class ActivityUtils {
 	}
 	
 	/**
-	 * Returns to the given Activity.
-	 * @param name the name of the Activity to be returned to e.g. "MyActivity"
+	 * Returns to the given {@link Activity}.
+	 *
+	 * @param name the name of the {@code Activity} to return to, e.g. {@code "MyActivity"}
 	 * 
 	 */
 	
@@ -151,7 +171,7 @@ class ActivityUtils {
 			{
 				try{
 				inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
-				}catch(Throwable e){
+				}catch(SecurityException e){
 					Assert.assertTrue("Activity named " + name + " can not be returned to", false);}
 			}
 		}
@@ -165,7 +185,7 @@ class ActivityUtils {
 	/**
 	 * Returns a localized string
 	 * 
-	 * @param resId the resource ID of the view
+	 * @param resId the resource ID for the string
 	 * @return the localized string
 	 * 
 	 */
@@ -189,9 +209,7 @@ class ActivityUtils {
 			getCurrentActivity().finish();
 			activityList.clear();
 		
-		} catch (Throwable e) {
-			
-		}
+		} catch (Exception ignored) {}
 		super.finalize();
 	}
 

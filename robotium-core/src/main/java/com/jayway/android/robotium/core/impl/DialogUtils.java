@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.solo;
+package com.jayway.android.robotium.core.impl;
 
 
 /**
@@ -9,33 +9,34 @@ package com.jayway.android.robotium.solo;
  * 
  */
 
-class DialogUtils {
+public class DialogUtils {
 	
 	private final ViewFetcher viewFetcher;
-	private final int MINIPAUS = 300;
+    private final Sleeper sleeper;
 
 	/**
 	 * Constructs this object.
 	 * 
-	 * @param viewFetcher the {@link ViewFetcher} instance.
+	 * @param viewFetcher the {@code ViewFetcher} instance.
+     * @param sleeper the {@code Sleeper} instance.
 	 * 
 	 */
 
-	public DialogUtils(ViewFetcher viewFetcher) {
+	public DialogUtils(ViewFetcher viewFetcher, Sleeper sleeper) {
 		this.viewFetcher = viewFetcher;
-
-	}
+        this.sleeper = sleeper;
+    }
 
 
 	/**
-	 * Waits for a Dialog to close.
-	 * 
-	 * @param timeout the the amount of time in milliseconds to wait
-	 * @return true if the dialog is closed before the timeout and false if it is not closed
+	 * Waits for a {@link android.app.Dialog} to close.
+	 *
+	 * @param timeout the amount of time in milliseconds to wait
+	 * @return {@code true} if the {@code Dialog} is closed before the timeout and {@code false} if it is not closed.
 	 */
 
 	public boolean waitForDialogToClose(long timeout) {
-		RobotiumUtils.sleep(MINIPAUS);
+		sleeper.sleepMini();
 		int elements = viewFetcher.getWindowDecorViews().length;
 		long now = System.currentTimeMillis();
 		final long endTime = now + timeout;
@@ -49,7 +50,7 @@ class DialogUtils {
 			if(!viewFetcher.getActiveDecorView().isEnabled())
 				break;
 			
-			RobotiumUtils.sleep(MINIPAUS);
+			sleeper.sleepMini();
 			now = System.currentTimeMillis();
 		}
 		

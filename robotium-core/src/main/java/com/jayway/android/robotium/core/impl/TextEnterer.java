@@ -1,5 +1,6 @@
-package com.jayway.android.robotium.solo;
+package com.jayway.android.robotium.core.impl;
 
+import android.widget.EditText;
 import junit.framework.Assert;
 import android.app.Instrumentation;
 import android.view.KeyEvent;
@@ -11,7 +12,7 @@ import android.view.KeyEvent;
  *
  */
 
-class TextEnterer{
+public class TextEnterer{
 	
 	private final ViewFetcher viewFetcher;
 	private final RobotiumUtils robotiumUtils;
@@ -35,7 +36,7 @@ class TextEnterer{
 
 	
 	/**
-	 * This method is used to enter text into an EditText or a NoteField with a certain index.
+	 * Enters text into an {@link android.widget.EditText} with a certain index.
 	 *
 	 * @param index the index of the text field. Index 0 if only one available.
 	 * @param text the text string that is to be entered into the text field
@@ -46,36 +47,35 @@ class TextEnterer{
     	robotiumUtils.waitForIdle();
     	Boolean focused = false;
     	try {
-    		if (viewFetcher.getCurrentEditTexts().size() > 0) {
-    			for (int i = 0; i < viewFetcher.getCurrentEditTexts().size(); i++) {
-    				if (viewFetcher.getCurrentEditTexts().get(i).isFocused())
+			if (viewFetcher.getCurrentViews(EditText.class).size() > 0) {
+				for (int i = 0; i < viewFetcher.getCurrentViews(EditText.class).size(); i++) {
+					if (viewFetcher.getCurrentViews(EditText.class).get(i).isFocused())
     					focused = true;
     			}
     		}
-    		if (!focused && viewFetcher.getCurrentEditTexts().size() > 0) {
-    			clicker.clickOnEditText(index);
-    			try{
+			if (!focused && viewFetcher.getCurrentViews(EditText.class).size() > 0) {
+				clicker.clickOn(EditText.class, index);
+				try{
     				inst.sendStringSync(text);
     				inst.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
-    				inst.sendKeyDownUpSync(KeyEvent.KEYCODE_ENTER);
-    			}catch(Throwable e){
+    			}catch(SecurityException e){
     				Assert.assertTrue("Text can not be entered!", false);	
     			}
 
-    		} else if (focused && viewFetcher.getCurrentEditTexts().size() >1)
+    		} else if (focused && viewFetcher.getCurrentViews(EditText.class).size() >1)
     		{
-    			clicker.clickOnEditText(index);
-    			try{
+				clicker.clickOn(EditText.class, index);
+				try{
     				inst.sendStringSync(text);
-    			}catch(Throwable e){
-    				Assert.assertTrue("Text can not be entered!", false);	
+    			}catch(SecurityException e){
+    				Assert.assertTrue("Text can not be entered!", false);
     			}
     		}
     		else {
     			try{
     				inst.sendStringSync(text);
-    			}catch(Throwable e){
-    				Assert.assertTrue("Text can not be entered!", false);	
+    			}catch(SecurityException e){
+    				Assert.assertTrue("Text can not be entered!", false);
     			}
     		}
     	} catch (IndexOutOfBoundsException e) {

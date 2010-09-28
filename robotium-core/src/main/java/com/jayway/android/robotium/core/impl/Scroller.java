@@ -1,6 +1,5 @@
-package com.jayway.android.robotium.solo;
+package com.jayway.android.robotium.core.impl;
 
-import junit.framework.Assert;
 import android.app.Instrumentation;
 import android.os.SystemClock;
 import android.view.MotionEvent;
@@ -15,17 +14,15 @@ import android.widget.ScrollView;
 * 
 */
 
-class Scroller {
+public class Scroller {
 	
+    public enum Direction {UP, DOWN}
+    public enum Side {LEFT, RIGHT}
+
 	private final Instrumentation inst;
 	private final ActivityUtils activityUtils;
 	private final ViewFetcher viewFetcher;
    	private int scrollAmount = 0;
-	private final static int RIGHT = 2;
-	private final static int LEFT = 3;
-	private final static int UP = 4;
-	private final static int DOWN = 5;
-	
 
     /**
      * Constructs this object.
@@ -66,9 +63,7 @@ class Scroller {
 		MotionEvent event = MotionEvent.obtain(downTime, eventTime,MotionEvent.ACTION_DOWN, fromX, fromY, 0);
 		try {
 			inst.sendPointerSync(event);
-		} catch (Throwable e) {
-			Assert.assertTrue("Application can not be dragged!", false);
-		}
+		} catch (SecurityException ignored) {}
 		for (int i = 0; i < stepCount; ++i) {
 			y += yStep;
 			x += xStep;
@@ -76,54 +71,29 @@ class Scroller {
 			event = MotionEvent.obtain(downTime, eventTime,MotionEvent.ACTION_MOVE, x, y, 0);
 			try {
 				inst.sendPointerSync(event);
-			} catch (Throwable e) {}
+			} catch (SecurityException ignored) {}
 			inst.waitForIdleSync();
 		}
 		eventTime = SystemClock.uptimeMillis();
 		event = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP,toX, toY, 0);
 		try {
 			inst.sendPointerSync(event);
-		} catch (Throwable e) {}
+		} catch (SecurityException ignored) {}
 	}
-	
-	
+
+
 	/**
-	 * Used to scroll down the screen.
-	 *
-	 * @return true if more scrolling can be done and false if it is at the end of 
-	 * the screen 
-	 *
-	 */
-	
-	public boolean scrollDown() {
-		return scroll(DOWN);
-	
-	}
-	
-	/**
-	 * Used to scroll up the screen.
-	 *
-	 * @return true if more scrolling can be done and false if it is at the top of 
-	 * the screen 
-	 *
-	 */
-	
-	public boolean scrollUp(){
-		return scroll(UP);
-	}
-	
-	/**
-	 * Private method used to scroll up and down
+	 * Scrolls up and down.
 	 * 
 	 * @param direction the direction in which to scroll
-	 * @return true if more scrolling can be done
+	 * @return {@code true} if more scrolling can be done
 	 * 
 	 */
 	
-	private boolean scroll(int direction) {
+	public boolean scroll(Direction direction) {
 		int yStart;
 		int yEnd;
-		if (direction == DOWN) {
+		if (direction == Direction.DOWN) {
 			yStart = (activityUtils.getCurrentActivity().getWindowManager()
 					.getDefaultDisplay().getHeight() - 20);
 			yEnd = ((activityUtils.getCurrentActivity().getWindowManager()
@@ -138,62 +108,38 @@ class Scroller {
 		int x = activityUtils.getCurrentActivity().getWindowManager()
 				.getDefaultDisplay().getWidth() / 2;
 
-		if (viewFetcher.getCurrentListViews().size() > 0) {
+		if (viewFetcher.getCurrentViews(ListView.class).size() > 0) {
 			return scrollList(0, direction);
 		} 
-		else if (viewFetcher.getCurrentScrollViews().size() > 0) {
-			ScrollView scroll = viewFetcher.getCurrentScrollViews().get(0);
-			scrollAmount = scroll.getScrollY();
-			drag(x, x, yStart, yEnd, 20);
-			if (scrollAmount == scroll.getScrollY()) {
-				scrollAmount = 0;
-				return false;
-			} 
+		else {
+			if (viewFetcher.getCurrentViews(ScrollView.class).size() > 0) {
+				ScrollView scroll = viewFetcher.getCurrentViews(ScrollView.class).get(0);
+				scrollAmount = scroll.getScrollY();
+				drag(x, x, yStart, yEnd, 20);
+				if (scrollAmount == scroll.getScrollY()) {
+					scrollAmount = 0;
+					return false;
+				}
+				else
+					return true;
+			}
 			else
-				return true;
-		} 
-		else
-			return false;
+				return false;
+		}
 
 	}
-	
+
 	/**
-	 * Scrolls up a list with a given listIndex. 
-	 * @param listIndex the ListView to be scrolled. 0 if only one list is available.
-	 * @return true if more scrolling can be done
-	 * 
-	 */
-	
-	public boolean scrollUpList(int listIndex)
-	{
-		return scrollList(listIndex, UP);
-	}
-	
-	/**
-	 * Scrolls down a list with a given listIndex.
-	 * 
-	 * @param listIndex the list to be scrolled. 0 if only one list is available
-	 * @return true if more scrolling can be done
-	 * 
-	 */
-	
-	public boolean scrollDownList(int listIndex)
-	{
-		return scrollList(listIndex, DOWN);
-		
-	}
-	
-	/**
-	 * Scrolls a list
+	 * Scrolls a list.
 	 * 
 	 * @param listIndex the list to be scrolled
 	 * @param direction the direction to be scrolled
-	 * @return true if more scrolling can be done
+	 * @return {@code true} if more scrolling can be done
 	 * 
 	 */
 	
-	private boolean scrollList(int listIndex, int direction) {
-		ListView listView = viewFetcher.getCurrentListViews().get(listIndex);
+	public boolean scrollList(int listIndex, Direction direction) {
+		ListView listView = viewFetcher.getCurrentViews(ListView.class).get(listIndex);
 		int[] xy = new int[2];
 		listView.getLocationOnScreen(xy);
 
@@ -210,7 +156,7 @@ class Scroller {
 		}
 		int yStart;
 		int yEnd;
-		if (direction == DOWN) {
+		if (direction == Direction.DOWN) {
 			yStart = ((xy[1] + listView.getHeight()) - 20);
 			yEnd = (xy[1] + 20);
 		} else {
@@ -233,22 +179,22 @@ class Scroller {
 	
 	
 	/**
-	 * This method is used to scroll horizontally.
+	 * Scrolls horizontally.
 	 *
-	 * @param side the side in which to scroll
+	 * @param side the side to which to scroll; {@link Side#RIGHT} or {@link Side#LEFT}
 	 *
 	 */
 	
-	public void scrollToSide(int side) {
+	public void scrollToSide(Side side) {
 		int screenHeight = activityUtils.getCurrentActivity().getWindowManager().getDefaultDisplay()
 		.getHeight();
 		int screenWidth = activityUtils.getCurrentActivity().getWindowManager().getDefaultDisplay()
 		.getWidth();
 		float x = screenWidth / 2.0f;
 		float y = screenHeight / 2.0f;
-		if (side == LEFT)
+		if (side == Side.LEFT)
 			drag(0, x, y, y, 40);
-		else if (side == RIGHT)
+		else if (side == Side.RIGHT)
 			drag(x, 0, y, y, 40);
 	}
 	
