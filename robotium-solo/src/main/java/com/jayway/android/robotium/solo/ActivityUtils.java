@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.core.impl;
+package com.jayway.android.robotium.solo;
 
 import java.util.ArrayList;
 import junit.framework.Assert;
@@ -11,13 +11,13 @@ import android.view.KeyEvent;
 
 /**
  * This class contains activity related methods. Examples are:
- * getCurrentActivity(), getActivityList().
+ * getCurrentActivity(), getActivityList(), getAllOpenedActivities().
  * 
  * @author Renas Reda, renas.reda@jayway.com
  * 
  */
 
-public class ActivityUtils {
+class ActivityUtils {
 	
 	private final Instrumentation inst;
 	private ActivityMonitor activityMonitor;
@@ -74,8 +74,6 @@ public class ActivityUtils {
 	 * Sets the Orientation (Landscape/Portrait) for the current activity.
 	 * 
 	 * @param orientation An orientation constant such as {@link android.content.pm.ActivityInfo#SCREEN_ORIENTATION_LANDSCAPE} or {@link android.content.pm.ActivityInfo#SCREEN_ORIENTATION_PORTRAIT}.
-	 *
-	 * @see android.app.Activity#setRequestedOrientation(int)
 	 *  
 	 */
 	
@@ -83,7 +81,7 @@ public class ActivityUtils {
 	{
 		if(activity.equals(getCurrentActivity()))
 			sleeper.sleep();
-		Activity activity = getCurrentActivity();
+		Activity activity = getCurrentActivity(false);
 		activity.setRequestedOrientation(orientation);	
 	}
 
@@ -206,7 +204,7 @@ public class ActivityUtils {
 			for (int i = 0; i < activityList.size(); i++) {
 				activityList.get(i).finish();
 			}
-			getCurrentActivity().finish();
+			getCurrentActivity(false).finish();
 			activityList.clear();
 		
 		} catch (Exception ignored) {}

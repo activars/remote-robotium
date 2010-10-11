@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.core.impl;
+package com.jayway.android.robotium.solo;
 
 import android.widget.Spinner;
 import junit.framework.Assert;
@@ -13,7 +13,7 @@ import android.view.KeyEvent;
  * 
  */
 
-public class Presser{
+class Presser{
 
 	private final ViewFetcher viewFetcher;
 	private final Clicker clicker;
@@ -40,7 +40,7 @@ public class Presser{
 
 	
 	/**
-	 * Presses a {@link android.view.MenuItem} with a certain index. Index {@code 0} is the first item in the
+	 * Presses a {@link android.view.MenuItem} with a given index. Index {@code 0} is the first item in the
 	 * first row, Index {@code 3} is the first item in the second row and
 	 * index {@code 5} is the first item in the third row.
 	 *

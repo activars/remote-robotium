@@ -1,7 +1,7 @@
 package com.jayway.android.robotium.solo;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -20,12 +20,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ListView;
 import android.widget.ToggleButton;
-import com.jayway.android.robotium.core.impl.*;
 
 /**
  * This class contains all the methods that the sub-classes have. It supports test
- * cases that span over multiple activities. It supports regular expressions and 
- * will automatically scroll when needed.
+ * cases that span over multiple activities. 
+ * 
+ * Robotium has full support for Activities, Dialogs, Toasts, Menus and Context Menus. 
  * 
  * When writing tests there is no need to plan for or expect new activities in the test case. 
  * All is handled automatically by Robotium-Solo. Robotium-Solo can be used in conjunction with
@@ -45,10 +45,13 @@ import com.jayway.android.robotium.core.impl.*;
  *
  * solo.clickOnText(&quot;Categories&quot;);
  * solo.clickOnText(&quot;Other&quot;);
+ * solo.clickInList(1);
+ * solo.scrollDown();
  * solo.clickOnButton(&quot;Edit&quot;);
  * solo.searchText(&quot;Edit Window&quot;);
  * solo.clickOnButton(&quot;Commit&quot;);
  * assertTrue(solo.searchText(&quot;Changes have been made successfully&quot;));
+ * solo.goBackToActivity("CategoriesActivity");
  * }
  *
  * </pre>
@@ -62,6 +65,7 @@ public class Solo implements ISolo {
 
 	private final Asserter asserter;
 	private final ViewFetcher viewFetcher;
+	private final Checker checker;
 	private final Clicker clicker;
 	private final Presser presser;
 	private final Searcher searcher;
@@ -71,6 +75,7 @@ public class Solo implements ISolo {
 	private final Scroller scroller;
 	private final RobotiumUtils robotiumUtils;
 	private final Sleeper sleeper;
+	private final Waiter waiter;
 	public final static int LANDSCAPE = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;   // 0
 	public final static int PORTRAIT = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;     // 1
 	public final static int RIGHT = 2;
@@ -95,29 +100,31 @@ public class Solo implements ISolo {
 	public Solo(Instrumentation inst, Activity activity) {
         this.sleeper = new Sleeper();
         this.activitiyUtils = new ActivityUtils(inst, activity, sleeper);
-        this.viewFetcher = new ViewFetcher(inst, activitiyUtils);
+        this.viewFetcher = new ViewFetcher(inst, activitiyUtils, sleeper);
+        this.checker = new Checker(viewFetcher);
         this.asserter = new Asserter(activitiyUtils, sleeper);
         this.dialogUtils = new DialogUtils(viewFetcher, sleeper);
         this.scroller = new Scroller(inst, activitiyUtils, viewFetcher);
         this.searcher = new Searcher(viewFetcher, scroller, inst, sleeper);
-        this.robotiumUtils = new RobotiumUtils(activitiyUtils, searcher, viewFetcher, inst, sleeper, scroller);
-        this.clicker = new Clicker(activitiyUtils, viewFetcher, scroller,robotiumUtils, inst, sleeper);
+        this.waiter = new Waiter(viewFetcher, searcher, sleeper);
+        this.robotiumUtils = new RobotiumUtils(inst, sleeper);
+        this.clicker = new Clicker(activitiyUtils, viewFetcher, scroller,robotiumUtils, inst, sleeper, waiter);
         this.presser = new Presser(viewFetcher, clicker, inst, sleeper);
-        this.textEnterer = new TextEnterer(viewFetcher, robotiumUtils, clicker, inst);
+        this.textEnterer = new TextEnterer(activitiyUtils,viewFetcher, waiter);
 
 	}
 
 	/**
-	 * Returns a {@code List} of the {@code View}s located in the current
+	 * Returns an {@code ArrayList} of the {@code View}s located in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code View}s located in the current {@code Activity}
+	 * @return an {@code ArrayList} of the {@code View}s located in the current {@code Activity}
 	 *
 	 */
 	
 	public ArrayList<View> getViews() {
 		try {
-			return ensureArrayListOrNull(viewFetcher.getViews(null));
+			return viewFetcher.getViews(null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -140,13 +147,13 @@ public class Solo implements ISolo {
 	/**
      * Clears the value of an {@link EditText}.
      * 
-     * @param index the index of the {@code EditText} that should be cleared. 0 if only one is available.
+     * @param index the index of the {@code EditText} that should be cleared. 0 if only one is available
 	 *
      */
 	
     public void clearEditText(int index)
     {
-       robotiumUtils.clearEditText(index);
+       textEnterer.setEditText(index, "");
     }
     
     /**
@@ -159,7 +166,7 @@ public class Solo implements ISolo {
 	
 	public boolean waitForText(String text) {
 
-		return robotiumUtils.waitForText(text);
+		return waiter.waitForText(text);
 	}
 
 	
@@ -174,7 +181,7 @@ public class Solo implements ISolo {
 	 */
 	
 	public boolean waitForText(String text, int minimumNumberOfMatches, long timeout) {
-       return robotiumUtils.waitForText(text, minimumNumberOfMatches, timeout);
+       return waiter.waitForText(text, minimumNumberOfMatches, timeout);
     }
 	
 	 /**
@@ -189,7 +196,7 @@ public class Solo implements ISolo {
 	 */
 	
 	public boolean waitForText(String text, int minimumNumberOfMatches, long timeout, boolean scroll) {
-		return robotiumUtils.waitForText(text, minimumNumberOfMatches, timeout, scroll);
+		return waiter.waitForText(text, minimumNumberOfMatches, timeout, scroll);
     }
 	
 	
@@ -203,7 +210,7 @@ public class Solo implements ISolo {
 	 */
 	
 	public boolean searchEditText(String text) {
-		boolean found = searcher.searchWithTimeoutFor(EditText.class, text, 1, true);
+		boolean found = searcher.searchWithTimeoutFor(EditText.class, text, 1, true, false);
 		return found;
 	}
 	
@@ -218,7 +225,22 @@ public class Solo implements ISolo {
 	 */
 	
 	public boolean searchButton(String text) {
-		boolean found = searcher.searchWithTimeoutFor(Button.class, text, 0, true);
+		boolean found = searcher.searchWithTimeoutFor(Button.class, text, 0, true, false);
+		return found;
+	}
+	
+	/**
+	 * Searches for a {@link Button} with the given text string and returns true if at least one {@code Button}
+	 * is found. Will automatically scroll when needed. 
+	 *
+	 * @param text the text to search for. The parameter will be interpreted as a regular expression
+	 * @param onlyVisible {@code true} if only {@code Button}s visible on the screen should be searched
+	 * @return {@code true} if a {@code Button} with the given text is found and {@code false} if it is not found
+	 *
+	 */
+	
+	public boolean searchButton(String text, boolean onlyVisible) {
+		boolean found = searcher.searchWithTimeoutFor(Button.class, text, 0, true, onlyVisible);
 		return found;
 	}
 	
@@ -232,7 +254,7 @@ public class Solo implements ISolo {
 	 */
 	
 	public boolean searchToggleButton(String text) {
-		boolean found = searcher.searchWithTimeoutFor(ToggleButton.class, text, 0, true);
+		boolean found = searcher.searchWithTimeoutFor(ToggleButton.class, text, 0, true, false);
 		return found;
 	}
 	
@@ -249,7 +271,25 @@ public class Solo implements ISolo {
 	 */
 	
 	public boolean searchButton(String text, int minimumNumberOfMatches) {
-		boolean found = searcher.searchWithTimeoutFor(Button.class, text, minimumNumberOfMatches, true);
+		boolean found = searcher.searchWithTimeoutFor(Button.class, text, minimumNumberOfMatches, true, false);
+		return found;
+	}
+	
+	/**
+	 * Searches for a {@link Button} with the given text string and returns {@code true} if the
+	 * searched {@code Button} is found a given number of times. Will automatically scroll when needed.
+	 * 
+	 * @param text the text to search for. The parameter will be interpreted as a regular expression
+	 * @param minimumNumberOfMatches the minimum number of matches expected to be found. {@code 0} matches means that one or more
+	 * matches are expected to be found
+	 * @param onlyVisible {@code true} if only {@code Button}s visible on the screen should be searched
+	 * @return {@code true} if a {@code Button} with the given text is found a given number of times and {@code false}
+	 * if it is not found
+	 *  
+	 */
+	
+	public boolean searchButton(String text, int minimumNumberOfMatches, boolean onlyVisible) {
+		boolean found = searcher.searchWithTimeoutFor(Button.class, text, minimumNumberOfMatches, true, onlyVisible);
 		return found;
 	}
 	
@@ -266,7 +306,7 @@ public class Solo implements ISolo {
 	 */
 	
 	public boolean searchToggleButton(String text, int minimumNumberOfMatches) {
-		boolean found = searcher.searchWithTimeoutFor(ToggleButton.class, text, minimumNumberOfMatches, true);
+		boolean found = searcher.searchWithTimeoutFor(ToggleButton.class, text, minimumNumberOfMatches, true, false);
 		return found;
 	}
 	
@@ -280,7 +320,22 @@ public class Solo implements ISolo {
 	 */
 	
 	public boolean searchText(String text) {
-		boolean found = searcher.searchWithTimeoutFor(TextView.class, text, 0, true);
+		boolean found = searcher.searchWithTimeoutFor(TextView.class, text, 0, true, false);
+		return found;
+	}
+	
+	/**
+	 * Searches for a text string and returns {@code true} if at least one item
+	 * is found with the expected text. Will automatically scroll when needed. 
+	 *
+	 * @param text the text to search for. The parameter will be interpreted as a regular expression
+	 * @param onlyVisible {@code true} if only texts visible on the screen should be searched
+	 * @return {@code true} if the search string is found and {@code false} if it is not found
+	 *
+	 */
+	
+	public boolean searchText(String text, boolean onlyVisible) {
+		boolean found = searcher.searchWithTimeoutFor(TextView.class, text, 0, true, onlyVisible);
 		return found;
 	}
 	
@@ -297,7 +352,7 @@ public class Solo implements ISolo {
 	 */
 	
 	public boolean searchText(String text, int minimumNumberOfMatches) {
-		boolean found = searcher.searchWithTimeoutFor(TextView.class, text, minimumNumberOfMatches, true);
+		boolean found = searcher.searchWithTimeoutFor(TextView.class, text, minimumNumberOfMatches, true, false);
 		return found;
 	}
 	
@@ -315,7 +370,25 @@ public class Solo implements ISolo {
 	 */
 	
 	public boolean searchText(String text, int minimumNumberOfMatches, boolean scroll) {
-		return searcher.searchWithTimeoutFor(TextView.class, text, minimumNumberOfMatches, scroll);
+		return searcher.searchWithTimeoutFor(TextView.class, text, minimumNumberOfMatches, scroll, false);
+	}
+	
+	/**
+	 * Searches for a text string and returns {@code true} if the searched text is found a given
+	 * number of times.
+	 * 
+	 * @param text the text to search for. The parameter will be interpreted as a regular expression.
+	 * @param minimumNumberOfMatches the minimum number of matches expected to be found. {@code 0} matches means that one or more
+	 * matches are expected to be found
+	 * @param scroll {@code true} if scrolling should be performed
+	 * @param onlyVisible {@code true} if only texts visible on the screen should be searched
+	 * @return {@code true} if text string is found a given number of times and {@code false} if the text string
+	 * is not found
+	 *  
+	 */
+	
+	public boolean searchText(String text, int minimumNumberOfMatches, boolean scroll, boolean onlyVisible) {
+		return searcher.searchWithTimeoutFor(TextView.class, text, minimumNumberOfMatches, scroll, onlyVisible);
 	}
 
 	/**
@@ -332,15 +405,15 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Returns a {@code List} of all the opened/active activities.
+	 * Returns an {@code ArrayList} of all the opened/active activities.
 	 * 
-	 * @return a {@code List} of all the opened/active activities
+	 * @return an {@code ArrayList} of all the opened/active activities
 	 *
 	 */
 	
 	public ArrayList<Activity> getAllOpenedActivities()
 	{
-		return ensureArrayListOrNull(activitiyUtils.getAllOpenedActivities());
+		return activitiyUtils.getAllOpenedActivities();
 	}
 	
 	/**
@@ -388,7 +461,7 @@ public class Solo implements ISolo {
 	 * verify that the expected {@code Activity} is a new instance of the {@code Activity}.
 	 * 
 	 * @param message the message that should be displayed if the assert fails
-	 * @param name the name of the activity that is expected to be active e.g. "MyActivity"
+	 * @param name the name of the activity that is expected to be active e.g. {@code "MyActivity"}
 	 * @param isNewInstance {@code true} if the expected {@code Activity} is a new instance of the {@code Activity}
 	 * 
 	 */
@@ -442,7 +515,7 @@ public class Solo implements ISolo {
 	 * Waits for a {@link android.app.Dialog} to close.
 	 * 
 	 * @param timeout the amount of time in milliseconds to wait
-	 * @return {@code true} if the {@code Dialog} is closed before the timeout and {@code false} if it is not closed.
+	 * @return {@code true} if the {@code Dialog} is closed before the timeout and {@code false} if it is not closed
 	 * 
 	 */
 
@@ -458,11 +531,11 @@ public class Solo implements ISolo {
 	
 	public void goBack()
 	{
-		clicker.goBack();
+		robotiumUtils.goBack();
 	}
 	
 	/**
-	 * Clicks on a specific coordinate on the screen.
+	 * Clicks on a given coordinate on the screen.
 	 *
 	 * @param x the x coordinate
 	 * @param y the y coordinate
@@ -470,11 +543,11 @@ public class Solo implements ISolo {
 	 */
 	
 	public void clickOnScreen(float x, float y) {
-		robotiumUtils.waitForIdle();
+		waiter.waitForIdle();
 		clicker.clickOnScreen(x, y);
 	}
 	/**
-	 * Long clicks a specific coordinate on the screen.
+	 * Long clicks a given coordinate on the screen.
 	 *
 	 * @param x the x coordinate
 	 * @param y the y coordinate
@@ -489,7 +562,7 @@ public class Solo implements ISolo {
 	/**
 	 * Clicks on a {@link Button} with a given text. Will automatically scroll when needed. 
 	 *
-	 * @param name the name of the {@code Button} presented to the user. The parameter will be interpreted as a regular expression.
+	 * @param name the name of the {@code Button} presented to the user. The parameter will be interpreted as a regular expression
 	 *
 	 */
 	
@@ -499,7 +572,7 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Clicks on an {@link ImageButton} with a certain index.
+	 * Clicks on an {@link ImageButton} with a given index.
 	 *
 	 * @param index the index of the {@code ImageButton} to be clicked. 0 if only one is available
 	 *
@@ -512,7 +585,7 @@ public class Solo implements ISolo {
 	/**
 	 * Clicks on a {@link ToggleButton} with a given text.
 	 * 
-	 * @param name the name of the {@code ToggleButton} presented to the user. The parameter will be interpreted as a regular expression.
+	 * @param name the name of the {@code ToggleButton} presented to the user. The parameter will be interpreted as a regular expression
 	 * 
 	 */
 
@@ -522,7 +595,7 @@ public class Solo implements ISolo {
 	
 	/**
 	 * Clicks on a menu item with a given text.
-	 * @param text the menu text that should be clicked on. The parameter will be interpreted as a regular expression.
+	 * @param text the menu text that should be clicked on. The parameter will be interpreted as a regular expression
 	 *
 	 */
 	
@@ -534,7 +607,7 @@ public class Solo implements ISolo {
 	/**
 	 * Clicks on a menu item with a given text.
 	 * 
-	 * @param text the menu text that should be clicked on. The parameter will be interpreted as a regular expression.
+	 * @param text the menu text that should be clicked on. The parameter will be interpreted as a regular expression
 	 * @param subMenu true if the menu item could be located in a sub menu
 	 * 
 	 */
@@ -545,7 +618,7 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Presses a {@link android.view.MenuItem} with a certain index. Index {@code 0} is the first item in the
+	 * Presses a {@link android.view.MenuItem} with a given index. Index {@code 0} is the first item in the
 	 * first row, Index {@code 3} is the first item in the second row and
 	 * index {@code 5} is the first item in the third row.
 	 * 
@@ -561,7 +634,7 @@ public class Solo implements ISolo {
 	 * Presses on a {@link Spinner} (drop-down menu) item.
 	 * 
 	 * @param spinnerIndex the index of the {@code Spinner} menu to be used
-	 * @param itemIndex the index of the {@code Spinner} item to be pressed relative to the currently selected item.
+	 * @param itemIndex the index of the {@code Spinner} item to be pressed relative to the currently selected item
 	 * A Negative number moves up on the {@code Spinner}, positive moves down
 	 * 
 	 */
@@ -573,36 +646,36 @@ public class Solo implements ISolo {
     
 	
 	/**
-	 * Clicks on a specific {@link View}.
+	 * Clicks on a given {@link View}.
 	 *
 	 * @param view the {@code View} that should be clicked
 	 *
 	 */
 	
 	public void clickOnView(View view) {
-		robotiumUtils.waitForIdle();
+		waiter.waitForIdle();
 		clicker.clickOnScreen(view);
 	}
 	
 	
 	/**
-	 * Long clicks on a specific {@link View}.
+	 * Long clicks on a given {@link View}.
 	 *
 	 * @param view the view that should be long clicked
 	 *
 	 */
 	
 	public void clickLongOnView(View view) {
-		robotiumUtils.waitForIdle();
+		waiter.waitForIdle();
 		clicker.clickOnScreen(view, true);
 
 	}
 	
 	/**
-	 * Clicks on a {@link View} displaying a certain
+	 * Clicks on a {@link View} displaying a given
 	 * text. Will automatically scroll when needed. 
 	 *
-	 * @param text the text that should be clicked on. The parameter will be interpreted as a regular expression.
+	 * @param text the text that should be clicked on. The parameter will be interpreted as a regular expression
 	 *
 	 */
 	
@@ -611,9 +684,9 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Clicks on a {@link View} displaying a certain text. Will automatically scroll when needed.
+	 * Clicks on a {@link View} displaying a given text. Will automatically scroll when needed.
 	 *
-	 * @param text the text that should be clicked on. The parameter will be interpreted as a regular expression.
+	 * @param text the text that should be clicked on. The parameter will be interpreted as a regular expression
 	 * @param match the match that should be clicked on 
 	 *
 	 */
@@ -623,9 +696,9 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Clicks on a {@link View} displaying a certain text.
+	 * Clicks on a {@link View} displaying a given text.
 	 *
-	 * @param text the text that should be clicked on. The parameter will be interpreted as a regular expression.
+	 * @param text the text that should be clicked on. The parameter will be interpreted as a regular expression
 	 * @param match the match that should be clicked on 
 	 * @param scroll true if scrolling should be performed
 	 *
@@ -637,10 +710,10 @@ public class Solo implements ISolo {
 	
 	
 	/**
-	 * Long clicks on a specific {@link View}. Will automatically scroll when needed. {@link #clickOnText(String)} can then be
+	 * Long clicks on a given {@link View}. Will automatically scroll when needed. {@link #clickOnText(String)} can then be
 	 * used to click on the context menu items that appear after the long click.
 	 *
-	 * @param text the text that should be clicked on. The parameter will be interpreted as a regular expression.
+	 * @param text the text that should be clicked on. The parameter will be interpreted as a regular expression
 	 *
 	 */
 	
@@ -650,10 +723,10 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Long clicks on a specific {@link View}. Will automatically scroll when needed. {@link #clickOnText(String)} can then be
+	 * Long clicks on a given {@link View}. Will automatically scroll when needed. {@link #clickOnText(String)} can then be
 	 * used to click on the context menu items that appear after the long click.
 	 *
-	 * @param text the text that should be clicked on. The parameter will be interpreted as a regular expression.
+	 * @param text the text that should be clicked on. The parameter will be interpreted as a regular expression
 	 * @param match the match that should be clicked on 
 	 *
 	 */
@@ -664,7 +737,7 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Long clicks on a specific {@link View}. {@link #clickOnText(String)} can then be
+	 * Long clicks on a given {@link View}. {@link #clickOnText(String)} can then be
 	 * used to click on the context menu items that appear after the long click.
 	 *
 	 * @param text the text that should be clicked on. The parameter will be interpreted as a regular expression
@@ -679,11 +752,11 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Long clicks on a specific {@link View} and then selects
+	 * Long clicks on a given {@link View} and then selects
 	 * an item from the context menu that appears. Will automatically scroll when needed. 
 	 *
 	 * @param text the text to be clicked on. The parameter will be interpreted as a regular expression
-	 * @param index the index of the menu item to be pressed. 0 if only one is available
+	 * @param index the index of the menu item to be pressed. {@code 0} if only one is available
 	 *
 	 */
 	
@@ -692,13 +765,17 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Clicks on a {@link Button} with a certain index.
+	 * Clicks on a {@link Button} with a given index.
 	 *
+<<<<<<< HEAD
 <<<<<<< HEAD
 	 * @param index the index number of the button
 =======
 	 * @param index the index number of the {@code Button}. 0 if only one is available
 >>>>>>> 3958c76a064fa944ce35111acbd0d8392b21f1bb
+=======
+	 * @param index the index number of the {@code Button}. {@code 0} if only one is available
+>>>>>>> a866efbb7db928958bd1b93d33650acae03fd6fd
 	 *
 	 */
 	
@@ -707,9 +784,9 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Clicks on a {@link RadioButton} with a certain index.
+	 * Clicks on a {@link RadioButton} with a given index.
 	 *
-	 * @param index the index of the {@code RadioButton} to be clicked. 0 if only one is available
+	 * @param index the index of the {@code RadioButton} to be clicked. {@code 0} if only one is available
 	 *
 	 */
 	
@@ -718,9 +795,9 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Clicks on a {@link CheckBox} with a certain index.
+	 * Clicks on a {@link CheckBox} with a given index.
 	 *
-	 * @param index the index of the {@code CheckBox} to be clicked. 0 if only one is available
+	 * @param index the index of the {@code CheckBox} to be clicked. {@code 0} if only one is available
 	 *
 	 */
 	
@@ -729,9 +806,9 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Clicks on an {@link EditText} with a certain index.
+	 * Clicks on an {@link EditText} with a given index.
 	 *
-	 * @param index the index of the {@code EditText} to be clicked. 0 if only one is available
+	 * @param index the index of the {@code EditText} to be clicked. {@code 0} if only one is available
 	 *
 	 */
 	
@@ -740,39 +817,39 @@ public class Solo implements ISolo {
 	}
 
 	/**
-	 * Clicks on a certain list line and returns the {@link TextView}s that
+	 * Clicks on a given list line and returns an {@code ArrayList} of the {@link TextView}s that
 	 * the list line is showing. Will use the first list it finds.
 	 * 
 	 * @param line the line that should be clicked
-	 * @return a {@code List} of the {@code TextView}s located in the list line
+	 * @return an {@code ArrayList} of the {@code TextView}s located in the list line
 	 *
 	 */
 
 	public ArrayList<TextView> clickInList(int line) {
-		return ensureArrayListOrNull(clicker.clickInList(line));
+		return clicker.clickInList(line);
 	}
 
 	/**
-	 * Clicks on a certain list line on a specified list and 
-	 * returns the {@link TextView}s that the list line is showing.
+	 * Clicks on a given list line on a specified list and 
+	 * returns an {@code ArrayList} of the {@link TextView}s that the list line is showing.
 	 * 
 	 * @param line the line that should be clicked
 	 * @param listIndex the index of the list. 1 if two lists are available
-	 * @return a {@code List} of the {@code TextView}s located in the list line
+	 * @return an {@code ArrayList} of the {@code TextView}s located in the list line
 	 *
 	 */
 	
 	public ArrayList<TextView> clickInList(int line, int listIndex) {
-		return ensureArrayListOrNull(clicker.clickInList(line, listIndex));
+		return clicker.clickInList(line, listIndex);
 	}
 
 	 /**
-	 * Simulate touching a specific location and dragging to a new location.
+	 * Simulate touching a given location and dragging it to a new location.
 	 *
 	 * This method was copied from {@code TouchUtils.java} in the Android Open Source Project, and modified here.
 	 *
 	 * @param fromX X coordinate of the initial touch, in screen coordinates
-	 * @param toX Xcoordinate of the drag destination, in screen coordinates
+	 * @param toX X coordinate of the drag destination, in screen coordinates
 	 * @param fromY X coordinate of the initial touch, in screen coordinates
 	 * @param toY Y coordinate of the drag destination, in screen coordinates
 	 * @param stepCount How many move steps to include in the drag
@@ -848,21 +925,21 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Enters text into an {@link EditText} with a certain index.
+	 * Enters text into an {@link EditText} with a given index.
 	 *
-	 * @param index the index of the text field. 0 if only one is available
+	 * @param index the index of the text field. {@code 0} if only one is available
 	 * @param text the text string that is to be entered into the text field
 	 *
 	 */
 	
 	public void enterText(int index, String text) {
-		textEnterer.enterText(index, text);		
+		textEnterer.setEditText(index, text);		
 	}
 	
 	/**
-	 * Clicks on an image with a certain index.
+	 * Clicks on an {@link ImageView} with a given index.
 	 *
-	 * @param index the index of the image to be clicked. 0 if only one is available
+	 * @param index the index of the {@link ImageView} to be clicked. {@code 0} if only one is available
 	 *
 	 */
 	
@@ -871,22 +948,22 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Returns a {@code List} of the {@code ImageView}s contained in the current
+	 * Returns an {@code ArrayList} of the {@code ImageView}s contained in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code ImageView}s contained in the current
+	 * @return an {@code ArrayList} of the {@code ImageView}s contained in the current
 	 * {@code Activity}
 	 *
 	 */
 	
 	public ArrayList<ImageView> getCurrentImageViews() {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(ImageView.class));
+		return viewFetcher.getCurrentViews(ImageView.class);
 	}
 	
 	/**
-	 * Returns an {@code EditText} with a certain index.
+	 * Returns an {@code EditText} with a given index.
 	 *
-	 * @param index the index of the {@code EditText}. 0 if only one is available
+	 * @param index the index of the {@code EditText}. {@code 0} if only one is available
 	 * @return the {@code EditText} with a specified index or {@code null} if index is invalid
 	 *
 	 */
@@ -897,9 +974,9 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Returns a {@code Button} with a certain index.
+	 * Returns a {@code Button} with a given index.
 	 *
-	 * @param index the index of the {@code Button}. 0 if only one is available
+	 * @param index the index of the {@code Button}. {@code 0} if only one is available
 	 * @return the {@code Button} with a specified index or {@code null} if index is invalid
 	 *
 	 */
@@ -910,9 +987,9 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Returns a {@code TextView} with a certain index.
+	 * Returns a {@code TextView} with a given index.
 	 *
-	 * @param index the index of the {@code TextView}. 0 if only one is available
+	 * @param index the index of the {@code TextView}. {@code 0} if only one is available
 	 * @return the {@code TextView} with a specified index or {@code null} if index is invalid
 	 *
 	 */
@@ -922,9 +999,9 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Returns an {@code ImageView} with a certain index.
+	 * Returns an {@code ImageView} with a given index.
 	 *
-	 * @param index the index of the {@code ImageView}. 0 if only one is available
+	 * @param index the index of the {@code ImageView}. {@code 0} if only one is available
 	 * @return the {@code ImageView} with a specified index or {@code null} if index is invalid
 	 *
 	 */
@@ -934,9 +1011,9 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Returns an {@code ImageButton} with a certain index.
+	 * Returns an {@code ImageButton} with a given index.
 	 *
-	 * @param index the index of the {@code ImageButton}. 0 if only one is available
+	 * @param index the index of the {@code ImageButton}. {@code 0} if only one is available
 	 * @return the {@code ImageButton} with a specified index or {@code null} if index is invalid
 	 *
 	 */
@@ -946,7 +1023,8 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Returns a {@link TextView} which shows a given text
+	 * Returns a {@link TextView} which shows a given text. 
+	 * 
 	 * @param text the text that is shown
 	 * @return the {@code TextView} that shows the given text
 	 */
@@ -957,7 +1035,8 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Returns a {@link Button} which shows a given text
+	 * Returns a {@link Button} which shows a given text.
+	 * 
 	 * @param text the text that is shown
 	 * @return the {@code Button} that shows the given text
 	 */
@@ -968,9 +1047,10 @@ public class Solo implements ISolo {
 	}
 	
 	/**
-	 * Returns an {@link EditText} which shows a given text
+	 * Returns an {@link EditText} which shows a given text.
+	 * 
 	 * @param text the text that is shown
-	 * @return the {@code EditText} that shows the given text
+	 * @return the {@code EditText} which shows the given text
 	 */
 	
 	public EditText getEditText(String text)
@@ -995,150 +1075,161 @@ public class Solo implements ISolo {
 	
 	
 	/**
-	 * Returns a {@code List} of the {@code EditText}s contained in the current
+	 * Returns a {@code View} with a given id. 
+	 * 
+	 * @param id the R.id of the {@code View} to be returned 
+	 * @return a {@code View} with a given id
+	 */
+	
+	public View getView(int id){
+		return viewFetcher.getView(id);
+	}
+	
+	/**
+	 * Returns an {@code ArrayList} of the {@code EditText}s contained in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code EditText}s contained in the current
+	 * @return an {@code ArrayList} of the {@code EditText}s contained in the current
 	 * {@code Activity}
 	 *
 	 */
 	
 	public ArrayList<EditText> getCurrentEditTexts() {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(EditText.class));
+		return viewFetcher.getCurrentViews(EditText.class);
 	}
 	
 	/**
-	 * Returns a {@code List} of the {@code ListView}s contained in the current
+	 * Returns an {@code ArrayList} of the {@code ListView}s contained in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code ListView}s contained in the current
+	 * @return an {@code ArrayList} of the {@code ListView}s contained in the current
 	 * {@code Activity}
 	 * 
 	 */
 
 	public ArrayList<ListView> getCurrentListViews() {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(ListView.class));
+		return viewFetcher.getCurrentViews(ListView.class);
 	}
 
 	/**
-	 * Returns a {@code List} of the {@code ScrollView}s contained in the current
+	 * Returns an {@code ArrayList} of the {@code ScrollView}s contained in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code ScrollView}s contained in the current
+	 * @return an {@code ArrayList} of the {@code ScrollView}s contained in the current
 	 * {@code Activity}
 	 *
 	 */
 
     public ArrayList<ScrollView> getCurrentScrollViews() {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(ScrollView.class));
+		return viewFetcher.getCurrentViews(ScrollView.class);
 	}
 
 	
 	/**
-	 * Returns a {@code List} of the {@code Spinner}s (drop-down menus) contained in the current
+	 * Returns an {@code ArrayList} of the {@code Spinner}s (drop-down menus) contained in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code Spinner}s (drop-down menus) contained in the current
+	 * @return an {@code ArrayList} of the {@code Spinner}s (drop-down menus) contained in the current
 	 * {@code Activity}
 	 *
 	 */
 	
 	public ArrayList<Spinner> getCurrentSpinners() {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(Spinner.class));
+		return viewFetcher.getCurrentViews(Spinner.class);
 	}
 	
 	/**
-	 * Returns a {@code List} of the {@code TextView}s contained in the current
+	 * Returns an {@code ArrayList} of the {@code TextView}s contained in the current
 	 * {@code Activity} or {@code View}.
 	 *
 	 * @param parent the parent {@code View} from which the {@code TextView}s should be returned. {@code null} if
 	 * all {@code TextView}s from the current {@code Activity} should be returned
 	 *
-	 * @return a {@code List} of the {@code TextView}s contained in the current
+	 * @return an {@code ArrayList} of the {@code TextView}s contained in the current
 	 * {@code Activity} or {@code View}
 	 *
 	 */
 
 	public ArrayList<TextView> getCurrentTextViews(View parent) {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(TextView.class, parent));
+		return viewFetcher.getCurrentViews(TextView.class, parent);
 	}
 	
 	/**
-	 * Returns a {@code List} of the {@code GridView}s contained in the current
+	 * Returns an {@code ArrayList} of the {@code GridView}s contained in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code GridView}s contained in the current
+	 * @return an {@code ArrayList} of the {@code GridView}s contained in the current
 	 * {@code Activity}
 	 *
 	 */
 	
 	public ArrayList<GridView> getCurrentGridViews() {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(GridView.class));
+		return viewFetcher.getCurrentViews(GridView.class);
 	}
 	
 	
 	/**
-	 * Returns a {@code List} of the {@code Button}s located in the current
+	 * Returns an {@code ArrayList} of the {@code Button}s located in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code Button}s located in the current {@code Activity}
+	 * @return an {@code ArrayList} of the {@code Button}s located in the current {@code Activity}
 	 * 
 	 */
 	
 	public ArrayList<Button> getCurrentButtons() {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(Button.class));
+		return viewFetcher.getCurrentViews(Button.class);
 	}
 	
 	/**
-	 * Returns a {@code List} of the {@code ToggleButton}s contained in the current
+	 * Returns an {@code ArrayList} of the {@code ToggleButton}s contained in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code ToggleButton}s contained in the current
+	 * @return an {@code ArrayList} of the {@code ToggleButton}s contained in the current
 	 * {@code Activity}
 	 *
 	 */
 	
 	public ArrayList<ToggleButton> getCurrentToggleButtons() {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(ToggleButton.class));
+		return viewFetcher.getCurrentViews(ToggleButton.class);
 	}
 	
 	/**
-	 * Returns a {@code List} of the {@code RadioButton}s contained in the current
+	 * Returns an {@code ArrayList} of the {@code RadioButton}s contained in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code RadioButton}s contained in the current
+	 * @return an {@code ArrayList} of the {@code RadioButton}s contained in the current
 	 * {@code Activity}
 	 *
 	 */
 	
 	public ArrayList<RadioButton> getCurrentRadioButtons() {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(RadioButton.class));
+		return viewFetcher.getCurrentViews(RadioButton.class);
 	}
 	
 	/**
-	 * Returns a {@code List} of the {@code CheckBox}es contained in the current
+	 * Returns an {@code ArrayList} of the {@code CheckBox}es contained in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code CheckBox}es contained in the current
+	 * @return an {@code ArrayList} of the {@code CheckBox}es contained in the current
 	 * {@code Activity}
 	 *
 	 */
 	
 	public ArrayList<CheckBox> getCurrentCheckBoxes() {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(CheckBox.class));
+		return viewFetcher.getCurrentViews(CheckBox.class);
 	}
 	
 	/**
-	 * Returns a {@code List} of the {@code ImageButton}s contained in the current
+	 * Returns an {@code ArrayList} of the {@code ImageButton}s contained in the current
 	 * {@code Activity}.
 	 *
-	 * @return a {@code List} of the {@code ImageButton}s contained in the current
+	 * @return an {@code ArrayList} of the {@code ImageButton}s contained in the current
 	 * {@code Activity}
 	 *
 	 */
 	
 	public ArrayList<ImageButton> getCurrentImageButtons() {
-		return ensureArrayListOrNull(viewFetcher.getCurrentViews(ImageButton.class));
+		return viewFetcher.getCurrentViews(ImageButton.class);
 	}
 	
 	/**
@@ -1151,7 +1242,20 @@ public class Solo implements ISolo {
 	
 	public boolean isRadioButtonChecked(int index)
 	{
-		return robotiumUtils.isRadioButtonChecked(index);
+		return checker.isButtonChecked(RadioButton.class, index);
+	}
+	
+	/**
+	 * Checks if a {@link RadioButton} with a given text is checked.
+	 *
+	 * @param text the text that the {@code RadioButton} shows
+	 * @return {@code true} if a {@code RadioButton} with the given text is checked and {@code false} if it is not checked
+	 *
+	 */
+	
+	public boolean isRadioButtonChecked(String text)
+	{
+		return checker.isButtonChecked(RadioButton.class, text);
 	}
 	
 	/**
@@ -1164,14 +1268,76 @@ public class Solo implements ISolo {
 	
 	public boolean isCheckBoxChecked(int index)
 	{
-		return robotiumUtils.isCheckBoxChecked(index);
+		return checker.isButtonChecked(CheckBox.class, index);
 	}
 	
+	/**
+	 * Checks if a {@link ToggleButton} with a given text is checked.
+	 *
+	 * @param text the text that the {@code ToggleButton} shows
+	 * @return {@code true} if a {@code ToggleButton} with the given text is checked and {@code false} if it is not checked
+	 *
+	 */
+	
+	public boolean isToggleButtonChecked(String text)
+	{
+		return checker.isButtonChecked(ToggleButton.class, text);
+	}
+	
+	/**
+	 * Checks if a {@link ToggleButton} with a given index is checked.
+	 * 
+	 * @param index of the {@code ToggleButton} to check. {@code 0} if only one is available
+	 * @return {@code true} if {@code ToggleButton} is checked and {@code false} if it is not checked
+	 * 
+	 */
+	
+	public boolean isToggleButtonChecked(int index)
+	{
+		return checker.isButtonChecked(ToggleButton.class, index);
+	}
+	
+	/**
+	 * Checks if a {@link CheckBox} with a given text is checked.
+	 *
+	 * @param text the text that the {@code CheckBox} shows
+	 * @return {@code true} if a {@code CheckBox} with the given text is checked and {@code false} if it is not checked
+	 *
+	 */
+	
+	public boolean isCheckBoxChecked(String text)
+	{
+		return checker.isButtonChecked(CheckBox.class, text);
+	}
+	
+	/**
+	 * Checks if a given text is selected in any {@link Spinner} located on the current screen.
+	 * @param text the text that is expected to be selected
+	 * @return {@code true} if the given text is selected in any {@code Spinner} and false if it is not
+	 * 
+	 */
+	
+	public boolean isSpinnerTextSelected(String text)
+	{
+		return checker.isSpinnerTextSelected(text);
+	}
+	
+	/**
+	 * Checks if a given text is selected in a given {@link Spinner} 
+	 * @param spinnerIndex the index of the spinner to check. {@code 0} if only one spinner is available
+	 * @param text the text that is expected to be selected
+	 * @return true if the given text is selected in the given {@code Spinner} and false if it is not
+	 */
+	
+	public boolean isSpinnerTextSelected(int spinnerIndex, String text)
+	{
+		return checker.isSpinnerTextSelected(spinnerIndex, text);
+	}
 
 	/**
-	 * Tells Robotium to send a key: Right, Left, Up, Down, Enter, Menu or Delete.
+	 * Tells Robotium to send a key: Right, Left, Up, Down, Enter, Menu, Delete, Call and End Call.
 	 * 
-	 * @param key the key to be sent. Use {@code Solo.}{@link #RIGHT}, {@link #LEFT}, {@link #UP}, {@link #DOWN}, {@link #ENTER}, {@link #MENU}, {@link #DELETE}
+	 * @param key the key to be sent. Use {@code Solo.}{@link #RIGHT}, {@link #LEFT}, {@link #UP}, {@link #DOWN}, {@link #ENTER}, {@link #MENU}, {@link #DELETE}, {@link #CALL}, {@link #ENDCALL}
 	 * 
 	 */
 	
@@ -1271,29 +1437,6 @@ public class Solo implements ISolo {
 	
 	public void finalize() throws Throwable {
 		activitiyUtils.finalize();
-	}
-
-
-	/**
-	 * Converts any {@link List} into an {@link ArrayList} if necessary.
-	 *
-	 * This is used to keep the {@link Solo} API intact.
-	 *
-	 * @param list any {@code List} to be checked or converted into an {@code ArrayList}
-	 * @param <T> type of the list's elements
-	 * @return {@code null} if {@code list==null}, or an {@code ArrayList} with the same contents as the supplied {@code list}, or the same {@code list}
-	 * instance if it's already an {@code ArrayList}
-	 */
-	private <T> ArrayList<T> ensureArrayListOrNull(List<T> list){
-		if (list == null){
-			return null;
-		}else{
-			if (list instanceof ArrayList){
-				return (ArrayList<T>) list;
-			}else{
-				return new ArrayList<T>(list);
-			}
-		}
 	}
 	
 }

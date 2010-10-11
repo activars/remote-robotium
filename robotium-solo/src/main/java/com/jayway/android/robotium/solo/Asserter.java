@@ -1,17 +1,17 @@
-package com.jayway.android.robotium.core.impl;
+package com.jayway.android.robotium.solo;
 
 import junit.framework.Assert;
 import android.app.Activity;
 import android.app.ActivityManager;
 
 /**
- * This class contains assertActivity() methods.
+ * This class contains assertActivity() methods and assertLowMemory().
  * 
  * @author Renas Reda, renas.reda@jayway.com
  *
  */
 
-public class Asserter {
+class Asserter {
 	private final ActivityUtils activityUtils;
     private final Sleeper sleeper;
 
@@ -91,7 +91,7 @@ public class Asserter {
 			boolean isNewInstance) {
 		boolean found = false;
 		assertCurrentActivity(message, expectedClass);
-		Activity activity = activityUtils.getCurrentActivity();
+		Activity activity = activityUtils.getCurrentActivity(false);
 		for (int i = 0; i < activityUtils.getAllOpenedActivities().size() - 1; i++) {
 			String instanceString = activityUtils.getAllOpenedActivities().get(i).toString();
 			if (instanceString.equals(activity.toString()))

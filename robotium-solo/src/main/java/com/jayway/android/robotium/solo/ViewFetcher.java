@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.core.impl;
+package com.jayway.android.robotium.solo;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -18,21 +18,23 @@ import android.widget.TextView;
  * 
  */
 
-public class ViewFetcher {
+class ViewFetcher {
 	
 	private final Instrumentation inst;
 	private final ActivityUtils activityUtils;
+	private final Sleeper sleeper;
 	
     /**
      * Constructs this object.
      *
-     * @param inst the {@link Instrumentation} instance.
-	 * @param activityUtils the {@link ActivityUtils} instance.
+     * @param inst the {@code Instrumentation} instance
+	 * @param activityUtils the {@code ActivityUtils} instance
      */
 	
-    public ViewFetcher(Instrumentation inst, ActivityUtils activityUtils) {
+    public ViewFetcher(Instrumentation inst, ActivityUtils activityUtils, Sleeper sleeper) {
         this.inst = inst;
         this.activityUtils = activityUtils;
+        this.sleeper = sleeper;
     }
 	
 	
@@ -41,7 +43,6 @@ public class ViewFetcher {
 	 *
 	 * @param view the {@code View} whose top parent is requested
 	 * @return the top parent {@code View}
-	 *
 	 */
 	
 	public View getTopParent(View view) {
@@ -101,6 +102,17 @@ public class ViewFetcher {
 		else
 			return null;
 	}
+	
+	/**
+	 * Returns a {@code View} with a given id. 
+	 * @param id the R.id of the {@code View} to be returned 
+	 * @return a {@code View} with a given id
+	 */
+	
+	public View getView(int id){
+		final Activity activity = activityUtils.getCurrentActivity(false);
+		return activity.findViewById(id);
+	}
 
 
 	/**
@@ -110,8 +122,8 @@ public class ViewFetcher {
 	 * @return all {@code View}s located in the currently active {@code Activity}, never {@code null}
 	 */
 	
-	public List<View> getViews(View parent) {
-		final List<View> views = new ArrayList<View>();
+	public ArrayList<View> getViews(View parent) {
+		final ArrayList<View> views = new ArrayList<View>();
 		final View parentToUse;
 
 		if (parent == null){
@@ -132,10 +144,11 @@ public class ViewFetcher {
 
 	/**
 	 * Adds all children of {@code viewGroup} (recursively) into {@code views}.
-	 * @param views a {@code List} of {@code View}s
+	 * @param views an {@code ArrayList} of {@code View}s
 	 * @param viewGroup the {@code ViewGroup} to extract children from
 	 */
-	private void addChildren(List<View> views, ViewGroup viewGroup) {
+	
+	private void addChildren(ArrayList<View> views, ViewGroup viewGroup) {
 		for (int i = 0; i < viewGroup.getChildCount(); i++) {
 			final View child = viewGroup.getChildAt(i);
 
@@ -155,57 +168,65 @@ public class ViewFetcher {
 	 * @param index choose among all instances of this type, e.g. {@code Button.class} or {@code EditText.class}
 	 * @return a {@code View} with a certain index, from the list of current {@code View}s of the specified type
 	 */
+	
 	public <T extends View> T getView(Class<T> classToFilterBy, int index) {
+		sleeper.sleep();
+		inst.waitForIdleSync();
 		ArrayList<T> views = getCurrentViews(classToFilterBy);
+		views=RobotiumUtils.removeInvisibleViews(views);
 		T view = null;
 		try{
 			view = views.get(index);
 		}catch (IndexOutOfBoundsException e){
-			Assert.assertTrue("No " + classToFilterBy.getSimpleName() + " with index " + index + " is found", false);
+			Assert.assertTrue("No " + classToFilterBy.getSimpleName() + " with index " + index + " is found!", false);
 		}
 		return view;
 	}
 	
 	/**
-	 * Returns a {@code View} that shows a certain text, from the list of current {@code View}s of the specified type.
+	 * Returns a {@code View} that shows a given text, from the list of current {@code View}s of the specified type.
 	 *
 	 * @param classToFilterBy which {@code View}s to choose from
 	 * @param text the text that the view shows
-	 * @return a {@code View} showing a certain text, from the list of current {@code View}s of the specified type
+	 * @return a {@code View} showing a given text, from the list of current {@code View}s of the specified type
 	 */
 	
 	public <T extends TextView> T getView(Class<T> classToFilterBy, String text) {
+		sleeper.sleep();
+		inst.waitForIdleSync();
 		ArrayList<T> views = getCurrentViews(classToFilterBy);
 		T viewToReturn = null;
 		for(T view: views){
-			if(view.getText().equals(text))
+			if(view.getText().toString().equals(text))
 				viewToReturn = view;
 		}
 		if(viewToReturn == null)
-		Assert.assertTrue("No " + classToFilterBy.getSimpleName() + " with text " + text + " is found", false);
+		Assert.assertTrue("No " + classToFilterBy.getSimpleName() + " with text " + text + " is found!", false);
 		
 		return viewToReturn;
 	}
 
 
 	/**
-	 * Returns a {@code List} of {@code View}s of the specified {@code Class} located in the current
+	 * Returns an {@code ArrayList} of {@code View}s of the specified {@code Class} located in the current
 	 * {@code Activity}.
 	 *
 	 * @param classToFilterBy return all instances of this class, e.g. {@code Button.class} or {@code GridView.class}
-	 * @return a {@code List} of {@code View}s of the specified {@code Class} located in the current {@code Activity}
+	 * @return an {@code ArrayList} of {@code View}s of the specified {@code Class} located in the current {@code Activity}
 	 */
+	
 	public <T extends View> ArrayList<T> getCurrentViews(Class<T> classToFilterBy) {
 		return getCurrentViews(classToFilterBy, null);
 	}
 
 	/**
-	 * Returns a {@code List} of {@code View}s of the specified {@code Class} located under the specified {@code parent}.
+	 * Returns an {@code ArrayList} of {@code View}s of the specified {@code Class} located under the specified {@code parent}.
 	 *
 	 * @param classToFilterBy return all instances of this class, e.g. {@code Button.class} or {@code GridView.class}
 	 * @param parent the parent {@code View} for where to start the traversal
-	 * @return a {@code List} of {@code View}s of the specified {@code Class} located under the specified {@code parent}
+	 * @return an {@code ArrayList} of {@code View}s of the specified {@code Class} located under the specified {@code parent}
 	 */
+	
 	public <T extends View> ArrayList<T> getCurrentViews(Class<T> classToFilterBy, View parent) {
 		ArrayList<T> filteredViews = new ArrayList<T>();
 		List<View> allViews = getViews(parent);

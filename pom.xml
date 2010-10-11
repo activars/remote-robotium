@@ -2,14 +2,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jayway.android.robotium</groupId>
 	<artifactId>robotium</artifactId>
-	<version>1.8.0-beta-3-SNAPSHOT</version>
+	<version>1.8.0-beta-5-SNAPSHOT</version>
 	<packaging>pom</packaging>
     <name>Robotium</name>
     <description>User scenario testing for Android</description>
     <url>http://www.robotium.org/</url>
     <inceptionYear>2009</inceptionYear>
     <modules>
-        <module>robotium-core</module>
         <module>robotium-solo</module>
         <module>robotium-client</module>
         <module>robotium-common</module>
@@ -18,7 +17,7 @@
         <scm.branch>master</scm.branch>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.version>2.2.1</maven.version>
-        <android.jar.version>[1.6_r1,1.7)</android.jar.version>
+        <android.jar.version>1.6_r2</android.jar.version>
     </properties>
     <scm>
         <url>http://github.com/jayway/robotium/tree/${scm.branch}</url>
@@ -255,7 +254,6 @@
                                 <id>attach-sources</id>
                                 <goals>
                                     <goal>jar-no-fork</goal>
-                                    <goal>aggregate</goal>
                                 </goals>
                             </execution>
                         </executions>

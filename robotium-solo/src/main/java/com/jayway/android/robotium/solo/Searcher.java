@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.core.impl;
+package com.jayway.android.robotium.solo;
 
 import java.util.Collection;
 import java.util.concurrent.Callable;
@@ -16,7 +16,7 @@ import android.widget.TextView;
  * 
  */
 
-public class Searcher {
+class Searcher {
 	
 	private final ViewFetcher viewFetcher;
 	private final Scroller scroller;
@@ -33,6 +33,7 @@ public class Searcher {
      * @param inst the {@code Instrumentation} instance.
      * @param sleeper the {@code Sleeper} instance.
      */
+	
     public Searcher(ViewFetcher viewFetcher, Scroller scroller, Instrumentation inst, Sleeper sleeper) {
         this.viewFetcher = viewFetcher;
         this.scroller = scroller;
@@ -54,12 +55,13 @@ public class Searcher {
 	 * times, and {@code false} if it is not found
 	 *
 	 */
-	public boolean searchWithTimeoutFor(Class<? extends TextView> viewClass, String regex, int expectedMinimumNumberOfMatches, boolean scroll) {
+	
+	public boolean searchWithTimeoutFor(Class<? extends TextView> viewClass, String regex, int expectedMinimumNumberOfMatches, boolean scroll, boolean visible) {
 		final long endTime = System.currentTimeMillis() + TIMEOUT;
 
 		while (System.currentTimeMillis() < endTime) {
 			sleeper.sleep();
-			final boolean foundAnyMatchingView = searchFor(viewClass, regex, expectedMinimumNumberOfMatches, scroll);
+			final boolean foundAnyMatchingView = searchFor(viewClass, regex, expectedMinimumNumberOfMatches, scroll, visible);
 			if (foundAnyMatchingView){
 				return true;
 			}
@@ -82,10 +84,15 @@ public class Searcher {
      * {@code false} if it is not found.
      *
      */
-    public <T extends TextView> boolean searchFor(final Class<T> viewClass, final String regex, final int expectedMinimumNumberOfMatches, final boolean scroll) {
+	
+    public <T extends TextView> boolean searchFor(final Class<T> viewClass, final String regex, final int expectedMinimumNumberOfMatches, final boolean scroll, final boolean visible) {
         final Callable<Collection<T>> viewFetcherCallback = new Callable<Collection<T>>() {
             public Collection<T> call() throws Exception {
                 inst.waitForIdleSync();
+                
+                if(visible)
+                return RobotiumUtils.removeInvisibleViews(viewFetcher.getCurrentViews(viewClass));
+                
                 return viewFetcher.getCurrentViews(viewClass);
             }
         };
@@ -96,6 +103,7 @@ public class Searcher {
         }
 
     }
+    
 
 	/**
 	 * Searches for a {@code View} with the given regex string and returns {@code true} if the
@@ -112,6 +120,7 @@ public class Searcher {
 	 *
      * @throws Exception not really, it's just the signature of {@code Callable}
      */
+	
 	public <T extends TextView> boolean searchFor(Callable<Collection<T>> viewFetcherCallback, String regex, int expectedMinimumNumberOfMatches, boolean scroll) throws Exception {
 
 		if(expectedMinimumNumberOfMatches == 0) {

@@ -2,20 +2,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jayway.android.robotium</groupId>
 	<artifactId>robotium-solo</artifactId>
-	<version>1.8.0-beta-3-SNAPSHOT</version>
+	<version>1.8.0-beta-5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Robotium :: Solo</name>
     <parent>
         <groupId>com.jayway.android.robotium</groupId>
         <artifactId>robotium</artifactId>
-        <version>1.8.0-beta-3-SNAPSHOT</version>
+        <version>1.8.0-beta-5-SNAPSHOT</version>
     </parent>
 	<dependencies>
-		<dependency>
-			<groupId>com.jayway.android.robotium</groupId>
-			<artifactId>robotium-core</artifactId>
-            <version>1.8.0-beta-3-SNAPSHOT</version>
-		</dependency>
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
@@ -25,25 +20,4 @@
 			<artifactId>android-test</artifactId>
 		</dependency>
 	</dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>generate-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
