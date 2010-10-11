@@ -8,6 +8,5 @@
 	<classpathentry kind="lib" path="lib/json_simple-1.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/robotium-common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/robotium-solo"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/robotium-core"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
