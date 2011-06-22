@@ -1,44 +1,55 @@
 package com.jayway.android.robotium.solo;
 
+import java.util.ArrayList;
+import junit.framework.Assert;
 import android.app.Instrumentation;
 import android.os.SystemClock;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AbsListView;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
+
 /**
-* This class contains scroll methods. Examples are scrollDown(), scrollUpList(),
-* scrollToSide().
-* 
-* @author Renas Reda, renas.reda@jayway.com
-* 
-*/
+ * This class contains scroll methods. Examples are scrollDown(), scrollUpList(),
+ * scrollToSide().
+ * 
+ * @author Renas Reda, renas.reda@jayway.com
+ * 
+ */
 
 class Scroller {
-	
-    public enum Direction {UP, DOWN}
-    public enum Side {LEFT, RIGHT}
+
+	public enum Direction {UP, DOWN}
+	public static final int DOWN = 0;
+	public static final int UP = 1;
+	public enum Side {LEFT, RIGHT}
 	private final Instrumentation inst;
 	private final ActivityUtils activityUtils;
 	private final ViewFetcher viewFetcher;
-   	private int scrollAmount = 0;
-
-    /**
-     * Constructs this object.
-     *
-     * @param inst the {@code Instrumentation} instance.
-     * @param activityUtils the {@code ActivityUtils} instance.
-     * @param viewFetcher the {@code ViewFetcher} instance.
-     */
+	private final Sleeper sleeper;
 	
-    public Scroller(Instrumentation inst, ActivityUtils activityUtils, ViewFetcher viewFetcher) {
-        this.inst = inst;
-        this.activityUtils = activityUtils;
-        this.viewFetcher = viewFetcher;
-    }
 
-	
-	 /**
+	/**
+	 * Constructs this object.
+	 *
+	 * @param inst the {@code Instrumentation} instance.
+	 * @param activityUtils the {@code ActivityUtils} instance.
+	 * @param viewFetcher the {@code ViewFetcher} instance.
+	 * @param sleeper the {@code Sleeper} instance
+	 */
+
+	public Scroller(Instrumentation inst, ActivityUtils activityUtils, ViewFetcher viewFetcher, Sleeper sleeper) {
+		this.inst = inst;
+		this.activityUtils = activityUtils;
+		this.viewFetcher = viewFetcher;
+		this.sleeper = sleeper;
+	}
+
+
+	/**
 	 * Simulate touching a specific location and dragging to a new location.
 	 *
 	 * This method was copied from {@code TouchUtils.java} in the Android Open Source Project, and modified here.
@@ -50,9 +61,9 @@ class Scroller {
 	 * @param stepCount How many move steps to include in the drag
 	 *
 	 */
-	
+
 	public void drag(float fromX, float toX, float fromY, float toY,
-					  int stepCount) {
+			int stepCount) {
 		long downTime = SystemClock.uptimeMillis();
 		long eventTime = SystemClock.uptimeMillis();
 		float y = fromY;
@@ -71,7 +82,6 @@ class Scroller {
 			try {
 				inst.sendPointerSync(event);
 			} catch (SecurityException ignored) {}
-			inst.waitForIdleSync();
 		}
 		eventTime = SystemClock.uptimeMillis();
 		event = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP,toX, toY, 0);
@@ -82,50 +92,85 @@ class Scroller {
 
 
 	/**
+	 * Scrolls a ScrollView.
+	 * 
+	 * @param direction the direction to be scrolled
+	 * @return {@code true} if more scrolling can be done
+	 * 
+	 */
+
+	private boolean scrollScrollView(int direction, ArrayList<ScrollView> scrollViews){
+		final ScrollView scroll = viewFetcher.getView(ScrollView.class, scrollViews, 0);
+		int scrollAmount = 0;
+		
+		if(scroll != null){
+			int height = scroll.getHeight();
+			height--;
+			int scrollTo = 0;
+
+			if (direction == DOWN) {
+				scrollTo = (height);
+			}
+
+			else if (direction == UP) {
+				scrollTo = (-height);
+			}
+			scrollAmount = scroll.getScrollY();
+			scrollScrollViewTo(scroll,0, scrollTo);
+			if (scrollAmount == scroll.getScrollY()) {
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * Scroll the list to a given line
+	 * @param listView the listView to scroll
+	 * @param line the line to scroll to
+	 */
+
+	private void scrollScrollViewTo(final ScrollView scrollView, final int x, final int y){
+		inst.runOnMainSync(new Runnable(){
+			public void run(){
+				scrollView.scrollBy(x, y);
+			}
+		});
+	}
+
+
+	/**
 	 * Scrolls up and down.
 	 * 
 	 * @param direction the direction in which to scroll
 	 * @return {@code true} if more scrolling can be done
 	 * 
 	 */
-	
-	public boolean scroll(Direction direction) {
-		int yStart;
-		int yEnd;
-		if (direction == Direction.DOWN) {
-			yStart = (activityUtils.getCurrentActivity().getWindowManager()
-					.getDefaultDisplay().getHeight() - 20);
-			yEnd = ((activityUtils.getCurrentActivity(false).getWindowManager()
-					.getDefaultDisplay().getHeight() / 2));
-		} 
-		else {
-			yStart = ((activityUtils.getCurrentActivity().getWindowManager()
-					.getDefaultDisplay().getHeight() / 2));
-			yEnd = (activityUtils.getCurrentActivity(false).getWindowManager()
-					.getDefaultDisplay().getHeight() - 20);
-		}
-		int x = activityUtils.getCurrentActivity(false).getWindowManager()
-				.getDefaultDisplay().getWidth() / 2;
 
-		if (viewFetcher.getCurrentViews(ListView.class).size() > 0) {
-			return scrollList(0, direction);
-		} 
-		else {
-			if (viewFetcher.getCurrentViews(ScrollView.class).size() > 0) {
-				ScrollView scroll = viewFetcher.getCurrentViews(ScrollView.class).get(0);
-				scrollAmount = scroll.getScrollY();
-				drag(x, x, yStart, yEnd, 40);
-				if (scrollAmount == scroll.getScrollY()) {
-					scrollAmount = 0;
-					return false;
-				}
-				else
-					return true;
-			}
-			else
-				return false;
-		}
+	public boolean scroll(int direction) {
+		final ArrayList<View> viewList = viewFetcher.getViews(null, true);
+		final ArrayList<ListView> listViews = RobotiumUtils.filterViews(ListView.class, viewList);
 
+		if (listViews.size() > 0) {
+			return scrollList(ListView.class, 0, direction, listViews);
+		} 
+		
+		final ArrayList<GridView> gridViews = RobotiumUtils.filterViews(GridView.class, viewList);
+
+		if (gridViews.size() > 0) {
+			return scrollList(GridView.class, 0, direction, gridViews);
+		} 
+
+		final ArrayList<ScrollView> scrollViews = RobotiumUtils.filterViews(ScrollView.class, viewList);
+
+		if (scrollViews.size() > 0) {
+			return scrollScrollView(direction, scrollViews);
+		}
+		return false;
 	}
 
 	/**
@@ -136,54 +181,76 @@ class Scroller {
 	 * @return {@code true} if more scrolling can be done
 	 * 
 	 */
-	
-	public boolean scrollList(int listIndex, Direction direction) {
-		ListView listView = viewFetcher.getCurrentViews(ListView.class).get(listIndex);
-		int[] xy = new int[2];
-		listView.getLocationOnScreen(xy);
 
-		while (xy[1] + 20 > activityUtils.getCurrentActivity()
-				.getWindowManager().getDefaultDisplay().getHeight()) {
-			int yStart = (activityUtils.getCurrentActivity(false).getWindowManager()
-					.getDefaultDisplay().getHeight() - 20);
-			int yEnd = ((activityUtils.getCurrentActivity(false).getWindowManager()
-					.getDefaultDisplay().getHeight() / 2));
-			int x = activityUtils.getCurrentActivity(false).getWindowManager()
-					.getDefaultDisplay().getWidth() / 2;
-			drag(x, x, yStart, yEnd, 40);
-			listView.getLocationOnScreen(xy);
-		}
-		int yStart;
-		int yEnd;
-		if (direction == Direction.DOWN) {
-			yStart = ((xy[1] + listView.getHeight()) - 20);
-			yEnd = (xy[1] + 20);
-		} else {
-			
-			yStart = ((xy[1]) + 20);
-			yEnd = (xy[1] + listView.getHeight());
-		}
-		int x = activityUtils.getCurrentActivity(false).getWindowManager()
-				.getDefaultDisplay().getWidth() / 2;
-		
-		if (listView.getLastVisiblePosition() < listView.getCount()-1) {
-			drag(x, x, yStart, yEnd, 40);
-			return true;
+	public <T extends AbsListView> boolean scrollList(Class<T> classToFilterBy, int listIndex, int direction, ArrayList<T> listViews) {
+		final T listView = viewFetcher.getView(classToFilterBy, listViews, listIndex);
 
-		} else {
+		if(listView == null)
 			return false;
-		}
 
+		if (direction == DOWN) {
+			if (listView.getLastVisiblePosition() >= listView.getCount()-1) {
+				scrollListToLine(listView, listView.getLastVisiblePosition());
+				return false;
+			}
+			
+			if(listView.getFirstVisiblePosition() != listView.getLastVisiblePosition())
+				scrollListToLine(listView, listView.getLastVisiblePosition());
+	
+			else
+				scrollListToLine(listView, listView.getFirstVisiblePosition()+1);
+
+		} else if (direction == UP) {
+			if (listView.getFirstVisiblePosition() < 2) {
+				scrollListToLine(listView, 0);
+				return false;
+			}
+
+			final int lines = listView.getLastVisiblePosition() - listView.getFirstVisiblePosition();
+			int lineToScrollTo = listView.getFirstVisiblePosition() - lines;
+
+			if(lineToScrollTo == listView.getLastVisiblePosition())
+				lineToScrollTo--;
+			
+			if(lineToScrollTo < 0)
+				lineToScrollTo = 0;
+
+			scrollListToLine(listView, lineToScrollTo);
+		}	
+		sleeper.sleep();
+		return true;
 	}
 	
+
+	/**
+	 * Scroll the list to a given line
+	 * @param listView the listView to scroll
+	 * @param line the line to scroll to
+	 */
+
+	private <T extends AbsListView> void scrollListToLine(final T view, final int line){
+		
+		final int lineToMoveTo;
+		if(view instanceof GridView)
+			lineToMoveTo = line+1;
+		else
+			lineToMoveTo = line;
 	
+		inst.runOnMainSync(new Runnable(){
+			public void run(){
+				view.setSelection(lineToMoveTo);
+			}
+		});
+	}
+
+
 	/**
 	 * Scrolls horizontally.
 	 *
 	 * @param side the side to which to scroll; {@link Side#RIGHT} or {@link Side#LEFT}
 	 *
 	 */
-	
+
 	public void scrollToSide(Side side) {
 		int screenHeight = activityUtils.getCurrentActivity().getWindowManager().getDefaultDisplay()
 		.getHeight();
@@ -196,6 +263,5 @@ class Scroller {
 		else if (side == Side.RIGHT)
 			drag(x, 0, y, y, 40);
 	}
-	
 
 }

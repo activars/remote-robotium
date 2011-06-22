@@ -69,6 +69,16 @@ class ActivityUtils {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Returns the ActivityMonitor used by Robotium.
+	 * 
+	 * @return the ActivityMonitor used by Robotium
+	 */
+	
+	public ActivityMonitor getActivityMonitor(){
+		return activityMonitor;
+	}
 
 	/**
 	 * Sets the Orientation (Landscape/Portrait) for the current activity.
@@ -79,9 +89,7 @@ class ActivityUtils {
 	
 	public void setActivityOrientation(int orientation)
 	{
-		if(activity.equals(getCurrentActivity()))
-			sleeper.sleep();
-		Activity activity = getCurrentActivity(false);
+		Activity activity = getCurrentActivity();
 		activity.setRequestedOrientation(orientation);	
 	}
 
@@ -97,58 +105,62 @@ class ActivityUtils {
 	}
 	
 	/**
+	 * Waits for an activity to be started if one is not provided
+	 * by the constructor.
+	 *
+	 */
+
+	private final void waitForActivityIfNotAvailable(){
+	    if(activity == null){
+	        if (activityMonitor != null) {
+	            while (activityMonitor.getLastActivity() == null){
+	                sleeper.sleepMini();
+	            }
+	        }
+	        else{
+	            sleeper.sleepMini();
+	            setupActivityMonitor();
+	            waitForActivityIfNotAvailable();
+	        }
+	    }
+	}
+
+	/**
 	 * Returns the current {@code Activity}.
 	 *
 	 * @param shouldSleepFirst whether to sleep a default pause first
 	 * @return the current {@code Activity}
-	 * 
-	 */
-	
-	public Activity getCurrentActivity(boolean shouldSleepFirst) {
-		if(shouldSleepFirst){
-			sleeper.sleep();
-			inst.waitForIdleSync();
-		}
-		Boolean found = false;
-		if (activityMonitor != null) {
-			if (activityMonitor.getLastActivity() != null)
-				activity = activityMonitor.getLastActivity();
-		}
-		for(Activity storedActivity : activityList){
-			if (storedActivity.getClass().getName().equals(
-					activity.getClass().getName()))
-				found = true;
-		}
-		if (found)
-			return activity;
-		else {
-			activityList.add(activity);
-			return activity;
-		}
-	}
-	
-	/**
-	 * Waits for the given {@link Activity}.
 	 *
-	 * @param name the name of the {@code Activity} to wait for e.g. {@code "MyActivity"}
-	 * @param timeout the amount of time in milliseconds to wait
-	 * @return {@code true} if {@code Activity} appears before the timeout and {@code false} if it does not
-	 * 
 	 */
-	
-	public boolean waitForActivity(String name, int timeout)
-	{
-        long now = System.currentTimeMillis();
-        final long endTime = now + timeout;
-		while(!getCurrentActivity().getClass().getSimpleName().equals(name) && now < endTime)
-		{	
-			now = System.currentTimeMillis();
-		}
-		if(now < endTime)
-			return true;
-		else
-			return false;
+
+	public Activity getCurrentActivity(boolean shouldSleepFirst) {
+	    if(shouldSleepFirst){
+	        sleeper.sleep();
+	        inst.waitForIdleSync();
+	    }
+
+	    waitForActivityIfNotAvailable();
+	    Boolean found = false;
+
+	    if (activityMonitor != null) {
+	        if (activityMonitor.getLastActivity() != null)
+	            activity = activityMonitor.getLastActivity();
+	    }
+	    Activity storedActivity;
+	    for(int i = 0; i < activityList.size(); i++){
+	    	storedActivity = activityList.get(i);
+	        if (storedActivity.getClass().getName().equals(
+	                activity.getClass().getName()))
+	            found = true;
+	    }
+	    if (found)
+	        return activity;
+	    else {
+	        activityList.add(activity);
+	        return activity;
+	    }
 	}
+	
 	
 	/**
 	 * Returns to the given {@link Activity}.
@@ -190,6 +202,7 @@ class ActivityUtils {
 	
 	public String getString(int resId)
 	{
+		Activity activity = getCurrentActivity(false);
 		return activity.getString(resId);
 	}
 	
@@ -201,12 +214,25 @@ class ActivityUtils {
 	
 	public void finalize() throws Throwable {
 		try {
-			for (int i = 0; i < activityList.size(); i++) {
+			// Finish all opened activities
+			for (int i = activityList.size()-1; i >= 0; i--) {
 				activityList.get(i).finish();
+				sleeper.sleep(100);
 			}
-			getCurrentActivity(false).finish();
+
+			// Finish the initial activity, pressing Back for good measure
+			getCurrentActivity().finish();
+			try {
+				inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+			} catch (SecurityException ignored) {
+				// Guard against lack of INJECT_EVENT permission
+			}
 			activityList.clear();
-		
+
+			// Remove the monitor added during startup
+			if (activityMonitor != null) {
+				inst.removeMonitor(activityMonitor);
+			}
 		} catch (Exception ignored) {}
 		super.finalize();
 	}

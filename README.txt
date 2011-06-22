@@ -2,9 +2,9 @@
 ROBOTIUM
 ===============================================================================
 
-The project home page is at http://www.robotium.org/
+Robotium is an Android test framework that has full support for Activities, Dialogs, Toasts, Menus and Context Menus. 
 
-All documentation is there.
+The project home page is at http://www.robotium.org/
 
 1. Project layout
    /robotium
@@ -40,3 +40,5 @@ All documentation is there.
      - m2eclipse: http://m2eclipse.sonatype.org/
  note: the android application doesn't use Maven build because Maven(including some Android plugins) 
        doesn't play nicely for building the apk.  
+=======
+
