@@ -27,18 +27,14 @@ The project home page is at http://www.robotium.org/
         |        
         |
         |-/robotium-solo
-          (standalone Robotium API that works with standard Android test suite)
+           (standalone Robotium API that works with standard Android test suite)
 
 
 2.Building the Robotium
   In order to successfully build the Robotium project, it mainly requires
   installing the building tools below:
-     - Maven
-     - Maven Enforcer plugin
-     - Maven Versions plugin
- For those who working on Eclipse, there are plugins available at
      - m2eclipse: http://m2eclipse.sonatype.org/
- note: the android application doesn't use Maven build because Maven(including some Android plugins) 
-       doesn't play nicely for building the apk.  
-=======
+     - Setup your ANDROID_HOME system environment variable to /<Android SDK Location>/platform-tools/
+       
 
+Video Demo: http://www.flickr.com/photos/activars/5861337099/in/photostream
