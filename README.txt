@@ -1,8 +1,13 @@
 ===============================================================================
-ROBOTIUM
+REMOTE ROBOTIUM 
 ===============================================================================
 
 Robotium is an Android test framework that has full support for Activities, Dialogs, Toasts, Menus and Context Menus. 
+
+[Remote Robotium] is an extension to the current Robotium framework that allows to test multiple emulator or even real device instances at the same time with JUnit(without Android JUnit), or even execute remote instructions without any test frameworks.
+
+
+
 
 The project home page is at http://www.robotium.org/
 
@@ -36,5 +41,3 @@ The project home page is at http://www.robotium.org/
      - m2eclipse: http://m2eclipse.sonatype.org/
      - Setup your ANDROID_HOME system environment variable to /<Android SDK Location>/platform-tools/
        
-
-Video Demo: http://www.flickr.com/photos/activars/5861337099/in/photostream
